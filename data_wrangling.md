@@ -31,6 +31,8 @@ library(janitor)
 
 ``` r
 library(lubridate)
+
+set.seed(235)
 ```
 
 ``` r
@@ -40,20 +42,19 @@ na_values <- c(".", "NA", "")
 bike_data <- read_csv(file_path, na = na_values) %>% 
   janitor::clean_names() %>% 
   mutate(
-    datetime_obj = ymd_hms(started_at), 
-    start_year = year(datetime_obj),
-    start_month = month(datetime_obj),
-    start_day = day(datetime_obj),
-    start_time = format(datetime_obj, "%H:%M:%S")
+    datetime_start_obj = ymd_hms(started_at), 
+    start_year = year(datetime_start_obj),
+    start_month = month(datetime_start_obj),
+    start_day = day(datetime_start_obj),
+    start_time = format(datetime_start_obj, "%H:%M:%S")
   ) %>% 
   mutate(
-    datetime_obj = ymd_hms(ended_at), 
-    end_year = year(datetime_obj),
-    end_month = month(datetime_obj),
-    end_day = day(datetime_obj),
-    end_time = format(datetime_obj, "%H:%M:%S")
-  ) %>% 
-  select(-started_at, -ended_at)
+    datetime_end_obj = ymd_hms(ended_at), 
+    end_year = year(datetime_end_obj),
+    end_month = month(datetime_end_obj),
+    end_day = day(datetime_end_obj),
+    end_time = format(datetime_end_obj, "%H:%M:%S")
+  )
 ```
 
     ## Rows: 1000000 Columns: 13
