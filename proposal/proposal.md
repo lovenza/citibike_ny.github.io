@@ -114,8 +114,8 @@ Successfully acquired and vetted two primary data sources for a focused
 analysis of September 2025:
 
 - ***Citi Bike Trip Data:***  
-  Sourced from the official Citi Bike System Data
-  (citibikenyc.com/system-data).  
+  Sourced from the official [Citi Bike System
+  Data](https://citibikenyc.com/system-data).  
   The full dataset for September 2025 is massive (approx. 5.28 million
   rides across six files). To ensure computational feasibility while
   maintaining representative data, we have adopted a sampling strategy:
@@ -127,11 +127,11 @@ analysis of September 2025:
     as our primary dataset for trip-level analysis.
 
 - ***NYC Weather Data:***  
-  Sourced from the NOAA Climate Data Online portal
-  (ncei.noaa.gov/cdo-web/). We downloaded daily weather summaries for
-  September 2025 from the Central Park station (ID: USW00094728). This
-  file (`noaa_central_park_2025.csv`) contains key predictive variables:
-  **TMAX**, **TMIN**, and **PRCP**.
+  Sourced from the [NOAA Climate Data Online
+  portal](https://www.ncei.noaa.gov/cdo-web/). We downloaded daily
+  weather summaries for September 2025 from the Central Park station
+  (ID: USW00094728). This file (`noaa_central_park_2025.csv`) contains
+  key predictive variables: **TMAX**, **TMIN**, and **PRCP**.
 
 - ***Rationale for Choosing September 2025:***  
   September provides moderate weather, avoiding extremes that suppress
