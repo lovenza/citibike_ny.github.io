@@ -1,14 +1,14 @@
 Final Project Proposal
 ================
 Mungyu Kwok, Ziang Niu, Bowen Xia, Zihan Zhou
-2024-11-08
+2025-11-07
 
 ## Team members
 
 - Ziang Niu (zn2220)
 - Bowen Xia (bx2232)
 - Mungyu Kwok (mk5149)
-- 
+- Zihan Zhou (zz3460)
 
 ## Tentative Project Title
 
