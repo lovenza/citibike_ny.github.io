@@ -6,8 +6,8 @@ Mungyu Kwok, Ziang Niu, Bowen Xia, Zihan Zhou
 ## Team members
 
 - Ziang Niu (zn2220)
-- 
-- 
+- Bowen Xia (bx2232)
+- Mungyu Kwok (mk5149)
 - 
 
 ## Tentative Project Title
