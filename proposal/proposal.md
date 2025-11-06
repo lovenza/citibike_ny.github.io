@@ -1,0 +1,223 @@
+Final Project Proposal
+================
+Mungyu Kwok, Ziang Niu, Bowen Xia, Zihan Zhou
+2024-11-08
+
+## Team members
+
+- Ziang Niu (zn2220)
+- 
+- 
+- 
+
+## Tentative Project Title
+
+**The Pulse of the City: An Analysis of NYC Citi Bike Ridership Patterns
+in Response to Daily Rhythms and Weather**
+
+------------------------------------------------------------------------
+
+## Motivation
+
+Citi Bike has become an integral part of New York City’s public
+transportation network, serving millions of rides to commuters,
+residents, and tourists. As a data-rich system, it offers a unique
+opportunity to understand the mobility patterns of a major metropolis.
+
+The goal of this project is to analyze how NYC’s population uses the
+Citi Bike system. The aim is to answer these key questions:
+
+- How do predictable daily and weekly rhythms (e.g., time of day,
+  weekday vs. weekend) shape ridership?  
+- How do different user groups (members vs. casual riders) use the
+  system differently?  
+- To what extent does daily weather (a powerful external factor)
+  influence the decision to ride a bike?
+
+Understanding these patterns is valuable for urban planning, public
+health initiatives, and the operational logistics of the bike-share
+system itself.
+
+------------------------------------------------------------------------
+
+## Intended Final Products
+
+The project will be delivered as a comprehensive, integrated website,
+designed to clearly present our findings and provide a dynamic, hands-on
+user experience. The site will be organized around the following key
+components:
+
+**1. Data Processing & Curation:**  
+A detailed description of our data sources (Citi Bike System Data and
+NOAA). This section will explain our data collection process, including
+our stratified sampling strategy to create a 100,000-ride manageable
+dataset, and the full cleaning and merging process used to combine
+trip-level data with daily weather data.
+
+**2. Exploratory Analyses Report:**  
+A comprehensive report systematically answering our key research
+questions about Citi Bike ridership for September 2025. This will
+include a full analysis of temporal patterns (hourly, daily, weekly),
+differences in user behavior (member vs. casual), and average trip
+durations.
+
+**3. Visualization Plots:**  
+A collection of static and interactive charts and maps to showcase key
+trends. This will include:
+
+- ***Maps:*** Geospatial plots showcasing citywide station density, the
+  most popular start stations, and “flow maps” visualizing the most
+  common routes, with facets by borough and user type.  
+- ***Time-Series Graphs:*** Bar charts showing ridership by hour of the
+  day, faceted by user type and weekday/weekend to reveal commuter
+  peaks.  
+- ***Correlation Plots:*** Scatter plots demonstrating the relationship
+  between total daily rides and key weather variables (e.g., maximum
+  temperature, precipitation).
+
+**4. Statistical Analysis Report:**  
+An illustrative page detailing the statistical methodology, results, and
+interpretation of our linear regression models. This section will
+quantify the specific impact of weather (e.g., effect per 10°F or 1-inch
+of precipitation) and day of the week on daily ridership, comparing
+these effects for member vs. casual users.
+
+**5. Interactive Dashboard (Shiny Application):**  
+An interactive dashboard integrated into the website to “bring the
+analysis to life.” This tool will allow users to dynamically explore the
+data by filtering ridership maps and charts by user type, time of day,
+or weather conditions. It will also feature a simple “what-if”
+prediction widget to estimate ridership based on user-selected inputs.
+
+**6. Two-Minute Screencast:**  
+A two-minute narrated screencast embedded on the website, serving as the
+project’s “elevator pitch.” This video will concisely summarize the main
+research questions, highlight the most significant findings, and
+demonstrate the key features of the interactive dashboard.
+
+**7. Summary & Discussion:**  
+A concise summary highlighting our key findings, the main predictors of
+ridership, and a discussion of the project’s limitations and potential
+future work.
+
+**8. GitHub Repository:**  
+A link to the project’s complete GitHub repository. The repository will
+be clearly organized with all code, analysis scripts (R/Python), R
+Markdown files, and the two datasets (the 100k ride sample and NOAA
+weather data) to ensure the analysis is fully reproducible.
+
+------------------------------------------------------------------------
+
+## Anticipated Data Sources
+
+Successfully acquired and vetted two primary data sources for a focused
+analysis of September 2025:
+
+- ***Citi Bike Trip Data:***  
+  Sourced from the official Citi Bike System Data
+  (citibikenyc.com/system-data).  
+  The full dataset for September 2025 is massive (approx. 5.28 million
+  rides across six files). To ensure computational feasibility while
+  maintaining representative data, we have adopted a sampling strategy:
+
+  - Selected one of the six files (1 million rides).  
+  - Drawn a stratified random sample of 100,000 rides, ensuring all 30
+    days of September are proportionately represented.  
+  - This 100k-ride sample (`202509-citibike-tripdata_3.csv`) will serve
+    as our primary dataset for trip-level analysis.
+
+- ***NYC Weather Data:***  
+  Sourced from the NOAA Climate Data Online portal
+  (ncei.noaa.gov/cdo-web/). We downloaded daily weather summaries for
+  September 2025 from the Central Park station (ID: USW00094728). This
+  file (`noaa_central_park_2025.csv`) contains key predictive variables:
+  **TMAX**, **TMIN**, and **PRCP**.
+
+- ***Rationale for Choosing September 2025:***  
+  September provides moderate weather, avoiding extremes that suppress
+  ridership, while still showing natural variability (rain, cool snaps).
+  It captures post-summer “back-to-work” and “back-to-school” rhythms,
+  ideal for observing weekday–weekend contrasts. Moreover, using **2025
+  data** ensures the study reflects post-pandemic mobility patterns and
+  the Citi Bike system’s expanded coverage.
+
+------------------------------------------------------------------------
+
+## Anticipated Coding Challenges
+
+This project anticipates three main coding challenges:
+
+- ***Data Aggregation and Merging:***  
+  Citi Bike data (trip level) and NOAA data (daily level) must be
+  aligned by date.  
+  Accurately aggregating trips into daily summaries (e.g., total rides,
+  mean duration) is essential.
+
+- ***Spatial Data Visualization:***  
+  Creating meaningful “flow maps” of routes requires precise handling of
+  latitude/longitude data and specialized mapping packages.
+
+- ***Shiny Application Reactivity:***  
+  Ensuring the dashboard updates smoothly based on multiple user inputs
+  demands efficient, reactive server-side code.
+
+------------------------------------------------------------------------
+
+## Planned Analyses and Visualizations
+
+The analysis will be structured to address our core research questions,
+progressing from data wrangling to modeling.
+
+- ***Data Wrangling:***
+  - Clean the 100,000-ride sample, creating derived variables (trip
+    duration, hour, day of week).  
+  - Clean NOAA data, convert units (e.g., tenths °C → °F), handle
+    missing values.  
+  - Aggregate trip data by date and join with daily weather data.
+- ***Exploratory Data Analysis (EDA) & Visualization:***
+  - **Time Patterns:** Plot hourly ridership to reveal rush-hour peaks
+    and compare by user type and weekday/weekend.  
+  - **Spatial Patterns:** Map top 50 start stations and visualize top
+    100 routes to identify key corridors.  
+  - **Weather Impact:** Create scatterplots showing the relationship
+    between daily rides and temperature/precipitation.
+- ***Statistical Modeling:***
+  - Fit a multivariate linear regression model.  
+  - **Outcome:** total daily rides.  
+  - **Predictors:** TMAX, TMIN, PRCP, and day of week.  
+  - Interpret coefficients to quantify how each weather factor affects
+    ridership.
+
+------------------------------------------------------------------------
+
+## Planned Timeline
+
+- ***Week 1 (Nov 7 – Nov 14):*** Submit proposal; complete project
+  review; finalize data wrangling scripts and core dataset.  
+- ***Week 2 (Nov 15 – Nov 21):*** Conduct all EDA and visualizations;
+  produce static `ggplot2` charts.  
+- ***Week 3 (Nov 22 – Nov 28):*** Complete spatial mapping and
+  statistical modeling (`lm`); interpret results.  
+- ***Week 4 (Nov 29 – Dec 5):*** Build and deploy Shiny app; integrate
+  plots; finalize report and website.  
+- ***Final Delivery (Dec 6):*** Record screencast, finalize all
+  deliverables.
+
+------------------------------------------------------------------------
+
+## Division of Responsibilities (Tentative)
+
+To ensure balanced contributions, we propose the following task
+assignments:
+
+- ***Ziang Niu:*** Project Lead & Data Wrangling — overall management,
+  GitHub maintenance, data cleaning, and merging.  
+- ***Zihan Zhou:*** EDA & Visualization Lead — responsible for
+  time-pattern and weather-related visualizations using `ggplot2`.  
+- ***Bowen Xia:*** Modeling & Spatial Analysis Lead — handles station
+  and flow maps, builds and interprets regression model.  
+- ***Mungyu Kwok:*** Shiny & Web Lead — develops the interactive Shiny
+  dashboard and final GitHub Pages site.
+
+All members will co-write the final report and participate in the
+screencast.
