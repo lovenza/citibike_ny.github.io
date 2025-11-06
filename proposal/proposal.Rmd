@@ -62,7 +62,7 @@ A two-minute narrated screencast embedded on the website, serving as the project
 A concise summary highlighting our key findings, the main predictors of ridership, and a discussion of the project's limitations and potential future work.
 
 **8. GitHub Repository:**  
-A link to the project's complete GitHub repository. The repository will be clearly organized with all code, analysis scripts (R/Python), R Markdown files, and the two datasets (the 100k ride sample and NOAA weather data) to ensure the analysis is fully reproducible.
+A link to the project's complete GitHub repository. The repository will be clearly organized with all code, analysis scripts (R), R Markdown files, and the two datasets (the 100k ride sample and NOAA weather data) to ensure the analysis is fully reproducible.
 
 ---
 
@@ -70,19 +70,19 @@ A link to the project's complete GitHub repository. The repository will be clear
 
 Successfully acquired and vetted two primary data sources for a focused analysis of September 2025:
 
-+ ***Citi Bike Trip Data:***  
+**1. Citi Bike Trip Data:**  
 Sourced from the official [Citi Bike System Data](https://citibikenyc.com/system-data).  
 The full dataset for September 2025 is massive (approx. 5.28 million rides across six files). To ensure computational feasibility while maintaining representative data, we have adopted a sampling strategy:  
 
-  - Selected one of the six files (1 million rides).  
-  - Drawn a stratified random sample of 100,000 rides, ensuring all 30 days of September are proportionately represented.  
-  - This 100k-ride sample (`202509-citibike-tripdata_3.csv`) will serve as our primary dataset for trip-level analysis.
+  + Selected one of the six files (1 million rides).  
+  + Drawn a stratified random sample of 100,000 rides, ensuring all 30 days of September are proportionately represented.  
+  + This 100k-ride sample (`202509-citibike-tripdata_3.csv`) will serve as our primary dataset for trip-level analysis.
 
-+ ***NYC Weather Data:***  
+**2. NYC Weather Data:**  
 Sourced from the [NOAA Climate Data Online portal](https://www.ncei.noaa.gov/cdo-web/). We downloaded daily weather summaries for September 2025 from the Central Park station (ID: USW00094728). This file (`noaa_central_park_2025.csv`) contains key predictive variables: **TMAX**, **TMIN**, and **PRCP**.
 
-+ ***Rationale for Choosing September 2025:***  
-September provides moderate weather, avoiding extremes that suppress ridership, while still showing natural variability (rain, cool snaps). It captures post-summer “back-to-work” and “back-to-school” rhythms, ideal for observing weekday–weekend contrasts. Moreover, using **2025 data** ensures the study reflects post-pandemic mobility patterns and the Citi Bike system’s expanded coverage.
+**3. Rationale for Choosing September 2025:**  
+September provides moderate weather, avoiding extremes that suppress ridership, while still showing natural variability (rain, cool snaps). It captures post-summer “back-to-work” and “back-to-school” rhythms, ideal for observing weekday–weekend contrasts. Moreover, using ***2025 data*** ensures the study reflects post-pandemic mobility patterns and the Citi Bike system’s expanded coverage.
 
 ---
 
@@ -90,14 +90,14 @@ September provides moderate weather, avoiding extremes that suppress ridership, 
 
 This project anticipates three main coding challenges:
 
-+ ***Data Aggregation and Merging:***  
+**1. Data Aggregation and Merging:**  
 Citi Bike data (trip level) and NOAA data (daily level) must be aligned by date.  
 Accurately aggregating trips into daily summaries (e.g., total rides, mean duration) is essential.
 
-+ ***Spatial Data Visualization:***  
+**2. Spatial Data Visualization:**  
 Creating meaningful “flow maps” of routes requires precise handling of latitude/longitude data and specialized mapping packages.
 
-+ ***Shiny Application Reactivity:***  
+**3. Shiny Application Reactivity:**  
 Ensuring the dashboard updates smoothly based on multiple user inputs demands efficient, reactive server-side code.
 
 ---
@@ -106,31 +106,31 @@ Ensuring the dashboard updates smoothly based on multiple user inputs demands ef
 
 The analysis will be structured to address our core research questions, progressing from data wrangling to modeling.
 
-+ ***Data Wrangling:***  
-  - Clean the 100,000-ride sample, creating derived variables (trip duration, hour, day of week).  
-  - Clean NOAA data, convert units (e.g., tenths °C → °F), handle missing values.  
-  - Aggregate trip data by date and join with daily weather data.
+**1. Data Wrangling:**  
+  + Clean the 100,000-ride sample, creating derived variables (trip duration, hour, day of week).  
+  + Clean NOAA data, convert units (e.g., tenths °C → °F), handle missing values.  
+  + Aggregate trip data by date and join with daily weather data.
 
-+ ***Exploratory Data Analysis (EDA) & Visualization:***  
-  - **Time Patterns:** Plot hourly ridership to reveal rush-hour peaks and compare by user type and weekday/weekend.  
-  - **Spatial Patterns:** Map top 50 start stations and visualize top 100 routes to identify key corridors.  
-  - **Weather Impact:** Create scatterplots showing the relationship between daily rides and temperature/precipitation.
+**2. Exploratory Data Analysis (EDA) & Visualization:**  
+  + ***Time Patterns:*** Plot hourly ridership to reveal rush-hour peaks and compare by user type and weekday/weekend.  
+  + ***Spatial Patterns:*** Map top 50 start stations and visualize top 100 routes to identify key corridors.  
+  + ***Weather Impact:*** Create scatterplots showing the relationship between daily rides and temperature/precipitation.
 
-+ ***Statistical Modeling:***  
-  - Fit a multivariate linear regression model.  
-  - **Outcome:** total daily rides.  
-  - **Predictors:** TMAX, TMIN, PRCP, and day of week.  
-  - Interpret coefficients to quantify how each weather factor affects ridership.
+**3. Statistical Modeling:**  
+  + Fit a multivariate linear regression model.  
+  + ***Outcome:*** total daily rides.  
+  + ***Predictors:*** TMAX, TMIN, PRCP, and day of week.  
+  + Interpret coefficients to quantify how each weather factor affects ridership.
 
 ---
 
 ## Planned Timeline
 
-+ ***Week 1 (Nov 7 – Nov 14):*** Submit proposal; complete project review; finalize data wrangling scripts and core dataset.  
-+ ***Week 2 (Nov 15 – Nov 21):*** Conduct all EDA and visualizations; produce static `ggplot2` charts.  
-+ ***Week 3 (Nov 22 – Nov 28):*** Complete spatial mapping and statistical modeling (`lm`); interpret results.  
-+ ***Week 4 (Nov 29 – Dec 5):*** Build and deploy Shiny app; integrate plots; finalize report and website.  
-+ ***Final Delivery (Dec 6):*** Record screencast, finalize all deliverables.
+**Week 1 (Nov 7 – Nov 14):** Submit proposal; complete project review; finalize data wrangling scripts and core dataset.  
+**Week 2 (Nov 15 – Nov 21):** Conduct all EDA and visualizations; produce static `ggplot2` charts.  
+**Week 3 (Nov 22 – Nov 28):** Complete spatial mapping and statistical modeling (`lm`); interpret results.  
+**Week 4 (Nov 29 – Dec 5):** Build and deploy Shiny app; integrate plots; finalize report and website.  
+**Final Delivery (Dec 6):** Record screencast, finalize all deliverables.
 
 ---
 
