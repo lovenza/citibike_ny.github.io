@@ -31,29 +31,40 @@ library(janitor)
 
 ``` r
 library(lubridate)
+library(geosphere)
 
 set.seed(235)
 ```
+
+# Load and Pre-process Bike Data
+
+This section reads the raw Citibike data from its CSV file, specifying a
+list of values to interpret as NA. It then performs initial cleaning and
+feature engineering:
+
+- Cleans column names to a consistent snake_case format.
+
+- Parses the started_at and ended_at columns into full datetime objects.
+
+- Extracts the start_month and start_day for later filtering and
+  grouping.
+
+- Directly calculates the ride_duration_hours by subtracting the start
+  and end datetimes, which is more efficient and accurate than the
+  original method of converting to strings and back to time objects.
 
 ``` r
 file_path <- "raw_data/202509-citibike-tripdata_3.csv"
 na_values <- c(".", "NA", "")
 
-bike_data <- read_csv(file_path, na = na_values) %>% 
-  janitor::clean_names() %>% 
+bike_data <- read_csv(file_path, na = na_values) %>%
+  janitor::clean_names() %>%
   mutate(
-    datetime_start_obj = ymd_hms(started_at), 
-    start_year = year(datetime_start_obj),
+    datetime_start_obj = ymd_hms(started_at),
+    datetime_end_obj = ymd_hms(ended_at),
     start_month = month(datetime_start_obj),
     start_day = day(datetime_start_obj),
-    start_time = format(datetime_start_obj, "%H:%M:%S")
-  ) %>% 
-  mutate(
-    datetime_end_obj = ymd_hms(ended_at), 
-    end_year = year(datetime_end_obj),
-    end_month = month(datetime_end_obj),
-    end_day = day(datetime_end_obj),
-    end_time = format(datetime_end_obj, "%H:%M:%S")
+    ride_duration_hours = as.numeric(datetime_end_obj - datetime_start_obj, units = "hours")
   )
 ```
 
@@ -67,9 +78,26 @@ bike_data <- read_csv(file_path, na = na_values) %>%
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 
+# Stratified Daily Sampling
+
+This block creates the smaller sampled_bike_data dataframe (containing
+100000 rides). It first filters the data to include only rides from
+September. Then, it uses a split-map-combine strategy to perform
+stratified sampling:
+
+- group_split() divides the data into a list of dataframes, one for each
+  start_day.
+
+- map_dfr() iterates over this list, applies a custom sampling function,
+  and rows-binds the results back into a single dataframe.
+
+- The function samples 3343 rides for day 1 (01/09/2025) and 3333 rides
+  for all other days(02/09/2025 - 30/09/2025), as specified in the
+  original logic.
+
 ``` r
-bike_data_light <- bike_data %>%
-  filter(start_day >= 1 & start_day <= 30) %>%
+sampled_bike_data <- bike_data %>%
+  filter(start_month == 9) %>%
   group_split(start_day) %>%
   map_dfr(function(group_df) {
     current_day <- group_df$start_day[1]
@@ -79,18 +107,137 @@ bike_data_light <- bike_data %>%
       n_to_sample <- 3333
     }
     slice_sample(group_df, n = n_to_sample, replace = FALSE)
-  }) %>%
+  })
+```
+
+# Feature Engineering and Weather Data Merge
+
+This section enriches the sampled bike data with new geospatial features
+and joins it with external weather data.
+
+- It first loads the NOAA weather data.
+
+- Within the sampled_bike_data, it converts latitude/longitude columns
+  to numeric and prepares coordinate matrices to calculate the Haversine
+  distance (The Haversine distance is a way to calculate the shortest
+  distance between two points on the surface of a sphere, such as the
+  Earth, using their latitude and longitude. It accounts for the Earth’s
+  curvature, giving a more accurate distance than simple flat-plane
+  formulas. Unit: kilometers.) and bearing (The bearing represents the
+  direction or angle from one point to another, measured clockwise from
+  true north. For example, a bearing of 90° means the destination is
+  directly east of the starting point. Unit: degrees) for each ride.
+
+- It creates a start_date column in the bike data and converts the DATE
+  column in the weather data to ensure they are both Date objects, which
+  are used as the join key.
+
+- Finally, it performs a left_join and runs clean_names() after the join
+  to standardize the new columns from the weather file (e.g., TMAX,
+  PRCP).
+
+``` r
+noaa_data <- read_csv("data/noaa_central_park_2025.csv")
+```
+
+    ## Rows: 30 Columns: 28
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr   (7): STATION, NAME, PRCP_ATTRIBUTES, SNOW_ATTRIBUTES, SNWD_ATTRIBUTES,...
+    ## dbl   (8): LATITUDE, LONGITUDE, ELEVATION, PRCP, SNOW, SNWD, TMAX, TMIN
+    ## lgl  (12): DAPR, DAPR_ATTRIBUTES, MDPR, MDPR_ATTRIBUTES, TAVG, TAVG_ATTRIBUT...
+    ## date  (1): DATE
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+merged_data <- sampled_bike_data %>%
   mutate(
-    start_time_obj = hms(start_time),
-    end_time_obj = hms(end_time),
-    diff_in_seconds = end_time_obj - start_time_obj,
-    riding_time_raw = as.numeric(diff_in_seconds, units = "hours"),
-    riding_time = ifelse(riding_time_raw < 0, riding_time_raw + 24, riding_time_raw),
-    start_time_obj = NULL,
-    end_time_obj = NULL,
-    diff_in_seconds = NULL,
-    riding_time_raw = NULL
+    start_lng = as.numeric(start_lng),
+    start_lat = as.numeric(start_lat),
+    end_lng = as.numeric(end_lng),
+    end_lat = as.numeric(end_lat)
+  ) %>%
+  mutate(
+    start_coords = cbind(start_lng, start_lat),
+    end_coords = cbind(end_lng, end_lat),
+    distance_km = distHaversine(start_coords, end_coords) / 1000,
+    bearing_degrees = bearing(start_coords, end_coords),
+    start_date = as.Date(datetime_start_obj)
+  ) %>%
+  select(-start_coords, -end_coords)
+
+noaa_data_clean <- noaa_data %>%
+  mutate(
+    DATE = as.Date(DATE)
   )
 
-write.csv(bike_data_light, file = "data/bike_data_light.csv", row.names = FALSE)
+merged_data <- left_join(merged_data, noaa_data_clean, by = c("start_date" = "DATE")) %>%
+  janitor::clean_names()
+```
+
+# Final Categorization and Export
+
+This final block creates categorical variables based on the merged
+weather data, selects the final columns for the analysis, and exports
+the result to a new CSV file.
+
+- case_when() is used to create three new categorical columns:
+
+  - temp_diff_category: Based on the diurnal temperature range (tmax -
+    tmin). “High” is assigned if the temperature difference is greater
+    than 15 degrees. “Medium” is assigned if the difference is greater
+    than 8 but less than or equal to 15. “Low” is for 8 degrees or less.
+    “NA” is assigned if the calculation results in a missing value.
+
+  - temp_level_category: Based on the maximum temperature (tmax). “High”
+    is assigned if the maximum temperature is 80 degrees or higher.
+    “Low” is for a maximum temperature less than 80. “NA” is assigned if
+    tmax is a missing value.
+
+  - rain_category: Based on the precipitation amount (prcp). “Missing”
+    is assigned if the precipitation data is NA (not available). “No
+    Rain” is for exactly 0. “Light Rain” is greater than 0 and less than
+    or equal to 0.3 (units, e.g., inches). “Medium Rain” is greater than
+    0.3 and less than or equal to 1.0. “Heavy Rain” is for precipitation
+    greater than 1.0. “Other” catches any other cases.
+
+- select() is used to organize the dataframe, keeping essential ride
+  info and the new weather categories.
+
+- The final, processed dataframe is written to
+  final_bike_weather_categorized.csv.
+
+``` r
+final_categorized_data <- merged_data %>%
+  mutate(
+    temp_diff = tmax - tmin,
+    temp_diff_category = case_when(
+      temp_diff > 15 ~ "High",
+      temp_diff > 8  ~ "Medium",
+      temp_diff <= 8 ~ "Low",
+      TRUE           ~ NA_character_
+    ),
+    temp_level_category = case_when(
+      tmax >= 80 ~ "High",
+      tmax < 80  ~ "Low",
+      TRUE       ~ NA_character_
+    ),
+    rain_category = case_when(
+      is.na(prcp)      ~ "Missing",
+      prcp == 0        ~ "No Rain",
+      prcp > 0 & prcp <= 0.3 ~ "Light Rain",
+      prcp > 0.3 & prcp <= 1.0 ~ "Medium Rain",
+      prcp > 1.0       ~ "Heavy Rain",
+      TRUE             ~ "Other"
+    )
+  ) %>%
+  select(
+    ride_id:start_date,
+    tmax, tmin, prcp,
+    temp_diff_category, temp_level_category, rain_category
+  )
+
+write_csv(final_categorized_data, "data/final_bike_weather_categorized.csv")
 ```
