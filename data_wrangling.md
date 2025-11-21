@@ -203,6 +203,12 @@ the result to a new CSV file.
     0.3 and less than or equal to 1.0. “Heavy Rain” is for precipitation
     greater than 1.0. “Other” catches any other cases.
 
+  - weekend_and_holiday: Based on the specific day of the month
+    (start_day). “weekend and holiday” is assigned if the start day
+    falls on specific dates: the 1st, 6th, 7th, 13th, 14th, 20th, 21st,
+    27th, or 28th (representing the Labor Day on the 1st and recurring
+    weekends). “workday” catches all other cases not listed above.
+
 - select() is used to organize the dataframe, keeping essential ride
   info and the new weather categories.
 
@@ -213,30 +219,38 @@ the result to a new CSV file.
 final_categorized_data <- merged_data %>%
   mutate(
     temp_diff = tmax - tmin,
+    
     temp_diff_category = case_when(
       temp_diff > 15 ~ "High",
       temp_diff > 8  ~ "Medium",
       temp_diff <= 8 ~ "Low",
       TRUE           ~ NA_character_
     ),
+    
     temp_level_category = case_when(
       tmax >= 80 ~ "High",
       tmax < 80  ~ "Low",
       TRUE       ~ NA_character_
     ),
+    
     rain_category = case_when(
-      is.na(prcp)      ~ "Missing",
-      prcp == 0        ~ "No Rain",
-      prcp > 0 & prcp <= 0.3 ~ "Light Rain",
+      is.na(prcp)             ~ "Missing",
+      prcp == 0               ~ "No Rain",
+      prcp > 0 & prcp <= 0.3  ~ "Light Rain",
       prcp > 0.3 & prcp <= 1.0 ~ "Medium Rain",
-      prcp > 1.0       ~ "Heavy Rain",
-      TRUE             ~ "Other"
+      prcp > 1.0              ~ "Heavy Rain",
+      TRUE                    ~ "Other"
+    ),
+    
+    weekend_and_holiday = case_when(
+      start_day %in% c(1, 6, 7, 13, 14, 20, 21, 27, 28) ~ "weekend and holiday",
+      TRUE ~ "workday"
     )
-  ) %>%
+  ) %>% 
   select(
     ride_id:start_date,
     tmax, tmin, prcp,
-    temp_diff_category, temp_level_category, rain_category
+    temp_diff_category, temp_level_category, rain_category, weekend_and_holiday
   )
 
 write_csv(final_categorized_data, "data/final_bike_weather_categorized.csv")
