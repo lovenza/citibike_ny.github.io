@@ -19,5 +19,51 @@ library(scales)
 library(knitr)
 
 bike <- read_csv("data/final_bike_weather_categorized.csv")
+
+glimpse(bike)
 ```
 
+# 1. Overview
+
+This part analyzes temporal ridership patterns and weather effects for Citi Bike trips in September 2025.
+
+```{r}
+if("datetime_start_obj" %in% names(bike) && !all(is.na(bike$datetime_start_obj))) {
+  bike <- bike %>%
+  mutate(datetime_start = ymd_hms(datetime_start_obj, quiet = TRUE))
+} else {
+  bike <- bike %>% mutate(datetime_start = ymd_hms(started_at, quiet = TRUE))
+}
+
+bike <- bike %>%
+  mutate(
+  date = as.Date(datetime_start),
+  hour = hour(datetime_start),
+  wday = wday(datetime_start, label = TRUE, week_start = 1), # Mon-Sun labels
+  weekday_weekend = case_when(
+  weekend_and_holiday %in% c("weekend", "weekend and holiday", "Weekend", "weekend and holiday") ~ "Weekend", TRUE ~ "Weekday"),
+  user_type = member_casual
+)
+```
+
+# 2. Hourly patterns by user type
+
+```{r}
+hourly <- bike %>%
+  filter(!is.na(hour)) %>%
+  group_by(hour, user_type, weekday_weekend) %>%
+  summarise(rides = n(), .groups = "drop")
+
+p_hour_facet <- hourly %>%
+  ggplot(aes(x = hour, y = rides, fill = user_type)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~ weekday_weekend, nrow = 1) +
+  scale_x_continuous(breaks = 0:23) +
+  labs(title = "Hourly Ridership by User Type (weekday vs weekend)", x = "Hour of day", y = "Number of rides", fill = "User type") +
+  theme_minimal()
+
+p_hour_facet
+
+```
+
+From the plot, the number of members is larger than the number of casual users, which means most of the users are members. Compared to weekend, weekday has a higher proportion of members, showing that people who need weekly commute are more likely to be a member.
