@@ -1,0 +1,23 @@
+---
+title: "EDA"
+author: "Zihan Zhou"
+date: "2025-11-25"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Library key packages and load data.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(patchwork)
+library(scales)
+library(knitr)
+
+bike <- read_csv("data/final_bike_weather_categorized.csv")
+```
+
