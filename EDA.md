@@ -100,7 +100,7 @@ This part analyzes temporal ridership patterns and weather effects for
 Citi Bike trips in September 2025.
 
 ``` r
-if("datetime_start_obj" %in% names(bike) && !all(is.na(bike$datetime_start_obj))) {
+if ("datetime_start_obj" %in% names(bike) && !all(is.na(bike$datetime_start_obj))) {
   bike <- bike %>%
   mutate(datetime_start = ymd_hms(datetime_start_obj, quiet = TRUE))
 } else {
@@ -143,3 +143,7 @@ From the plot, the number of members is larger than the number of casual
 users, which means most of the users are members. Compared to weekend,
 weekday has a higher proportion of members, showing that people who need
 weekly commute are more likely to be a member.
+
+In addition, the morning and evening peak hours are more pronounced
+among members, characterized by a bimodal distribution during 7~8 a.m.
+and 5~6 p.m. on weekdays.
