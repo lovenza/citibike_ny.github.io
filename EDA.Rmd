@@ -70,3 +70,21 @@ From the plot, the number of members is larger than the number of casual users, 
 
 In addition, the morning and evening peak hours are more pronounced among members, characterized by a bimodal distribution during 7~8 a.m. and 5~6 p.m. on weekdays.
 
+# 3. Day-of-week patterns
+
+```{r}
+wday_daily <- bike %>%
+  group_by(wday, user_type) %>%
+  summarise(rides = n(), .groups = "drop") %>%
+  mutate(wday = factor(wday, levels = c("Mon","Tue","Wed","Thu","Fri","Sat","Sun")))
+
+p_wday <- ggplot(wday_daily, aes(x = wday, y = rides, fill = user_type)) +
+  geom_col(position = "dodge") +
+  labs(title = "Ridership by Day of Week (member vs casual)",
+       x = "Day of Week", y = "Ride Count", fill = "User Type") +
+  theme_minimal()
+
+p_wday
+
+```
+
