@@ -166,3 +166,13 @@ p_wday
 ```
 
 ![](EDA_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+As shown in the bar chart, it is clear that member users have much
+higher ride counts than casual users.
+
+Specifically, member ride counts are particularly high on Mondays and
+Tuesdays and reach their lowest on weekends.
+
+In contrast, casual users’ ride counts are relatively consistent
+throughout the week, with slightly higher numbers on weekends. The
+observation confirms the previous conclusion.
