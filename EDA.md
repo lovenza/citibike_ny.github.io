@@ -111,7 +111,7 @@ bike <- bike %>%
   mutate(
   date = as.Date(datetime_start),
   hour = hour(datetime_start),
-  wday = wday(datetime_start, label = TRUE, week_start = 1), # Mon-Sun labels
+  wday = wday(datetime_start, label = TRUE, week_start = 1),
   weekday_weekend = case_when(
   weekend_and_holiday %in% c("weekend", "weekend and holiday", "Weekend", "weekend and holiday") ~ "Weekend", TRUE ~ "Weekday"),
   user_type = member_casual
@@ -176,3 +176,128 @@ Tuesdays and reach their lowest on weekends.
 In contrast, casual users’ ride counts are relatively consistent
 throughout the week, with slightly higher numbers on weekends. The
 observation confirms the previous conclusion.
+
+# 3.2
+
+``` r
+p_member_weekend <- bike %>%
+  mutate(ride_duration_min = ride_duration_hours * 60) %>%
+  filter(ride_duration_min <= 60) %>%
+  ggplot(aes(x = weekend_and_holiday, y = ride_duration_min, fill = member_casual)) +
+  geom_boxplot() +
+  labs(title = "Ride Duration: Member vs Casual on Weekdays vs Weekends",
+       x = "Day Type", y = "Ride Duration (min)", fill = "User Type") +
+  theme_minimal()
+p_member_weekend
+```
+
+![](EDA_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+# 3.3
+
+``` r
+daily_mc <- bike %>%
+  mutate(ride_duration_min = ride_duration_hours * 60) %>%
+  group_by(date, member_casual) %>%
+  summarise(avg_duration = mean(ride_duration_min, na.rm = TRUE), .groups = "drop")
+p_daily_trend <- ggplot(daily_mc,
+                        aes(x = date, y = avg_duration, color = member_casual)) +
+  geom_line(size = 1) +
+  labs(title = "Daily Average Ride Duration in September 2025: Member vs Casual",
+       x = "Date", y = "Average Duration (min)", color = "User Type") +
+  scale_x_date(date_breaks = "5 days", date_labels = "%m-%d") +
+  theme_minimal()
+```
+
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `linewidth` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
+
+``` r
+p_daily_trend
+```
+
+![](EDA_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+# 4. Adding Weather
+
+``` r
+daily_weather <- bike %>%
+  mutate(date = as.Date(datetime_start)) %>%
+  group_by(date) %>%
+  summarise(
+    avg_duration = mean(ride_duration_hours, na.rm = TRUE),
+    tmax = first(tmax),
+    precip = first(prcp),
+    temp_level_category = first(temp_level_category),
+    rain_category = first(rain_category)
+  )
+```
+
+# 4.1 Temperature Category vs Average Duration
+
+``` r
+p_temp <- ggplot(daily_weather,
+                 aes(x = temp_level_category, y = avg_duration)) +
+  geom_boxplot() +
+  labs(title = "Daily Average Ride Duration by Temperature Category",
+       x = "Temperature Level", 
+       y = "Average Duration (min)") +
+  theme_minimal()
+
+p_temp
+```
+
+![](EDA_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+# 4.2 Rain Category vs Average Duration
+
+``` r
+p_rain <- ggplot(daily_weather,
+                 aes(x = rain_category, y = avg_duration)) +
+  geom_boxplot() +
+  labs(title = "Daily Average Ride Duration by Rain Category",
+       x = "Rain Category", 
+       y = "Average Duration (min)") +
+  theme_minimal()
+
+p_rain
+```
+
+![](EDA_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+# 4.3 Weather vs Average Duration
+
+``` r
+p_scatter_temp <- ggplot(daily_weather,
+                         aes(x = tmax, y = avg_duration)) +
+  geom_point(alpha = .7) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Temperature vs Average Ride Duration",
+       x = "Max Daily Temperature", y = "Avg Duration (min)") +
+  theme_minimal()
+
+p_scatter_temp
+```
+
+    ## `geom_smooth()` using formula = 'y ~ x'
+
+![](EDA_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+``` r
+p_scatter_rain <- ggplot(daily_weather,
+                         aes(x = precip, y = avg_duration)) +
+  geom_point(alpha = .7) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Daily Precipitation vs Average Ride Duration",
+       x = "Precipitation (mm)", y = "Avg Duration (min)") +
+  theme_minimal()
+
+p_scatter_rain
+```
+
+    ## `geom_smooth()` using formula = 'y ~ x'
+
+![](EDA_files/figure-gfm/unnamed-chunk-10-2.png)<!-- -->
