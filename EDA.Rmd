@@ -1,0 +1,199 @@
+---
+title: "EDA"
+author: "Zihan Zhou"
+date: "2025-11-25"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Library key packages and load data.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(patchwork)
+library(scales)
+library(knitr)
+
+bike <- read_csv("data/final_bike_weather_categorized.csv")
+
+glimpse(bike)
+```
+
+# 1. Overview
+
+This part analyzes temporal ridership patterns and weather effects for Citi Bike trips in September 2025.
+
+```{r}
+if ("datetime_start_obj" %in% names(bike) && !all(is.na(bike$datetime_start_obj))) {
+  bike <- bike %>%
+  mutate(datetime_start = ymd_hms(datetime_start_obj, quiet = TRUE))
+} else {
+  bike <- bike %>% mutate(datetime_start = ymd_hms(started_at, quiet = TRUE))
+}
+
+bike <- bike %>%
+  mutate(
+  date = as.Date(datetime_start),
+  hour = hour(datetime_start),
+  wday = wday(datetime_start, label = TRUE, week_start = 1),
+  weekday_weekend = case_when(
+  weekend_and_holiday %in% c("weekend", "weekend and holiday", "Weekend", "weekend and holiday") ~ "Weekend", TRUE ~ "Weekday"),
+  user_type = member_casual
+)
+```
+
+# 2. Hourly patterns by user type
+
+```{r}
+hourly <- bike %>%
+  filter(!is.na(hour)) %>%
+  group_by(hour, user_type, weekday_weekend) %>%
+  summarise(rides = n(), .groups = "drop")
+
+p_hour_facet <- hourly %>%
+  ggplot(aes(x = hour, y = rides, fill = user_type)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~ weekday_weekend, nrow = 1) +
+  scale_x_continuous(breaks = 0:23) +
+  labs(title = "Hourly Ridership by User Type (weekday vs weekend)", x = "Hour of day", y = "Number of rides", fill = "User type") +
+  theme_minimal()
+
+p_hour_facet
+
+```
+
+From the plot, the number of members is larger than the number of casual users, which means most of the users are members. Compared to weekend, weekday has a higher proportion of members, showing that people who need weekly commute are more likely to be a member.
+
+In addition, the morning and evening peak hours are more pronounced among members, characterized by a bimodal distribution during 7~8 a.m. and 5~6 p.m. on weekdays.
+
+# 3. Day-of-week patterns
+
+```{r}
+wday_daily <- bike %>%
+  group_by(wday, user_type) %>%
+  summarise(rides = n(), .groups = "drop") %>%
+  mutate(wday = factor(wday, levels = c("Mon","Tue","Wed","Thu","Fri","Sat","Sun")))
+
+p_wday <- ggplot(wday_daily, aes(x = wday, y = rides, fill = user_type)) +
+  geom_col(position = "dodge") +
+  labs(title = "Ridership by Day of Week (member vs casual)",
+       x = "Day of Week", y = "Ride Count", fill = "User Type") +
+  theme_minimal()
+
+p_wday
+
+```
+
+As shown in the bar chart, it is clear that member users have much higher ride counts than casual users.
+
+Specifically, member ride counts are particularly high on Mondays and Tuesdays and reach their lowest on weekends. 
+
+In contrast, casual users' ride counts are relatively consistent throughout the week, with slightly higher numbers on weekends. The observation confirms the previous conclusion.
+
+# 3.2 
+
+```{r}
+p_member_weekend <- bike %>%
+  mutate(ride_duration_min = ride_duration_hours * 60) %>%
+  filter(ride_duration_min <= 60) %>%
+  ggplot(aes(x = weekend_and_holiday, y = ride_duration_min, fill = member_casual)) +
+  geom_boxplot() +
+  labs(title = "Ride Duration: Member vs Casual on Weekdays vs Weekends",
+       x = "Day Type", y = "Ride Duration (min)", fill = "User Type") +
+  theme_minimal()
+p_member_weekend
+```
+
+# 3.3
+
+```{r}
+daily_mc <- bike %>%
+  mutate(ride_duration_min = ride_duration_hours * 60) %>%
+  group_by(date, member_casual) %>%
+  summarise(avg_duration = mean(ride_duration_min, na.rm = TRUE), .groups = "drop")
+p_daily_trend <- ggplot(daily_mc,
+                        aes(x = date, y = avg_duration, color = member_casual)) +
+  geom_line(size = 1) +
+  labs(title = "Daily Average Ride Duration in September 2025: Member vs Casual",
+       x = "Date", y = "Average Duration (min)", color = "User Type") +
+  scale_x_date(date_breaks = "5 days", date_labels = "%m-%d") +
+  theme_minimal()
+p_daily_trend
+```
+
+# 4. Adding Weather
+
+```{r}
+daily_weather <- bike %>%
+  mutate(date = as.Date(datetime_start)) %>%
+  group_by(date) %>%
+  summarise(
+    avg_duration = mean(ride_duration_hours, na.rm = TRUE),
+    tmax = first(tmax),
+    precip = first(prcp),
+    temp_level_category = first(temp_level_category),
+    rain_category = first(rain_category)
+  )
+
+```
+
+# 4.1 Temperature Category vs Average Duration
+
+```{r}
+p_temp <- ggplot(daily_weather,
+                 aes(x = temp_level_category, y = avg_duration)) +
+  geom_boxplot() +
+  labs(title = "Daily Average Ride Duration by Temperature Category",
+       x = "Temperature Level", 
+       y = "Average Duration (min)") +
+  theme_minimal()
+
+p_temp
+
+```
+
+# 4.2 Rain Category vs Average Duration
+
+```{r}
+p_rain <- ggplot(daily_weather,
+                 aes(x = rain_category, y = avg_duration)) +
+  geom_boxplot() +
+  labs(title = "Daily Average Ride Duration by Rain Category",
+       x = "Rain Category", 
+       y = "Average Duration (min)") +
+  theme_minimal()
+
+p_rain
+
+```
+
+# 4.3 Weather vs Average Duration
+
+```{r}
+p_scatter_temp <- ggplot(daily_weather,
+                         aes(x = tmax, y = avg_duration)) +
+  geom_point(alpha = .7) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Temperature vs Average Ride Duration",
+       x = "Max Daily Temperature", y = "Avg Duration (min)") +
+  theme_minimal()
+
+p_scatter_temp
+
+
+p_scatter_rain <- ggplot(daily_weather,
+                         aes(x = precip, y = avg_duration)) +
+  geom_point(alpha = .7) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Daily Precipitation vs Average Ride Duration",
+       x = "Precipitation (mm)", y = "Avg Duration (min)") +
+  theme_minimal()
+
+p_scatter_rain
+
+```
+
