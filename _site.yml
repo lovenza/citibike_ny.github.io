@@ -1,0 +1,26 @@
+name: "citibike-project"
+title: "The Pulse of the City: NYC Citi Bike Ridership Analysis"
+output_dir: "." 
+navbar:
+  title: "Citi Bike Project"
+  left:
+    - text: "Home"
+      href: index_citibike.html
+    - text: "Data Wrangling"
+      href: data_wrangling.html
+    - text: "EDA & Visualization"
+      href: EDA.html
+    - text: "Statistical Analysis"
+      href: model_and_spatial_analysis.html
+    - text: "Proposal"
+      href: proposal.html
+  right:
+    - icon: fa-github
+      href: https://github.com/lovenza/citibike_ny.github.io 
+output:
+  html_document:
+    theme: flatly
+    highlight: textmate
+    toc: true
+    toc_float: true
+    code_folding: hide

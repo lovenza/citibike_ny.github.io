@@ -1,0 +1,44 @@
+---
+title: "The Pulse of the City"
+author: Mungyu Kwok, Ziang Niu, Bowen Xia, Zihan Zhou
+date: "December 2025"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+    theme: flatly
+---
+
+# 🚴 Introduction: NYC Citi Bike Ridership Patterns in Response to Daily Rhythms and Weather
+
+Citi Bike has become an integral part of New York City's public transportation network, serving millions of rides. As a data-rich system, it offers a unique opportunity to understand the mobility patterns of a major metropolis.
+
+The goal of this project is to analyze how NYC's population uses the Citi Bike system, focusing on key external factors and usage patterns.
+
+## ❓ Core Research Questions
+
+We will address the following key questions using our 100,000-ride sample from September 2025:
+
+1.  **Temporal Patterns:** How do predictable daily and weekly rhythms (e.g., time of day, weekday vs. weekend) shape ridership?
+2.  **User Segmentation:** How do different user groups (members vs. casual riders) use the system differently in terms of trip volume and duration?
+3.  **Weather Quantification:** To what extent does daily weather (Max Temperature, Precipitation) influence the decision to ride a bike and the duration of the trip?
+
+## 🛠️ Project Structure and Analysis Pipeline
+
+The website is organized to follow our analytical workflow:
+
+* **[1. Data Wrangling](data_wrangling.html)**: Details our data collection, the **stratified sampling strategy** creating the 100k-ride dataset, cleaning, and merging trip-level data with daily NOAA weather data.
+* **[2. EDA & Visualization](EDA.html)**: Presents a comprehensive exploratory analysis of **temporal** (hourly, daily) and **user-type** patterns, including plots demonstrating the relationship between ridership and key weather variables.
+* **[3. Statistical Analysis](model_and_spatial_analysis.html)**: Quantifies the specific impact of weather (e.g., effect per 10°F or 1-inch of precipitation) and day-of-week on **individual ride duration** using multivariate linear regression models.
+
+## 🧑‍💻 Team Members
+
+| Name | UNI | Tentative Responsibility |
+| :--- | :--- | :--- |
+| **Ziang Niu** | zn2220 | Project Lead & Data Wrangling |
+| **Zihan Zhou** | zz3460 | EDA & Visualization Lead |
+| **Bowen Xia** | bx2232 | Modeling & Spatial Analysis Lead |
+| **Mungyu Kwok** | mk5149 | Shiny & Web Lead |
+
+---
