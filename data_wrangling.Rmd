@@ -2,7 +2,12 @@
 title: "Data Wrangling"
 author: "Ziang Niu"
 date: "2025-11-06"
-output: github_document
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+    theme: flatly
 ---
 
 ```{r}
