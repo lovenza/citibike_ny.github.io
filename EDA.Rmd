@@ -80,7 +80,8 @@ daily <- bike %>%
     avg_duration = mean(ride_duration_hours, na.rm = TRUE),
     member_rides = sum(member_casual == "member"),
     casual_rides = sum(member_casual == "casual"),
-    tmax = tmax
+    tmax = tmax,
+    prcp = prcp
   )
 
 head(daily)
