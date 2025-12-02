@@ -32,6 +32,7 @@ library(janitor)
 ``` r
 library(lubridate)
 library(geosphere)
+library(knitr)
 
 set.seed(235)
 ```
@@ -91,24 +92,58 @@ stratified sampling:
 - map_dfr() iterates over this list, applies a custom sampling function,
   and rows-binds the results back into a single dataframe.
 
-- The function samples 3343 rides for day 1 (01/09/2025) and 3333 rides
-  for all other days(02/09/2025 - 30/09/2025), as specified in the
-  original logic.
+- The code performs proportional stratified sampling to achieve a target
+  sample size of 100,000 rides, preserving the relative distribution of
+  rides across each day in September.
 
 ``` r
+target_size <- 100000 
+total_rows <- sum(bike_data$start_month == 9)
+sampling_rate <- target_size / total_rows
+
 sampled_bike_data <- bike_data %>%
   filter(start_month == 9) %>%
-  group_split(start_day) %>%
-  map_dfr(function(group_df) {
-    current_day <- group_df$start_day[1]
-    if (current_day == 1) {
-      n_to_sample <- 3343
-    } else {
-      n_to_sample <- 3333
-    }
-    slice_sample(group_df, n = n_to_sample, replace = FALSE)
-  })
+  group_by(start_day) %>%
+  slice_sample(prop = sampling_rate) %>%
+  ungroup()
+
+sampled_bike_data %>%
+  count(start_day, name = "count") %>%
+  kable(col.names = c("Day", "Count"))
 ```
+
+| Day | Count |
+|----:|------:|
+|   1 |  2417 |
+|   2 |  2805 |
+|   3 |  2969 |
+|   4 |  2945 |
+|   5 |  3133 |
+|   6 |  2320 |
+|   7 |  1869 |
+|   8 |  2895 |
+|   9 |  3060 |
+|  10 |  2600 |
+|  11 |  3255 |
+|  12 |  3301 |
+|  13 |  3236 |
+|  14 |  2976 |
+|  15 |  3683 |
+|  16 |  3922 |
+|  17 |  3520 |
+|  18 |  4218 |
+|  19 |  4176 |
+|  20 |  3931 |
+|  21 |  3379 |
+|  22 |  3514 |
+|  23 |  3756 |
+|  24 |  3569 |
+|  25 |  3134 |
+|  26 |  4270 |
+|  27 |  3913 |
+|  28 |  3557 |
+|  29 |  3718 |
+|  30 |  3945 |
 
 # Feature Engineering and Weather Data Merge
 

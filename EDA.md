@@ -22,6 +22,42 @@ library(tidyverse)
 
 ``` r
 library(lubridate)
+library(ggplot2)
+library(gridExtra)
+```
+
+    ## 
+    ## Attaching package: 'gridExtra'
+    ## 
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     combine
+
+``` r
+library(tsibble)
+```
+
+    ## Registered S3 method overwritten by 'tsibble':
+    ##   method               from 
+    ##   as_tibble.grouped_df dplyr
+    ## 
+    ## Attaching package: 'tsibble'
+    ## 
+    ## The following object is masked from 'package:lubridate':
+    ## 
+    ##     interval
+    ## 
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, union
+
+``` r
+library(feasts)
+```
+
+    ## Loading required package: fabletools
+
+``` r
 library(patchwork)
 library(scales)
 ```
@@ -39,20 +75,23 @@ library(scales)
 
 ``` r
 library(knitr)
+library(broom)
+library(forecast)
+```
 
+    ## Registered S3 method overwritten by 'quantmod':
+    ##   method            from
+    ##   as.zoo.data.frame zoo
+
+``` r
 bike <- read_csv("data/final_bike_weather_categorized.csv")
 ```
 
-    ## Warning: One or more parsing issues, call `problems()` on your data frame for details,
-    ## e.g.:
-    ##   dat <- vroom(...)
-    ##   problems(dat)
-
-    ## Rows: 100000 Columns: 28
+    ## Rows: 99986 Columns: 28
     ## ── Column specification ────────────────────────────────────────────────────────
     ## Delimiter: ","
-    ## chr  (10): ride_id, rideable_type, start_station_name, start_station_id, end...
-    ## dbl  (13): end_station_id, start_lat, start_lng, end_lat, end_lng, start_mon...
+    ## chr  (11): ride_id, rideable_type, start_station_name, start_station_id, end...
+    ## dbl  (12): start_lat, start_lng, end_lat, end_lng, start_month, start_day, r...
     ## dttm  (4): started_at, ended_at, datetime_start_obj, datetime_end_obj
     ## date  (1): start_date
     ## 
@@ -63,7 +102,7 @@ bike <- read_csv("data/final_bike_weather_categorized.csv")
 glimpse(bike)
 ```
 
-    ## Rows: 100,000
+    ## Rows: 99,986
     ## Columns: 28
     ## $ ride_id             <chr> "761B30A5B7B64236", "FBEA1249070FDC8C", "91A501973…
     ## $ rideable_type       <chr> "electric_bike", "electric_bike", "classic_bike", …
@@ -72,7 +111,7 @@ glimpse(bike)
     ## $ start_station_name  <chr> "5 Ave & E 30 St", "W 74 St & Columbus Ave", "Cumb…
     ## $ start_station_id    <chr> "6248.08", "7230.10", "4428.02", "4467.03", "5329.…
     ## $ end_station_name    <chr> "8 Ave & W 31 St", "3 Ave & E 72 St", "Lafayette A…
-    ## $ end_station_id      <dbl> 6450.05, 7028.04, 4470.09, 4122.03, 5989.02, 4231.…
+    ## $ end_station_id      <chr> "6450.05", "7028.04", "4470.09", "4122.03", "5989.…
     ## $ start_lat           <dbl> 40.74598, 40.77857, 40.68753, 40.68672, 40.71755, …
     ## $ start_lng           <dbl> -73.98629, -73.97755, -73.97265, -73.93899, -74.01…
     ## $ end_lat             <dbl> 40.75059, 40.76994, 40.68700, 40.67686, 40.73805, …
@@ -94,10 +133,32 @@ glimpse(bike)
     ## $ rain_category       <chr> "No Rain", "No Rain", "No Rain", "No Rain", "No Ra…
     ## $ weekend_and_holiday <chr> "weekend and holiday", "weekend and holiday", "wee…
 
-# 1. Overview
+# 1. Overview 概览，变量类型归类
 
-This part analyzes temporal ridership patterns and weather effects for
-Citi Bike trips in September 2025.
+The dataset contains **stratified sampled Citi Bike trips from September
+2025**, enriched with **weather categories**.  
+Each row represents **a single bike ride** with detailed trip-level
+information including:
+
+- Ride ID  
+- Bike type (electric vs. classic)  
+- Start/end time and station  
+- Rider type (member vs. casual)  
+- Ride duration (hours), distance (km), bearing  
+- Weather on the ride date (tmax, tmin, prcp, temperature category, rain
+  category)  
+- Weekend/weekday indicator
+
+This allows us to analyze:
+
+- Time-of-day and weekday/weekend behavior  
+- Member vs. casual behavior  
+- Weather effects  
+- Time-series trends across the month
+
+In this part, we perform exploratory data analysis (EDA) and
+visualization for Citi Bike trips in September 2025 focusing on temporal
+patterns and weather influences.
 
 ``` r
 if ("datetime_start_obj" %in% names(bike) && !all(is.na(bike$datetime_start_obj))) {
@@ -118,37 +179,115 @@ bike <- bike %>%
 )
 ```
 
-# 2. Hourly patterns by user type
+# 2. Daily Aggregates 每日骑行汇总
+
+``` r
+daily <- bike %>%
+  group_by(start_date) %>%
+  summarise(
+    total_rides = n(),
+    avg_duration = mean(ride_duration_hours, na.rm = TRUE),
+    member_rides = sum(member_casual == "member"),
+    casual_rides = sum(member_casual == "casual"),
+    tmax = tmax,
+    prcp = prcp
+  )
+```
+
+    ## Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
+    ## dplyr 1.1.0.
+    ## ℹ Please use `reframe()` instead.
+    ## ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()`
+    ##   always returns an ungrouped data frame and adjust accordingly.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
+
+    ## `summarise()` has grouped output by 'start_date'. You can override using the
+    ## `.groups` argument.
+
+``` r
+head(daily)
+```
+
+    ## # A tibble: 6 × 7
+    ## # Groups:   start_date [1]
+    ##   start_date total_rides avg_duration member_rides casual_rides  tmax  prcp
+    ##   <date>           <int>        <dbl>        <int>        <int> <dbl> <dbl>
+    ## 1 2025-09-01        2417        0.258         1691          726    78     0
+    ## 2 2025-09-01        2417        0.258         1691          726    78     0
+    ## 3 2025-09-01        2417        0.258         1691          726    78     0
+    ## 4 2025-09-01        2417        0.258         1691          726    78     0
+    ## 5 2025-09-01        2417        0.258         1691          726    78     0
+    ## 6 2025-09-01        2417        0.258         1691          726    78     0
+
+# 3. Daily Ride Volume 骑行量随时间变化
+
+``` r
+p_daily_rides <- ggplot(daily, aes(x = start_date, y = total_rides)) +
+  geom_line(size = 1) +
+  labs(title = "Daily Ride Volume — September 2025",
+       x = "Date", y = "Ride Count") +
+  theme_minimal()
+```
+
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `linewidth` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
+
+``` r
+p_daily_rides
+```
+
+![](EDA_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+# 4. Member vs Casual ride duration 这个图不大好
+
+## 4.1 Daily average duration
+
+``` r
+dur_ts <- bike %>%
+  group_by(start_date, member_casual) %>%
+  summarise(mean_duration = mean(ride_duration_hours, na.rm = TRUE))
+```
+
+    ## `summarise()` has grouped output by 'start_date'. You can override using the
+    ## `.groups` argument.
+
+``` r
+ggplot(dur_ts, aes(start_date, mean_duration, color = member_casual)) +
+  geom_line(size = 1) +
+  labs(title = "Daily Average Ride Duration — Member vs Casual",
+       x = "Date", y = "Duration (hours)") +
+  theme_minimal()
+```
+
+![](EDA_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+## 4.2 Hourly ride count
 
 ``` r
 hourly <- bike %>%
-  filter(!is.na(hour)) %>%
-  group_by(hour, user_type, weekday_weekend) %>%
-  summarise(rides = n(), .groups = "drop")
-
-p_hour_facet <- hourly %>%
-  ggplot(aes(x = hour, y = rides, fill = user_type)) +
-  geom_col(position = "dodge") +
-  facet_wrap(~ weekday_weekend, nrow = 1) +
-  scale_x_continuous(breaks = 0:23) +
-  labs(title = "Hourly Ridership by User Type (weekday vs weekend)", x = "Hour of day", y = "Number of rides", fill = "User type") +
-  theme_minimal()
-
-p_hour_facet
+  group_by(hour, member_casual, weekend_and_holiday) %>%
+  summarise(rides = n())
 ```
 
-![](EDA_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+    ## `summarise()` has grouped output by 'hour', 'member_casual'. You can override
+    ## using the `.groups` argument.
 
-From the plot, the number of members is larger than the number of casual
-users, which means most of the users are members. Compared to weekend,
-weekday has a higher proportion of members, showing that people who need
-weekly commute are more likely to be a member.
+``` r
+ggplot(hourly, aes(hour, rides, color = member_casual)) +
+  geom_line(size = 1) +
+  facet_wrap(~ weekend_and_holiday) +
+  labs(title = "Hourly Ride Patterns — Member vs Casual (Weekday vs Weekend)",
+       x = "Hour of Day", y = "Ride Count") +
+  theme_minimal()
+```
 
-In addition, the morning and evening peak hours are more pronounced
-among members, characterized by a bimodal distribution during 7~8 a.m.
-and 5~6 p.m. on weekdays.
+![](EDA_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
-# 3. Day-of-week patterns
+## 4.3 Day of week pattern
 
 ``` r
 wday_daily <- bike %>%
@@ -165,7 +304,7 @@ p_wday <- ggplot(wday_daily, aes(x = wday, y = rides, fill = user_type)) +
 p_wday
 ```
 
-![](EDA_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](EDA_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 As shown in the bar chart, it is clear that member users have much
 higher ride counts than casual users.
@@ -177,127 +316,248 @@ In contrast, casual users’ ride counts are relatively consistent
 throughout the week, with slightly higher numbers on weekends. The
 observation confirms the previous conclusion.
 
-# 3.2
-
 ``` r
-p_member_weekend <- bike %>%
-  mutate(ride_duration_min = ride_duration_hours * 60) %>%
-  filter(ride_duration_min <= 60) %>%
-  ggplot(aes(x = weekend_and_holiday, y = ride_duration_min, fill = member_casual)) +
-  geom_boxplot() +
-  labs(title = "Ride Duration: Member vs Casual on Weekdays vs Weekends",
-       x = "Day Type", y = "Ride Duration (min)", fill = "User Type") +
-  theme_minimal()
-p_member_weekend
-```
-
-![](EDA_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
-
-# 3.3
-
-``` r
-daily_mc <- bike %>%
-  mutate(ride_duration_min = ride_duration_hours * 60) %>%
-  group_by(date, member_casual) %>%
-  summarise(avg_duration = mean(ride_duration_min, na.rm = TRUE), .groups = "drop")
-p_daily_trend <- ggplot(daily_mc,
-                        aes(x = date, y = avg_duration, color = member_casual)) +
-  geom_line(size = 1) +
-  labs(title = "Daily Average Ride Duration in September 2025: Member vs Casual",
-       x = "Date", y = "Average Duration (min)", color = "User Type") +
-  scale_x_date(date_breaks = "5 days", date_labels = "%m-%d") +
-  theme_minimal()
-```
-
-    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-    ## ℹ Please use `linewidth` instead.
-    ## This warning is displayed once every 8 hours.
-    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-    ## generated.
-
-``` r
-p_daily_trend
-```
-
-![](EDA_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
-
-# 4. Adding Weather
-
-``` r
-daily_weather <- bike %>%
-  mutate(date = as.Date(datetime_start)) %>%
-  group_by(date) %>%
+p_dur_group <- bike %>%
+  group_by(member_casual, weekend_and_holiday) %>%
   summarise(
-    avg_duration = mean(ride_duration_hours, na.rm = TRUE),
-    tmax = first(tmax),
-    precip = first(prcp),
-    temp_level_category = first(temp_level_category),
-    rain_category = first(rain_category)
-  )
+    mean_duration = mean(ride_duration_hours, na.rm = TRUE)
+  ) %>%
+  ggplot(aes(x = weekend_and_holiday, y = mean_duration,
+             fill = member_casual)) +
+  geom_col(position = "dodge") +
+  labs(title = "Average Ride Duration — Member vs Casual across Weekday/Weekend",
+       x = "Day Type", y = "Duration (hours)") +
+  theme_minimal()
 ```
 
-# 4.1 Temperature Category vs Average Duration
+    ## `summarise()` has grouped output by 'member_casual'. You can override using the
+    ## `.groups` argument.
 
 ``` r
-p_temp <- ggplot(daily_weather,
-                 aes(x = temp_level_category, y = avg_duration)) +
-  geom_boxplot() +
-  labs(title = "Daily Average Ride Duration by Temperature Category",
-       x = "Temperature Level", 
-       y = "Average Duration (min)") +
-  theme_minimal()
-
-p_temp
+p_dur_group
 ```
 
 ![](EDA_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
-# 4.2 Rain Category vs Average Duration
+# 5. Time series of Average Ride Duration
 
 ``` r
-p_rain <- ggplot(daily_weather,
-                 aes(x = rain_category, y = avg_duration)) +
-  geom_boxplot() +
-  labs(title = "Daily Average Ride Duration by Rain Category",
-       x = "Rain Category", 
-       y = "Average Duration (min)") +
+dur_ts <- bike %>%
+  group_by(start_date, member_casual) %>%
+  summarise(mean_duration = mean(ride_duration_hours, na.rm = TRUE))
+```
+
+    ## `summarise()` has grouped output by 'start_date'. You can override using the
+    ## `.groups` argument.
+
+``` r
+p_dur_ts <- ggplot(dur_ts, aes(start_date, mean_duration, color = member_casual)) +
+  geom_line(size = 1) +
+  labs(title = "Daily Average Ride Duration — Member vs Casual",
+       x = "Date", y = "Duration (hours)") +
   theme_minimal()
 
-p_rain
+p_dur_ts
 ```
 
 ![](EDA_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
-# 4.3 Weather vs Average Duration
+# 6. Weather effect
+
+## 6.1 ride count vs temperature level category 这个图说明偏高温人们爱骑车
 
 ``` r
-p_scatter_temp <- ggplot(daily_weather,
-                         aes(x = tmax, y = avg_duration)) +
-  geom_point(alpha = .7) +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Temperature vs Average Ride Duration",
-       x = "Max Daily Temperature", y = "Avg Duration (min)") +
+p_temp_level <- bike %>%
+  group_by(start_date, temp_level_category) %>%
+  summarise(rides = n()) %>%
+  ggplot(aes(temp_level_category, rides)) +
+  geom_boxplot() +
+  labs(title = "Ride Counts by Temperature Level Category",
+       x = "Temperature Category", y = "Daily Ride Count") +
   theme_minimal()
-
-p_scatter_temp
 ```
 
-    ## `geom_smooth()` using formula = 'y ~ x'
+    ## `summarise()` has grouped output by 'start_date'. You can override using the
+    ## `.groups` argument.
+
+``` r
+p_temp_level
+```
 
 ![](EDA_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
-``` r
-p_scatter_rain <- ggplot(daily_weather,
-                         aes(x = precip, y = avg_duration)) +
-  geom_point(alpha = .7) +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Daily Precipitation vs Average Ride Duration",
-       x = "Precipitation (mm)", y = "Avg Duration (min)") +
-  theme_minimal()
+## 6.2 ride count vs rain category 这个图小雨在中雨和大雨中间，想办法调一下，除此之外至少能看出来下雨应该与骑行是负相关的
 
-p_scatter_rain
+``` r
+p_rain <- bike %>%
+  group_by(start_date, rain_category) %>%
+  summarise(rides = n()) %>%
+  ggplot(aes(rain_category, rides)) +
+  geom_boxplot() +
+  labs(title = "Ride Counts by Rain Category",
+       x = "Rain Category", y = "Daily Ride Count") +
+  theme_minimal()
+```
+
+    ## `summarise()` has grouped output by 'start_date'. You can override using the
+    ## `.groups` argument.
+
+``` r
+p_rain
+```
+
+![](EDA_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+## 6.3 weather variables
+
+``` r
+# tmax
+ggplot(daily, aes(x = tmax, y = total_rides)) +
+  geom_point(alpha = .4) +
+  geom_smooth(method = "loess") +
+  labs(title = "Ride Count vs Daily Maximum Temperature",
+       x = "tmax", y = "Rides") +
+  theme_minimal()
 ```
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-![](EDA_files/figure-gfm/unnamed-chunk-10-2.png)<!-- -->
+    ## Warning: Failed to fit group -1.
+    ## Caused by error in `predLoess()`:
+    ## ! workspace required (14996775205) is too large probably because of setting 'se = TRUE'.
+
+![](EDA_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+``` r
+# prcp
+ggplot(daily, aes(x = prcp, y = total_rides)) +
+  geom_point(alpha = .4) +
+  geom_smooth(method = "loess") +
+  labs(title = "Ride Count vs Precipitation",
+       x = "Precipitation (mm)", y = "Rides") +
+  theme_minimal()
+```
+
+    ## `geom_smooth()` using formula = 'y ~ x'
+
+    ## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
+    ## : pseudoinverse used at -0.00505
+
+    ## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
+    ## : neighborhood radius 0.01505
+
+    ## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
+    ## : reciprocal condition number 7.1893e-25
+
+    ## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
+    ## : There are other near singularities as well. 0.0001
+
+    ## Warning: Failed to fit group -1.
+    ## Caused by error in `predLoess()`:
+    ## ! workspace required (14996775205) is too large probably because of setting 'se = TRUE'.
+
+![](EDA_files/figure-gfm/unnamed-chunk-12-2.png)<!-- -->
+
+# 7 bike type
+
+``` r
+p_type <- bike %>%
+  group_by(start_date, rideable_type) %>%
+  summarise(rides = n()) %>%
+  ggplot(aes(rideable_type, rides)) +
+  geom_boxplot() +
+  labs(title = "Ride Duration by Bike Type",
+       x = "Bike Type", y = "Ride Counts") +
+  theme_minimal()
+```
+
+    ## `summarise()` has grouped output by 'start_date'. You can override using the
+    ## `.groups` argument.
+
+``` r
+p_type
+```
+
+![](EDA_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+# 7 TSA 尝试做了下时间序列
+
+``` r
+library(tseries)
+daily_rides <- bike %>%
+  group_by(start_date) %>%
+  summarise(total_rides = n(), .groups = "drop")
+
+library(tsibble)
+library(fable)
+
+ts_data <- daily_rides %>%
+  as_tsibble(index = start_date)
+
+autoplot(ts_data, total_rides) +
+  labs(title = "Daily Ride Counts",
+       x = "Date",
+       y = "Number of Rides")
+```
+
+![](EDA_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+fit_arima <- ts_data %>%
+  model(ARIMA(total_rides))
+
+report(fit_arima)
+```
+
+    ## Series: total_rides 
+    ## Model: ARIMA(0,1,1)(1,0,0)[7] 
+    ## 
+    ## Coefficients:
+    ##           ma1    sar1
+    ##       -0.4548  0.4685
+    ## s.e.   0.1922  0.2006
+    ## 
+    ## sigma^2 estimated as 159701:  log likelihood=-214.82
+    ## AIC=435.64   AICc=436.6   BIC=439.74
+
+``` r
+fc <- fit_arima %>% forecast(h = 7)
+
+autoplot(fc, ts_data) +
+  labs(title = "ARIMA Forecast of Daily Rides",
+       x = "Date",
+       y = "Number of Rides")
+```
+
+![](EDA_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+## 7.1 Decomposition 数据分解
+
+``` r
+fit_ets <- ts_data %>% model(ETS(total_rides))
+
+components_plot <- autoplot(components(fit_ets)) +
+  labs(
+    title = "ETS Decomposition of Daily Ride Counts",
+    subtitle = "Using Exponential Smoothing (suitable for short, non-periodic series)",
+    x = "Date",
+    y = "Value"
+  ) +
+  theme_minimal()
+
+components_plot
+```
+
+    ## Warning: Removed 1 row containing missing values or values outside the scale range
+    ## (`geom_line()`).
+
+![](EDA_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+# 8 Summary
+
+- Member and casual riders display distinct **daily and weekend/weekday
+  patterns**.  
+- Daily ride volume shows clear **temporal trends** across September.  
+- Temperature and rainfall strongly shape both **trip volume**.  
+- Time-series decomposition reveals trend + seasonality suitable for
+  forecasting.
