@@ -33,7 +33,7 @@ set.seed(235)
 
 <div class="info-card">
 
-# Overview
+## Overview
 
 This page documents our comprehensive data wrangling process for the NYC Citi Bike analysis. We transform raw trip data and weather observations into a clean, analysis-ready dataset through:
 
@@ -44,9 +44,11 @@ This page documents our comprehensive data wrangling process for the NYC Citi Bi
 
 </div>
 
-# Load and Pre-process Bike Data
+## Load and Pre-process Bike Data
 
 <div class="info-card">
+
+Due to the large size of the raw dataset, which exceeds GitHub's storage limits, the file is stored locally. You can access the original data via [https://citibikenyc.com/system-data](https://citibikenyc.com/system-data), where the specific file `202509-citibike-tripdata_3` was selected for this analysis.
 
 This section reads the raw Citibike data from its CSV file, specifying a list of values to interpret as NA. It then performs initial cleaning and feature engineering:
 
@@ -75,17 +77,19 @@ bike_data <- read_csv(file_path, na = na_values) %>%
   )
 ```
 
-# Stratified Daily Sampling
+## Stratified Daily Sampling
 
 <div class="info-card">
 
-This block creates the smaller sampled_bike_data dataframe (containing 100000 rides). It first filters the data to include only rides from September. Then, it uses a split-map-combine strategy to perform stratified sampling:
+This block creates the smaller sampled_bike_data dataframe (containing 100,000 rides). It first filters the data to include only rides from September. Then, it uses a grouped sampling strategy:
 
-+ `group_split()` divides the data into a list of dataframes, one for each start_day.
++ It calculates a global sampling rate based on the target size (100,000) and the total rows available in September.
 
-+ `map_dfr()` iterates over this list, applies a custom sampling function, and rows-binds the results back into a single dataframe.
++ `group_by(start_day)` groups the data by the day of the month.
 
-+ The code performs **proportional stratified sampling** to achieve a target sample size of 100,000 rides, preserving the relative distribution of rides across each day in September.
++ `slice_sample(prop = sampling_rate)` applies the sampling rate within each group. This ensures **proportional stratified sampling**, preserving the relative distribution of rides across each day (e.g., busy days remain busy in the sample, quiet days remain quiet).
+
++ Finally, `ungroup()` removes the grouping structure for subsequent analysis.
 
 </div>
 
@@ -105,7 +109,7 @@ sampled_bike_data %>%
   kable(col.names = c("Day", "Count"))
 ```
 
-# Feature Engineering and Weather Data Merge
+## Feature Engineering and Weather Data Merge
 
 <div class="info-card">
 
@@ -149,7 +153,7 @@ merged_data <- left_join(merged_data, noaa_data_clean, by = c("start_date" = "DA
   janitor::clean_names()
 ```
 
-# Final Categorization and Export
+## Final Categorization and Export
 
 <div class="info-card">
 
@@ -228,7 +232,7 @@ write_csv(final_categorized_data, "data/final_bike_weather_categorized.csv")
 
 <div class="highlight-box">
 
-## ✅ Data Wrangling Complete!
+### ✅ Data Wrangling Complete!
 
 Our final dataset contains **100,000 strategically sampled rides** from September 2025, enriched with:
 - Temporal features (hour, day, weekday/weekend)

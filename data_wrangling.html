@@ -446,15 +446,25 @@ div.tocify {
     EDA &amp; Visualization
   </a>
 </li>
-<li>
-  <a href="model_and_spatial_analysis_STYLED.html">
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fa fa-calculator"></span>
      
     Statistical Analysis
+     
+    <span class="caret"></span>
   </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="statistical_analysis_RIDERSHIP_COMPLETE.html">Daily Ridership Analysis</a>
+    </li>
+    <li>
+      <a href="model_and_spatial_analysis_STYLED.html">Ride Duration Analysis</a>
+    </li>
+  </ul>
 </li>
 <li>
-  <a href="https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/">
+  <a href="https://YOUR_USERNAME.shinyapps.io/citibike_dashboard/">
     <span class="fa fa-dashboard"></span>
      
     Shiny Dashboard
@@ -536,6 +546,12 @@ analysis</li>
 <div id="load-and-pre-process-bike-data" class="section level2">
 <h2>Load and Pre-process Bike Data</h2>
 <div class="info-card">
+<p>Due to the large size of the raw dataset, which exceeds GitHub’s
+storage limits, the file is stored locally. You can access the original
+data via <a
+href="https://citibikenyc.com/system-data">https://citibikenyc.com/system-data</a>,
+where the specific file <code>202509-citibike-tripdata_3</code> was
+selected for this analysis.</p>
 <p>This section reads the raw Citibike data from its CSV file,
 specifying a list of values to interpret as NA. It then performs initial
 cleaning and feature engineering:</p>
@@ -577,19 +593,20 @@ objects.</p></li>
 <h2>Stratified Daily Sampling</h2>
 <div class="info-card">
 <p>This block creates the smaller sampled_bike_data dataframe
-(containing 100000 rides). It first filters the data to include only
-rides from September. Then, it uses a split-map-combine strategy to
-perform stratified sampling:</p>
+(containing 100,000 rides). It first filters the data to include only
+rides from September. Then, it uses a grouped sampling strategy:</p>
 <ul>
-<li><p><code>group_split()</code> divides the data into a list of
-dataframes, one for each start_day.</p></li>
-<li><p><code>map_dfr()</code> iterates over this list, applies a custom
-sampling function, and rows-binds the results back into a single
-dataframe.</p></li>
-<li><p>The code performs <strong>proportional stratified
-sampling</strong> to achieve a target sample size of 100,000 rides,
-preserving the relative distribution of rides across each day in
-September.</p></li>
+<li><p>It calculates a global sampling rate based on the target size
+(100,000) and the total rows available in September.</p></li>
+<li><p><code>group_by(start_day)</code> groups the data by the day of
+the month.</p></li>
+<li><p><code>slice_sample(prop = sampling_rate)</code> applies the
+sampling rate within each group. This ensures <strong>proportional
+stratified sampling</strong>, preserving the relative distribution of
+rides across each day (e.g., busy days remain busy in the sample, quiet
+days remain quiet).</p></li>
+<li><p>Finally, <code>ungroup()</code> removes the grouping structure
+for subsequent analysis.</p></li>
 </ul>
 </div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>target_size <span class="ot">&lt;-</span> <span class="dv">100000</span> </span>
