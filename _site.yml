@@ -22,7 +22,7 @@ navbar:
           href: model_and_spatial_analysis_STYLED.html
     - text: "Shiny Dashboard"
       icon: fa-dashboard
-      href: https://YOUR_USERNAME.shinyapps.io/citibike_dashboard/
+      href: https://kwokmungyu.shinyapps.io/shiny_app/
     - text: "About Us"
       icon: fa-users
       href: about.html
