@@ -62,7 +62,7 @@ This section reads the raw Citibike data from its CSV file, specifying a list of
 
 </div>
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 file_path <- "raw_data/202509-citibike-tripdata_3.csv"
 na_values <- c(".", "NA", "")
 
@@ -125,7 +125,7 @@ This section enriches the sampled bike data with new geospatial features and joi
 
 </div>
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 noaa_data <- read_csv("data/noaa_central_park_2025.csv")
 
 merged_data <- sampled_bike_data %>%
