@@ -2,15 +2,14 @@
 title: "Statistical Analysis: Weather and Temporal Effects on NYC Citi Bike Ridership"
 subtitle: "Based on Proportional Stratified Sample - September 2025"
 author: "Mungyu Kwok, Ziang Niu, Bowen Xia, Zihan Zhou"
-date: "`r Sys.Date()`"
+date: "2025-12-01"
 output: 
   html_document:
     toc: true
     toc_float: true
-    toc_depth: 3
     code_folding: hide
-    theme: flatly
-    highlight: tango
+    theme: cosmo
+    css: styles.css
 ---
 
 ```{r setup, include=FALSE}
