@@ -33,7 +33,7 @@ set.seed(235)
 
 <div class="info-card">
 
-## Overview
+# Overview
 
 This page documents our comprehensive data wrangling process for the NYC Citi Bike analysis. We transform raw trip data and weather observations into a clean, analysis-ready dataset through:
 
@@ -44,9 +44,9 @@ This page documents our comprehensive data wrangling process for the NYC Citi Bi
 
 </div>
 
-## Load and Pre-process Bike Data
-
 <div class="info-card">
+
+# Load and Pre-process Bike Data
 
 Due to the large size of the raw dataset, which exceeds GitHub's storage limits, the file is stored locally. You can access the original data via [https://citibikenyc.com/system-data](https://citibikenyc.com/system-data), where the specific file `202509-citibike-tripdata_3` was selected for this analysis.
 
@@ -59,8 +59,6 @@ This section reads the raw Citibike data from its CSV file, specifying a list of
 + Extracts the start_month and start_day for later filtering and grouping.
 
 + Directly calculates the ride_duration_hours by subtracting the start and end datetimes, which is more efficient and accurate than the original method of converting to strings and back to time objects.
-
-</div>
 
 ```{r, message=FALSE, warning=FALSE}
 file_path <- "raw_data/202509-citibike-tripdata_3.csv"
@@ -77,9 +75,11 @@ bike_data <- read_csv(file_path, na = na_values) %>%
   )
 ```
 
-## Stratified Daily Sampling
+</div>
 
 <div class="info-card">
+
+# Stratified Daily Sampling
 
 This block creates the smaller sampled_bike_data dataframe (containing 100,000 rides). It first filters the data to include only rides from September. Then, it uses a grouped sampling strategy:
 
@@ -90,8 +90,6 @@ This block creates the smaller sampled_bike_data dataframe (containing 100,000 r
 + `slice_sample(prop = sampling_rate)` applies the sampling rate within each group. This ensures **proportional stratified sampling**, preserving the relative distribution of rides across each day (e.g., busy days remain busy in the sample, quiet days remain quiet).
 
 + Finally, `ungroup()` removes the grouping structure for subsequent analysis.
-
-</div>
 
 ```{r}
 target_size <- 100000 
@@ -109,9 +107,11 @@ sampled_bike_data %>%
   kable(col.names = c("Day", "Count"))
 ```
 
-## Feature Engineering and Weather Data Merge
+</div>
 
 <div class="info-card">
+
+# Feature Engineering and Weather Data Merge
 
 This section enriches the sampled bike data with new geospatial features and joins it with external weather data. 
 
@@ -122,8 +122,6 @@ This section enriches the sampled bike data with new geospatial features and joi
 + It creates a start_date column in the bike data and converts the DATE column in the weather data to ensure they are both Date objects, which are used as the join key. 
 
 + Finally, it performs a left_join and runs clean_names() after the join to standardize the new columns from the weather file (e.g., TMAX, PRCP).
-
-</div>
 
 ```{r, message=FALSE, warning=FALSE}
 noaa_data <- read_csv("data/noaa_central_park_2025.csv")
@@ -153,9 +151,11 @@ merged_data <- left_join(merged_data, noaa_data_clean, by = c("start_date" = "DA
   janitor::clean_names()
 ```
 
-## Final Categorization and Export
+</div>
 
 <div class="info-card">
+
+# Final Categorization and Export
 
 This final block creates categorical variables based on the merged weather data, selects the final columns for the analysis, and exports the result to a new CSV file. 
 
@@ -183,8 +183,6 @@ This final block creates categorical variables based on the merged weather data,
 + `select()` organizes the dataframe, keeping essential ride info and the new weather categories. 
 
 + The final, processed dataframe is written to `final_bike_weather_categorized.csv`.
-
-</div>
 
 ```{r}
 final_categorized_data <- merged_data %>%
@@ -226,7 +224,7 @@ final_categorized_data <- merged_data %>%
 
 write_csv(final_categorized_data, "data/final_bike_weather_categorized.csv")
 ```
-
+</div>
 
 <br>
 
