@@ -2,25 +2,42 @@ name: "citibike-project"
 title: "The Pulse of the City: NYC Citi Bike Ridership Analysis"
 output_dir: "." 
 navbar:
-  title: "Citi Bike Project"
+  title: "🚴 Citi Bike NYC"
   left:
     - text: "Home"
+      icon: fa-home
       href: index_citibike.html
     - text: "Data Wrangling"
+      icon: fa-database
       href: data_wrangling.html
     - text: "EDA & Visualization"
+      icon: fa-chart-bar
       href: EDA.html
     - text: "Statistical Analysis"
-      href: model_and_spatial_analysis.html
+      icon: fa-calculator
+      href: model_and_spatial_analysis_STYLED.html
+    - text: "Shiny Dashboard"
+      icon: fa-dashboard
+      href: https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/
+    - text: "About Us"
+      icon: fa-users
+      href: about.html
     - text: "Proposal"
+      icon: fa-file-text
       href: proposal.html
   right:
-    - icon: fa-github
-      href: https://github.com/lovenza/citibike_ny.github.io 
+    - icon: fa-github fa-lg
+      href: https://github.com/lovenza/citibike_ny.github.io
+      text: "GitHub"
 output:
   html_document:
-    theme: flatly
-    highlight: textmate
+    theme: cosmo
+    highlight: tango
     toc: true
-    toc_float: true
+    toc_float: 
+      collapsed: false
+      smooth_scroll: true
     code_folding: hide
+    css: styles.css
+    includes:
+      after_body: footer.html

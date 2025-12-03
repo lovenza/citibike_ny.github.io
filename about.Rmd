@@ -1,0 +1,199 @@
+---
+title: "About Us"
+output: 
+  html_document:
+    toc: false
+    theme: cosmo
+    css: styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+<a href="index_citibike.html" class="back-home">
+  <i class="fa fa-home"></i> Back to Home
+</a>
+
+<div class="hero-section">
+  <h1>👥 Meet Our Team</h1>
+  <p>Students passionate about urban mobility and sustainable transportation</p>
+</div>
+
+<br>
+
+## 🎓 About the Project Team
+
+<div class="info-card">
+
+We are a team of graduate students at Columbia University Mailman School of Public Health, specializing in Biostatistics. This project represents the culmination of our work in Data Science I (P8105), where we applied advanced statistical methods and data visualization techniques to understand urban mobility patterns.
+
+</div>
+
+<section id="team">
+<h2>👩‍💻 Team Members</h2>
+
+<div class="row">
+
+<!-- Ziang Niu -->
+<div class="col-md-6">
+<div class="team-member">
+<img src="photos/nza.jpg" alt="Ziang Niu">
+<h3>Ziang Niu</h3>
+<p class="role">Theory & Methods</p>
+<p><strong>UNI:</strong> zn2220</p>
+<p><strong>Responsibilities:</strong></p>
+<ul style="text-align: left; display: inline-block;">
+<li>Overall project management and coordination</li>
+<li>GitHub repository maintenance</li>
+<li>Data collection and cleaning pipeline</li>
+</ul>
+<div class="contact">
+<a href="mailto:zn2220@cumc.columbia.edu" title="Email">
+<i class="fa fa-envelope"></i>
+</a>
+<a href="https://github.com/lovenza" target="_blank" title="GitHub">
+<i class="fa fa-github"></i>
+</a>
+</div>
+</div>
+</div>
+
+<!-- Zihan Zhou -->
+<div class="col-md-6">
+<div class="team-member">
+<img src="photos/zzh.jpg" alt="Zihan Zhou">
+<h3>Zihan Zhou</h3>
+<p class="role">Public Health Data Science</p>
+<p><strong>UNI:</strong> zz3460</p>
+<p><strong>Responsibilities:</strong></p>
+<ul style="text-align: left; display: inline-block;">
+<li>Exploratory data analysis design</li>
+<li>Statistical graphics creation</li>
+<li>Temporal pattern visualization</li>
+</ul>
+<div class="contact">
+<a href="mailto:zz3460@cumc.columbia.edu" title="Email">
+<i class="fa fa-envelope"></i>
+</a>
+<a href="https://github.com/ZihanZhou924" target="_blank" title="GitHub">
+<i class="fa fa-github"></i>
+</a>
+</div>
+</div>
+</div>
+
+<!-- Bowen Xia -->
+<div class="col-md-6">
+<div class="team-member">
+<img src="photos/xbw.jpg" alt="Bowen Xia">
+<h3>Bowen Xia</h3>
+<p class="role">Publice Health Data Science</p>
+<p><strong>UNI:</strong> bx2232</p>
+<p><strong>Responsibilities:</strong></p>
+<ul style="text-align: left; display: inline-block;">
+<li>Predictive modeling</li>
+<li>Feature engineering</li>
+<li>Model comparison & evaluation</li>
+</ul>
+<div class="contact">
+<a href="mailto:bx2232@columbia.edu" title="Email">
+    <i class="fa fa-envelope"></i>
+</a>
+<a href="https://github.com/xiabow" target="_blank" title="GitHub">
+    <i class="fa fa-github"></i>
+</a>
+</div>
+</div>
+</div>
+
+<!-- Mungyu Kwok -->
+<div class="col-md-6">
+<div class="team-member">
+<img src="photos/kmy.JPG" alt="Mungyu Kwok">
+<h3>Mungyu Kwok</h3>
+<p class="role">Public Health Data Science</p>
+<p><strong>UNI:</strong> mk5149</p>
+<p><strong>Responsibilities:</strong></p>
+<ul style="text-align: left; display: inline-block;">
+<li>Building Websites and ShinyApps</li>
+<li>Writing documentation & reports</li>
+<li>Reproducible workflow design</li>
+</ul>
+<div class="contact">
+<a href="mailto:mk5149@columbia.edu" title="Email">
+    <i class="fa fa-envelope"></i>
+</a>
+<a href="https://github.com/kwokmungyu" target="_blank" title="GitHub">
+    <i class="fa fa-github"></i>
+</a>
+</div>
+</div>
+</div>
+
+</div>
+
+</section>
+
+
+## 🏫 Academic Context
+
+<div class="info-card">
+
+**Course:** Data Science I (P8105)  
+**Institution:** Columbia University Mailman School of Public Health  
+**Program:** MS in Biostatistics  
+**Semester:** Fall 2025  
+**Instructors:** Jeff Goldsmith
+
+This project represents our capstone work, demonstrating proficiency in:
+
+- **Data Wrangling**: Cleaning, merging, and transforming large datasets
+- **Statistical Analysis**: Applying multivariate regression and hypothesis testing
+- **Data Visualization**: Creating informative and aesthetically pleasing graphics
+- **Reproducible Research**: Using R Markdown and version control
+- **Web Development**: Building interactive dashboards with Shiny
+- **Communication**: Presenting complex findings to diverse audiences
+
+</div>
+
+## 🌟 Acknowledgments
+
+<div class="info-card">
+
+We would like to thank:
+
+- **NYC Citi Bike** for providing open access to their system data
+- **NOAA** for comprehensive weather data
+- **Columbia University** for providing the academic environment and resources
+- **Course Instructors and TAs** for guidance throughout the semester
+- **Our peers** for feedback and suggestions during project development
+
+</div>
+
+## 📬 Get in Touch
+
+<div class="info-card" style="text-align: center;">
+
+Interested in learning more about our project or discussing potential collaborations?  
+Feel free to reach out to any team member using the contact information above!
+
+You can also:
+
+- <i class="fa fa-github"></i> [View our GitHub repository](https://github.com/lovenza/citibike_ny.github.io)
+- <i class="fa fa-file-text"></i> [Read our full proposal](proposal.html)
+- <i class="fa fa-dashboard"></i> [Try our interactive dashboard](https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/)
+
+</div>
+
+<br>
+
+<a href="index_citibike.html" class="back-home">
+  <i class="fa fa-home"></i> Back to Home
+</a>
+
+---
+
+<div style="text-align: center; margin-top: 30px; color: #666;">
+  <p><em>© 2025 NYC Citi Bike Analysis Team. Made with ❤️ and R.</em></p>
+</div>

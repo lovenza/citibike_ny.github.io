@@ -9,10 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Mungyu Kwok, Ziang Niu, Bowen Xia, Zihan Zhou" />
 
 
-<title>The Pulse of the City</title>
+<title>About Us</title>
 
 <script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -30,9 +29,6 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
-<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
@@ -218,69 +214,6 @@ $(document).ready(function () {
 
 
 
-<style type="text/css">
-
-#TOC {
-  margin: 25px 0px 20px 0px;
-}
-@media (max-width: 768px) {
-#TOC {
-  position: relative;
-  width: 100%;
-}
-}
-
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
-
-.toc-content {
-  padding-left: 30px;
-  padding-right: 40px;
-}
-
-div.main-container {
-  max-width: 1200px;
-}
-
-div.tocify {
-  width: 20%;
-  max-width: 260px;
-  max-height: 85%;
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  div.tocify {
-    width: 25%;
-  }
-}
-
-@media (max-width: 767px) {
-  div.tocify {
-    width: 100%;
-    max-width: none;
-  }
-}
-
-.tocify ul, .tocify li {
-  line-height: 20px;
-}
-
-.tocify-subheader .tocify-item {
-  font-size: 0.90em;
-}
-
-.tocify .list-group-item {
-  border-radius: 0px;
-}
-
-
-</style>
-
-
 
 </head>
 
@@ -288,16 +221,6 @@ div.tocify {
 
 
 <div class="container-fluid main-container">
-
-
-<!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row">
-<div class="col-xs-12 col-sm-4 col-md-3">
-<div id="TOC" class="tocify">
-</div>
-</div>
-
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -389,232 +312,249 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">The Pulse of the City</h1>
-<h4 class="author">Mungyu Kwok, Ziang Niu, Bowen Xia, Zihan Zhou</h4>
-<h4 class="date">December 2025</h4>
+<h1 class="title toc-ignore">About Us</h1>
 
 </div>
 
 
+<p><a href="index_citibike.html" class="back-home">
+<i class="fa fa-home"></i> Back to Home </a></p>
 <div class="hero-section">
 <h1>
-🚴 The Pulse of the City
+👥 Meet Our Team
 </h1>
 <p>
-<strong>NYC Citi Bike Ridership Patterns in Response to Daily Rhythms
-and Weather</strong>
-</p>
-<p>
-Analyzing 100,000 rides from September 2025
+Students passionate about urban mobility and sustainable transportation
 </p>
 </div>
 <p><br></p>
-<div id="project-overview" class="section level2">
-<h2>📊 Project Overview</h2>
+<div id="about-the-project-team" class="section level2">
+<h2>🎓 About the Project Team</h2>
 <div class="info-card">
-<p>Citi Bike has become an integral part of New York City’s public
-transportation network, serving millions of rides. As a data-rich
-system, it offers a unique opportunity to understand the mobility
-patterns of a major metropolis.</p>
-<p>The goal of this project is to analyze how NYC’s population uses the
-Citi Bike system, focusing on key external factors and usage patterns.
-Through comprehensive statistical analysis and interactive
-visualizations, we explore the intricate relationship between urban
-mobility, temporal patterns, and environmental conditions.</p>
+<p>We are a team of graduate students at Columbia University Mailman
+School of Public Health, specializing in Biostatistics. This project
+represents the culmination of our work in Data Science I (P8105), where
+we applied advanced statistical methods and data visualization
+techniques to understand urban mobility patterns.</p>
 </div>
-</div>
-<div id="core-research-questions" class="section level2">
-<h2>❓ Core Research Questions</h2>
-<div class="info-card">
-<p>We will address the following key questions using our 100,000-ride
-sample from September 2025:</p>
-<p><strong>1. Temporal Patterns</strong><br />
-How do predictable daily and weekly rhythms (e.g., time of day, weekday
-vs. weekend) shape ridership? We investigate commuter peaks, weekend
-leisure patterns, and the daily pulse of urban mobility.</p>
-<p><strong>2. User Segmentation</strong><br />
-How do different user groups (members vs. casual riders) use the system
-differently in terms of trip volume and duration? Understanding these
-patterns helps inform system optimization and user experience
-improvements.</p>
-<p><strong>3. Weather Quantification</strong><br />
-To what extent does daily weather (Max Temperature, Precipitation)
-influence the decision to ride a bike and the duration of the trip? We
-quantify the specific impact of weather variables on ridership
-behavior.</p>
-</div>
-</div>
-<div id="project-structure-and-analysis-pipeline"
-class="section level2">
-<h2>🛠️ Project Structure and Analysis Pipeline</h2>
-<div class="info-card">
-<p>The website is organized to follow our analytical workflow. Each
-section builds upon the previous, creating a comprehensive narrative of
-our findings:</p>
-<div
-style="padding: 20px; background: #f8f9fa; border-radius: 10px; margin: 15px 0;">
-<p><strong><a href="data_wrangling.html"><i class="fa fa-database"></i>
-1. Data Wrangling</a></strong><br />
-Details our data collection, the <strong>stratified sampling
-strategy</strong> creating the 100k-ride dataset, cleaning, and merging
-trip-level data with daily NOAA weather data. This foundation ensures
-robust and representative analysis.</p>
-<p><strong><a href="EDA.html"><i class="fa fa-chart-bar"></i> 2. EDA
-&amp; Visualization</a></strong><br />
-Presents a comprehensive exploratory analysis of
-<strong>temporal</strong> (hourly, daily) and <strong>user-type</strong>
-patterns, including plots demonstrating the relationship between
-ridership and key weather variables. Visual insights reveal hidden
-patterns in urban mobility.</p>
-<p><strong><a
-href="model_and_spatial_analysis_STYLED.html"><i class="fa fa-calculator"></i>
-3. Statistical Analysis</a></strong><br />
-Quantifies the specific impact of weather (e.g., effect per 10°F or
-1-inch of precipitation) and day-of-week on <strong>individual ride
-duration</strong> using multivariate linear regression models.
-Evidence-based conclusions drive our recommendations.</p>
-<p><strong><a
-href="https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/"><i class="fa fa-dashboard"></i>
-4. Interactive Dashboard</a></strong><br />
-Explore the data yourself! Our Shiny dashboard allows you to filter by
-user type, time period, and weather conditions. Visualize patterns in
-real-time and discover insights through interactive exploration.</p>
-</div>
-</div>
-</div>
-<div id="key-findings-preview" class="section level2">
-<h2>📈 Key Findings Preview</h2>
-<div class="info-card">
+<section id="team">
+<h2>
+👩‍💻 Team Members
+</h2>
 <div class="row">
-<div class="col-md-4">
-<div class="stat-card">
+<!-- Ziang Niu -->
+<div class="col-md-6">
+<div class="team-member">
+<img src="photos/nza.jpg" alt="Ziang Niu">
 <h3>
-100,000
+Ziang Niu
 </h3>
-<p>
-Rides Analyzed
+<p class="role">
+Theory &amp; Methods
 </p>
-</div>
-</div>
-<div class="col-md-4">
-<div class="stat-card">
-<h3>
-30 Days
-</h3>
 <p>
-September 2025
+<strong>UNI:</strong> zn2220
 </p>
-</div>
-</div>
-<div class="col-md-4">
-<div class="stat-card">
-<h3>
-5+ Variables
-</h3>
 <p>
-Weather &amp; Temporal
+<strong>Responsibilities:</strong>
 </p>
-</div>
-</div>
-</div>
-<p>Our analysis reveals significant patterns in how New Yorkers use Citi
-Bike. Weather plays a crucial role, with temperature and precipitation
-showing measurable effects on ridership. Temporal patterns demonstrate
-clear commuter behavior on weekdays versus leisure usage on weekends.
-User segmentation analysis shows distinct behavioral differences between
-members and casual riders.</p>
-</div>
-</div>
-<div id="meet-the-team" class="section level2">
-<h2>🧑‍💻 Meet the Team</h2>
-<div class="info-card">
-<p>Our interdisciplinary team brings together expertise in data science,
-public health, and urban analytics. Each member contributed specialized
-skills to create this comprehensive analysis:</p>
-<table>
-<colgroup>
-<col width="25%" />
-<col width="25%" />
-<col width="25%" />
-<col width="25%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Name</th>
-<th align="left">UNI</th>
-<th align="left">Primary Responsibility</th>
-<th align="left">Expertise</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><strong>Ziang Niu</strong></td>
-<td align="left">zn2220</td>
-<td align="left">Project Lead &amp; Data Wrangling</td>
-<td align="left">Data Engineering, Project Management</td>
-</tr>
-<tr class="even">
-<td align="left"><strong>Zihan Zhou</strong></td>
-<td align="left">zz3460</td>
-<td align="left">EDA &amp; Visualization Lead</td>
-<td align="left">Statistical Graphics, Data Visualization</td>
-</tr>
-<tr class="odd">
-<td align="left"><strong>Bowen Xia</strong></td>
-<td align="left">bx2232</td>
-<td align="left">Modeling &amp; Spatial Analysis Lead</td>
-<td align="left">Statistical Modeling, Geospatial Analysis</td>
-</tr>
-<tr class="even">
-<td align="left"><strong>Mungyu Kwok</strong></td>
-<td align="left">mk5149</td>
-<td align="left">Shiny &amp; Web Lead</td>
-<td align="left">Interactive Dashboards, Web Development</td>
-</tr>
-</tbody>
-</table>
-<p>Learn more about us on our <strong><a href="about.html">About
-Us</a></strong> page!</p>
-</div>
-</div>
-<div id="why-this-matters" class="section level2">
-<h2>🎯 Why This Matters</h2>
-<div class="highlight-box">
-<p>Understanding bike-share usage patterns has profound implications
-for:</p>
-<ul>
-<li><strong>Urban Planning</strong>: Optimize station placement and bike
-allocation</li>
-<li><strong>Public Health</strong>: Encourage active transportation and
-reduce emissions</li>
-<li><strong>Transportation Policy</strong>: Inform sustainable mobility
-strategies</li>
-<li><strong>System Operations</strong>: Improve service quality and user
-experience</li>
+<ul style="text-align: left; display: inline-block;">
+<li>
+Overall project management and coordination
+</li>
+<li>
+GitHub repository maintenance
+</li>
+<li>
+Data collection and cleaning pipeline
+</li>
 </ul>
-<p>Our findings contribute to the growing body of evidence supporting
-data-driven urban mobility solutions.</p>
+<div class="contact">
+<p><a href="mailto:zn2220@cumc.columbia.edu" title="Email">
+<i class="fa fa-envelope"></i> </a>
+<a href="https://github.com/lovenza" target="_blank" title="GitHub">
+<i class="fa fa-github"></i> </a></p>
 </div>
 </div>
-<div id="get-started" class="section level2">
-<h2>🚀 Get Started</h2>
-<div class="info-card" style="text-align: center;">
-<p>Ready to explore? Navigate through our analysis using the menu bar
-above, or start with our <a href="data_wrangling.html">Data
-Wrangling</a> section to see how we prepared this rich dataset.</p>
-<p>For an interactive experience, visit our <a
-href="https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/">Shiny
-Dashboard</a> to explore the data yourself!</p>
 </div>
-<hr />
-<div style="text-align: center; margin: 30px 0;">
-<p>
-<em>This project was completed as part of Data Science I (P8105) at
-Columbia University Mailman School of Public Health, Fall 2025.</em>
+<!-- Zihan Zhou -->
+<div class="col-md-6">
+<div class="team-member">
+<img src="photos/zzh.jpg" alt="Zihan Zhou">
+<h3>
+Zihan Zhou
+</h3>
+<p class="role">
+Public Health Data Science
 </p>
 <p>
-<a href="https://github.com/lovenza/citibike_ny.github.io" target="_blank" class="btn btn-primary"><i class="fa fa-github"></i>
-View on GitHub</a>
+<strong>UNI:</strong> zz3460
+</p>
+<p>
+<strong>Responsibilities:</strong>
+</p>
+<ul style="text-align: left; display: inline-block;">
+<li>
+Exploratory data analysis design
+</li>
+<li>
+Statistical graphics creation
+</li>
+<li>
+Temporal pattern visualization
+</li>
+</ul>
+<div class="contact">
+<p><a href="mailto:zz3460@cumc.columbia.edu" title="Email">
+<i class="fa fa-envelope"></i> </a>
+<a href="https://github.com/ZihanZhou924" target="_blank" title="GitHub">
+<i class="fa fa-github"></i> </a></p>
+</div>
+</div>
+</div>
+<!-- Bowen Xia -->
+<div class="col-md-6">
+<div class="team-member">
+<img src="photos/xbw.jpg" alt="Bowen Xia">
+<h3>
+Bowen Xia
+</h3>
+<p class="role">
+Publice Health Data Science
+</p>
+<p>
+<strong>UNI:</strong> bx2232
+</p>
+<p>
+<strong>Responsibilities:</strong>
+</p>
+<ul style="text-align: left; display: inline-block;">
+<li>
+Predictive modeling
+</li>
+<li>
+Feature engineering
+</li>
+<li>
+Model comparison &amp; evaluation
+</li>
+</ul>
+<div class="contact">
+<p><a href="mailto:bx2232@columbia.edu" title="Email">
+<i class="fa fa-envelope"></i> </a>
+<a href="https://github.com/xiabow" target="_blank" title="GitHub">
+<i class="fa fa-github"></i> </a></p>
+</div>
+</div>
+</div>
+<!-- Mungyu Kwok -->
+<div class="col-md-6">
+<div class="team-member">
+<img src="photos/kmy.JPG" alt="Mungyu Kwok">
+<h3>
+Mungyu Kwok
+</h3>
+<p class="role">
+Public Health Data Science
+</p>
+<p>
+<strong>UNI:</strong> mk5149
+</p>
+<p>
+<strong>Responsibilities:</strong>
+</p>
+<ul style="text-align: left; display: inline-block;">
+<li>
+Building Websites and ShinyApps
+</li>
+<li>
+Writing documentation &amp; reports
+</li>
+<li>
+Reproducible workflow design
+</li>
+</ul>
+<div class="contact">
+<p><a href="mailto:mk5149@columbia.edu" title="Email">
+<i class="fa fa-envelope"></i> </a>
+<a href="https://github.com/kwokmungyu" target="_blank" title="GitHub">
+<i class="fa fa-github"></i> </a></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<div id="academic-context" class="section level2">
+<h2>🏫 Academic Context</h2>
+<div class="info-card">
+<p><strong>Course:</strong> Data Science I (P8105)<br />
+<strong>Institution:</strong> Columbia University Mailman School of
+Public Health<br />
+<strong>Program:</strong> MS in Biostatistics<br />
+<strong>Semester:</strong> Fall 2025<br />
+<strong>Instructors:</strong> Jeff Goldsmith</p>
+<p>This project represents our capstone work, demonstrating proficiency
+in:</p>
+<ul>
+<li><strong>Data Wrangling</strong>: Cleaning, merging, and transforming
+large datasets</li>
+<li><strong>Statistical Analysis</strong>: Applying multivariate
+regression and hypothesis testing</li>
+<li><strong>Data Visualization</strong>: Creating informative and
+aesthetically pleasing graphics</li>
+<li><strong>Reproducible Research</strong>: Using R Markdown and version
+control</li>
+<li><strong>Web Development</strong>: Building interactive dashboards
+with Shiny</li>
+<li><strong>Communication</strong>: Presenting complex findings to
+diverse audiences</li>
+</ul>
+</div>
+</div>
+<div id="acknowledgments" class="section level2">
+<h2>🌟 Acknowledgments</h2>
+<div class="info-card">
+<p>We would like to thank:</p>
+<ul>
+<li><strong>NYC Citi Bike</strong> for providing open access to their
+system data</li>
+<li><strong>NOAA</strong> for comprehensive weather data</li>
+<li><strong>Columbia University</strong> for providing the academic
+environment and resources</li>
+<li><strong>Course Instructors and TAs</strong> for guidance throughout
+the semester</li>
+<li><strong>Our peers</strong> for feedback and suggestions during
+project development</li>
+</ul>
+</div>
+</div>
+<div id="get-in-touch" class="section level2">
+<h2>📬 Get in Touch</h2>
+<div class="info-card" style="text-align: center;">
+<p>Interested in learning more about our project or discussing potential
+collaborations?<br />
+Feel free to reach out to any team member using the contact information
+above!</p>
+<p>You can also:</p>
+<ul>
+<li><i class="fa fa-github"></i> <a
+href="https://github.com/lovenza/citibike_ny.github.io">View our GitHub
+repository</a></li>
+<li><i class="fa fa-file-text"></i> <a href="proposal.html">Read our
+full proposal</a></li>
+<li><i class="fa fa-dashboard"></i> <a
+href="https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/">Try
+our interactive dashboard</a></li>
+</ul>
+</div>
+<p><br></p>
+<p><a href="index_citibike.html" class="back-home">
+<i class="fa fa-home"></i> Back to Home </a></p>
+<hr />
+<div style="text-align: center; margin-top: 30px; color: #666;">
+<p>
+<em>© 2025 NYC Citi Bike Analysis Team. Made with ❤️ and R.</em>
 </p>
 </div>
 </div>
@@ -643,8 +583,6 @@ View on GitHub</a>
 </footer>
 
 
-</div>
-</div>
 
 </div>
 
@@ -682,35 +620,6 @@ $(document).ready(function () {
 });
 </script>
 
-<script>
-$(document).ready(function ()  {
-
-    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
-    $('.unlisted.unnumbered').addClass('toc-ignore')
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

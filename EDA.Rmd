@@ -7,14 +7,29 @@ output:
     toc: true
     toc_float: true
     code_folding: hide
-    theme: flatly
+    theme: cosmo
+    css: styles.css
 ---
+
+<a href="index_citibike.html" class="back-home">
+  <i class="fa fa-home"></i> Back to Home
+</a>
+
+<div class="hero-section">
+  <h1>📊 Exploratory Data Analysis</h1>
+  <p>Uncovering Patterns in NYC Citi Bike Usage</p>
+</div>
+
+<br>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Library key packages and load data. 
+<div class="info-card">
+
+## Data Loading
+Load key packages and data. 
 
 ```{r}
 library(tidyverse)
@@ -34,7 +49,11 @@ bike <- read_csv("data/final_bike_weather_categorized.csv")
 glimpse(bike)
 ```
 
-# 1. Overview 概览，变量类型归类
+</div>
+
+<div class="info-card">
+
+## 1. Dataset Overview
 
 The dataset contains **stratified sampled Citi Bike trips from September 2025**, enriched with **weather categories**.  
 Each row represents **a single bike ride** with detailed trip-level information including:
@@ -75,7 +94,11 @@ bike <- bike %>%
 )
 ```
 
-# 2. Daily Aggregates 每日骑行汇总
+</div>
+
+<div class="info-card">
+
+## 2. Daily Aggregates
 
 ```{r}
 daily <- bike %>%
@@ -92,7 +115,11 @@ daily <- bike %>%
 head(daily)
 ```
 
-# 3. Daily Ride Volume 骑行量随时间变化
+</div>
+
+<div class="info-card">
+
+## 3. Daily Ride Volume
 
 ```{r}
 p_daily_rides <- ggplot(daily, aes(x = start_date, y = total_rides)) +
@@ -104,9 +131,13 @@ p_daily_rides <- ggplot(daily, aes(x = start_date, y = total_rides)) +
 p_daily_rides
 ```
 
-# 4. Member vs Casual ride duration 这个图不大好
+</div>
 
-## 4.1 Daily average duration
+<div class="info-card">
+
+## 4. Member vs Casual Ride Patterns
+
+### 4.1 Daily Average Duration
 
 ```{r}
 dur_ts <- bike %>%
@@ -120,7 +151,7 @@ ggplot(dur_ts, aes(start_date, mean_duration, color = member_casual)) +
   theme_minimal()
 ```
 
-## 4.2 Hourly ride count
+### 4.2 Hourly Ride Count
 
 ```{r}
 hourly <- bike %>%
@@ -135,7 +166,7 @@ ggplot(hourly, aes(hour, rides, color = member_casual)) +
   theme_minimal()
 ```
 
-## 4.3 Day of week pattern
+### 4.3 Day of Week Pattern
 
 ```{r}
 wday_daily <- bike %>%
@@ -176,7 +207,11 @@ p_dur_group <- bike %>%
 p_dur_group
 ```
 
-# 5. Time series of Average Ride Duration
+</div>
+
+<div class="info-card">
+
+## 5. Time Series of Average Ride Duration
 
 ```{r}
 dur_ts <- bike %>%
@@ -192,9 +227,13 @@ p_dur_ts <- ggplot(dur_ts, aes(start_date, mean_duration, color = member_casual)
 p_dur_ts
 ```
 
-# 6. Weather effect
+</div>
 
-## 6.1 ride count vs temperature level category 这个图说明偏高温人们爱骑车
+<div class="info-card">
+
+## 6. Weather Effects
+
+### 6.1 Ride Count vs Temperature Level Category
 
 ```{r}
 p_temp_level <- bike %>%
@@ -209,7 +248,9 @@ p_temp_level <- bike %>%
 p_temp_level
 ```
 
-## 6.2 ride count vs rain category 这个图小雨在中雨和大雨中间，想办法调一下，除此之外至少能看出来下雨应该与骑行是负相关的
+This plot shows that higher temperatures are associated with increased ridership.
+
+### 6.2 Ride Count vs Rain Category
 
 ```{r}
 p_rain <- bike %>%
@@ -224,7 +265,9 @@ p_rain <- bike %>%
 p_rain
 ```
 
-## 6.3 weather variables
+The analysis reveals a negative correlation between rainfall and ridership.
+
+### 6.3 Weather Variables
 
 ```{r}
 # tmax
@@ -244,7 +287,11 @@ ggplot(daily, aes(x = prcp, y = total_rides)) +
   theme_minimal()
 ```
 
-# 7 bike type
+</div>
+
+<div class="info-card">
+
+## 7. Bike Type Analysis
 
 ```{r}
 p_type <- bike %>%
@@ -260,7 +307,11 @@ p_type
 ```
 
 
-# 7 TSA 尝试做了下时间序列
+</div>
+
+<div class="info-card">
+
+## 8. Time Series Analysis
 
 ```{r}
 library(tseries)
@@ -299,7 +350,7 @@ autoplot(fc, ts_data) +
 
 ```
 
-## 7.1 Decomposition 数据分解
+### 8.1 Decomposition
 
 ```{r}
 fit_ets <- ts_data %>% model(ETS(total_rides))
@@ -317,12 +368,24 @@ components_plot
 
 ```
 
-# 8 Summary
+</div>
+
+<div class="highlight-box">
+
+## Summary
 
 - Member and casual riders display distinct **daily and weekend/weekday patterns**.  
 - Daily ride volume shows clear **temporal trends** across September.  
 - Temperature and rainfall strongly shape both **trip volume**.  
 - Time-series decomposition reveals trend + seasonality suitable for forecasting. 
+
+</div>
+
+<br>
+
+<a href="index_citibike.html" class="back-home">
+  <i class="fa fa-home"></i> Back to Home
+</a>
 
 
 

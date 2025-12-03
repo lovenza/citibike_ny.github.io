@@ -7,10 +7,14 @@ output:
     toc: true
     toc_float: true
     code_folding: hide
-    theme: flatly
+    theme: cosmo          # Changed from flatly
+    css: styles.css       # ADD THIS LINE - links to custom CSS
 ---
+<a href="index_citibike.html" class="back-home">
+  <i class="fa fa-home"></i> Back to Home
+</a>
 
-```{r}
+```{r setup, include=FALSE}
 library(tidyverse)
 library(janitor)
 library(lubridate)
@@ -20,7 +24,29 @@ library(knitr)
 set.seed(235)
 ```
 
-# Load and Pre-process Bike Data
+<div class="hero-section">
+  <h1>🔧 Data Wrangling</h1>
+  <p>Transforming Raw Data into Analysis-Ready Insights</p>
+</div>
+
+<br>
+
+<div class="info-card">
+
+## Overview
+
+This page documents our comprehensive data wrangling process for the NYC Citi Bike analysis. We transform raw trip data and weather observations into a clean, analysis-ready dataset through:
+
+- **Stratified sampling** to create a manageable 100,000-ride dataset
+- **Feature engineering** including geospatial calculations
+- **Data integration** merging trip and weather data
+- **Categorical variable creation** for meaningful analysis
+
+</div>
+
+## Load and Pre-process Bike Data
+
+<div class="info-card">
 
 This section reads the raw Citibike data from its CSV file, specifying a list of values to interpret as NA. It then performs initial cleaning and feature engineering:
 
@@ -31,6 +57,8 @@ This section reads the raw Citibike data from its CSV file, specifying a list of
 + Extracts the start_month and start_day for later filtering and grouping.
 
 + Directly calculates the ride_duration_hours by subtracting the start and end datetimes, which is more efficient and accurate than the original method of converting to strings and back to time objects.
+
+</div>
 
 ```{r}
 file_path <- "raw_data/202509-citibike-tripdata_3.csv"
@@ -47,15 +75,19 @@ bike_data <- read_csv(file_path, na = na_values) %>%
   )
 ```
 
-# Stratified Daily Sampling
+## Stratified Daily Sampling
+
+<div class="info-card">
 
 This block creates the smaller sampled_bike_data dataframe (containing 100000 rides). It first filters the data to include only rides from September. Then, it uses a split-map-combine strategy to perform stratified sampling:
 
-+ group_split() divides the data into a list of dataframes, one for each start_day.
++ `group_split()` divides the data into a list of dataframes, one for each start_day.
 
-+ map_dfr() iterates over this list, applies a custom sampling function, and rows-binds the results back into a single dataframe.
++ `map_dfr()` iterates over this list, applies a custom sampling function, and rows-binds the results back into a single dataframe.
 
-+ The code performs proportional stratified sampling to achieve a target sample size of 100,000 rides, preserving the relative distribution of rides across each day in September.
++ The code performs **proportional stratified sampling** to achieve a target sample size of 100,000 rides, preserving the relative distribution of rides across each day in September.
+
+</div>
 
 ```{r}
 target_size <- 100000 
@@ -73,7 +105,9 @@ sampled_bike_data %>%
   kable(col.names = c("Day", "Count"))
 ```
 
-# Feature Engineering and Weather Data Merge
+## Feature Engineering and Weather Data Merge
+
+<div class="info-card">
 
 This section enriches the sampled bike data with new geospatial features and joins it with external weather data. 
 
@@ -84,6 +118,8 @@ This section enriches the sampled bike data with new geospatial features and joi
 + It creates a start_date column in the bike data and converts the DATE column in the weather data to ensure they are both Date objects, which are used as the join key. 
 
 + Finally, it performs a left_join and runs clean_names() after the join to standardize the new columns from the weather file (e.g., TMAX, PRCP).
+
+</div>
 
 ```{r}
 noaa_data <- read_csv("data/noaa_central_park_2025.csv")
@@ -113,27 +149,38 @@ merged_data <- left_join(merged_data, noaa_data_clean, by = c("start_date" = "DA
   janitor::clean_names()
 ```
 
-# Final Categorization and Export
+## Final Categorization and Export
+
+<div class="info-card">
 
 This final block creates categorical variables based on the merged weather data, selects the final columns for the analysis, and exports the result to a new CSV file. 
 
-+ case_when() is used to create three new categorical columns:
++ `case_when()` is used to create four new categorical columns:
 
-  - temp_diff_category: Based on the diurnal temperature range (tmax - tmin).
-    "High" is assigned if the temperature difference is greater than 15 degrees. "Medium" is assigned if the difference is greater than 8 but less than or equal to 15. "Low" is for 8 degrees or less. "NA" is assigned if the calculation results in a missing value.
+  - **temp_diff_category**: Based on the diurnal temperature range (tmax - tmin).
+    - "High" if temperature difference > 15°F
+    - "Medium" if 8°F < difference ≤ 15°F
+    - "Low" if difference ≤ 8°F
 
-  - temp_level_category: Based on the maximum temperature (tmax).
-    "High" is assigned if the maximum temperature is 80 degrees or higher. "Low" is for a maximum temperature less than 80. "NA" is assigned if tmax is a missing value.
+  - **temp_level_category**: Based on the maximum temperature (tmax).
+    - "High" if tmax ≥ 80°F
+    - "Low" if tmax < 80°F
 
-  - rain_category: Based on the precipitation amount (prcp).
-    "Missing" is assigned if the precipitation data is NA (not available). "No Rain" is for exactly 0. "Light Rain" is greater than 0 and less than or equal to 0.3 (units, e.g., inches). "Medium Rain" is greater than 0.3 and less than or equal to 1.0. "Heavy Rain" is for precipitation greater than 1.0. "Other" catches any other cases.
-    
-  - weekend_and_holiday: Based on the specific day of the month (start_day). 
-    "weekend and holiday" is assigned if the start day falls on specific dates: the 1st, 6th, 7th, 13th, 14th, 20th, 21st, 27th, or 28th (representing the Labor Day on the 1st and recurring weekends). "workday" catches all other cases not listed above.
+  - **rain_category**: Based on precipitation amount (prcp, in inches).
+    - "No Rain" for exactly 0
+    - "Light Rain" for 0 < prcp ≤ 0.3
+    - "Medium Rain" for 0.3 < prcp ≤ 1.0
+    - "Heavy Rain" for prcp > 1.0
 
-+ select() is used to organize the dataframe, keeping essential ride info and the new weather categories. 
+  - **weekend_and_holiday**: Based on the day of the month (start_day).
+    - "weekend and holiday" for Labor Day (Sept 1) and weekends
+    - "workday" for all other days
 
-+ The final, processed dataframe is written to final_bike_weather_categorized.csv.
++ `select()` organizes the dataframe, keeping essential ride info and the new weather categories. 
+
++ The final, processed dataframe is written to `final_bike_weather_categorized.csv`.
+
+</div>
 
 ```{r}
 final_categorized_data <- merged_data %>%
@@ -175,3 +222,26 @@ final_categorized_data <- merged_data %>%
 
 write_csv(final_categorized_data, "data/final_bike_weather_categorized.csv")
 ```
+
+
+<br>
+
+<div class="highlight-box">
+
+### ✅ Data Wrangling Complete!
+
+Our final dataset contains **100,000 strategically sampled rides** from September 2025, enriched with:
+- Temporal features (hour, day, weekday/weekend)
+- Geospatial metrics (distance, bearing)
+- Weather variables (temperature, precipitation)
+- Categorical classifications for analysis
+
+**Next Step**: Explore patterns and relationships in our [EDA & Visualization](EDA.html) section!
+
+</div>
+
+<br>
+
+<a href="index_citibike.html" class="back-home">
+  <i class="fa fa-home"></i> Back to Home
+</a>
