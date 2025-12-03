@@ -528,8 +528,8 @@ Transforming Raw Data into Analysis-Ready Insights
 </p>
 </div>
 <p><br></p>
-<div id="overview" class="section level2 info-card">
-<h2>Overview</h2>
+<div id="overview" class="section level1 info-card">
+<h1>Overview</h1>
 <p>This page documents our comprehensive data wrangling process for the
 NYC Citi Bike analysis. We transform raw trip data and weather
 observations into a clean, analysis-ready dataset through:</p>
@@ -543,9 +543,9 @@ calculations</li>
 analysis</li>
 </ul>
 </div>
-<div id="load-and-pre-process-bike-data" class="section level2">
-<h2>Load and Pre-process Bike Data</h2>
-<div class="info-card">
+<div id="load-and-pre-process-bike-data"
+class="section level1 info-card">
+<h1>Load and Pre-process Bike Data</h1>
 <p>Due to the large size of the raw dataset, which exceeds GitHub’s
 storage limits, the file is stored locally. You can access the original
 data via <a
@@ -566,7 +566,6 @@ start and end datetimes, which is more efficient and accurate than the
 original method of converting to strings and back to time
 objects.</p></li>
 </ul>
-</div>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>file_path <span class="ot">&lt;-</span> <span class="st">&quot;raw_data/202509-citibike-tripdata_3.csv&quot;</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>na_values <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;.&quot;</span>, <span class="st">&quot;NA&quot;</span>, <span class="st">&quot;&quot;</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
@@ -580,9 +579,8 @@ objects.</p></li>
 <span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>    <span class="at">ride_duration_hours =</span> <span class="fu">as.numeric</span>(datetime_end_obj <span class="sc">-</span> datetime_start_obj, <span class="at">units =</span> <span class="st">&quot;hours&quot;</span>)</span>
 <span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>  )</span></code></pre></div>
 </div>
-<div id="stratified-daily-sampling" class="section level2">
-<h2>Stratified Daily Sampling</h2>
-<div class="info-card">
+<div id="stratified-daily-sampling" class="section level1 info-card">
+<h1>Stratified Daily Sampling</h1>
 <p>This block creates the smaller sampled_bike_data dataframe
 (containing 100,000 rides). It first filters the data to include only
 rides from September. Then, it uses a grouped sampling strategy:</p>
@@ -599,7 +597,6 @@ days remain quiet).</p></li>
 <li><p>Finally, <code>ungroup()</code> removes the grouping structure
 for subsequent analysis.</p></li>
 </ul>
-</div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>target_size <span class="ot">&lt;-</span> <span class="dv">100000</span> </span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>total_rows <span class="ot">&lt;-</span> <span class="fu">sum</span>(bike_data<span class="sc">$</span>start_month <span class="sc">==</span> <span class="dv">9</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>sampling_rate <span class="ot">&lt;-</span> target_size <span class="sc">/</span> total_rows</span>
@@ -745,9 +742,8 @@ for subsequent analysis.</p></li>
 </table>
 </div>
 <div id="feature-engineering-and-weather-data-merge"
-class="section level2">
-<h2>Feature Engineering and Weather Data Merge</h2>
-<div class="info-card">
+class="section level1 info-card">
+<h1>Feature Engineering and Weather Data Merge</h1>
 <p>This section enriches the sampled bike data with new geospatial
 features and joins it with external weather data.</p>
 <ul>
@@ -770,7 +766,6 @@ which are used as the join key.</p></li>
 join to standardize the new columns from the weather file (e.g., TMAX,
 PRCP).</p></li>
 </ul>
-</div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>noaa_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/noaa_central_park_2025.csv&quot;</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> sampled_bike_data <span class="sc">%&gt;%</span></span>
@@ -797,9 +792,9 @@ PRCP).</p></li>
 <span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(merged_data, noaa_data_clean, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;start_date&quot;</span> <span class="ot">=</span> <span class="st">&quot;DATE&quot;</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>()</span></code></pre></div>
 </div>
-<div id="final-categorization-and-export" class="section level2">
-<h2>Final Categorization and Export</h2>
-<div class="info-card">
+<div id="final-categorization-and-export"
+class="section level1 info-card">
+<h1>Final Categorization and Export</h1>
 <p>This final block creates categorical variables based on the merged
 weather data, selects the final columns for the analysis, and exports
 the result to a new CSV file.</p>
@@ -840,7 +835,6 @@ ride info and the new weather categories.</p></li>
 <li><p>The final, processed dataframe is written to
 <code>final_bike_weather_categorized.csv</code>.</p></li>
 </ul>
-</div>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>final_categorized_data <span class="ot">&lt;-</span> merged_data <span class="sc">%&gt;%</span></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="at">temp_diff =</span> tmax <span class="sc">-</span> tmin,</span>
@@ -879,6 +873,7 @@ ride info and the new weather categories.</p></li>
 <span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>  )</span>
 <span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a></span>
 <span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="fu">write_csv</span>(final_categorized_data, <span class="st">&quot;data/final_bike_weather_categorized.csv&quot;</span>)</span></code></pre></div>
+</div>
 <p><br></p>
 <div id="data-wrangling-complete" class="section level3 highlight-box">
 <h3>✅ Data Wrangling Complete!</h3>
@@ -893,7 +888,6 @@ classifications for analysis</p>
 <p><br></p>
 <p><a href="index_citibike.html" class="back-home">
 <i class="fa fa-home"></i> Back to Home </a></p>
-</div>
 
 <footer>
     <div class="container">
