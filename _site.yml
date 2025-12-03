@@ -15,10 +15,14 @@ navbar:
       href: EDA.html
     - text: "Statistical Analysis"
       icon: fa-calculator
-      href: model_and_spatial_analysis_STYLED.html
+      menu:
+        - text: "Daily Ridership Analysis"
+          href: statistical_analysis_RIDERSHIP_COMPLETE.html
+        - text: "Ride Duration Analysis"
+          href: model_and_spatial_analysis_STYLED.html
     - text: "Shiny Dashboard"
       icon: fa-dashboard
-      href: https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/
+      href: https://YOUR_USERNAME.shinyapps.io/citibike_dashboard/
     - text: "About Us"
       icon: fa-users
       href: about.html

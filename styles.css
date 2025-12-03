@@ -185,13 +185,17 @@ h1, h2, h3, h4, h5, h6 {
     color: #0099ff;
 }
 
-/* Table of Contents */
+/* ============================================
+   FIX 1: Table of Contents - Prevent Overlap
+   ============================================ */
 #TOC {
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     padding: 20px;
     border-left: 4px solid #0066cc;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
 }
 
 #TOC ul {
@@ -209,12 +213,109 @@ h1, h2, h3, h4, h5, h6 {
     color: #0099ff;
 }
 
+/* Fix the floating TOC container */
+.tocify-wrapper {
+    position: fixed !important;
+    top: 80px;
+    left: 0;
+    width: 260px !important;
+    max-width: 260px !important;
+    z-index: 100;
+    overflow-x: hidden !important;
+}
+
+/* Prevent horizontal scroll on the entire page */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+/* Ensure the TOC stays in its lane */
+.col-xs-12.col-sm-4.col-md-3 {
+    position: relative !important;
+    z-index: 100;
+}
+
+/* Main content should not be affected by TOC */
+.col-xs-12.col-sm-8.col-md-9 {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================
+   FIX 2: Footer - Prevent Text Overflow
+   ============================================ */
+footer {
+    background: #2c3e50;
+    color: white;
+    padding: 30px 20px;
+    margin-top: 50px;
+    text-align: center;
+    /* Prevent overflow */
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+footer a {
+    color: #0099ff;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #00ccff;
+}
+
+/* Fix for any custom footer div at the bottom */
+div[style*="text-align: center"] {
+    padding: 20px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* ============================================
+   General Container Fixes
+   ============================================ */
+/* Ensure all containers respect their boundaries */
+.container-fluid {
+    max-width: 100%;
+    overflow-x: hidden;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.container {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Main content area fixes */
+.main-container {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Ensure row doesn't cause horizontal scroll */
+.row {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+}
+
+/* Fix columns to not overflow */
+[class*="col-"] {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 /* Code Blocks */
 pre {
     background: #f8f9fa;
     border-radius: 8px;
     border-left: 4px solid #0066cc;
     padding: 15px;
+    overflow-x: auto;
+    max-width: 100%;
 }
 
 /* Images and Plots */
@@ -240,24 +341,6 @@ img {
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
 
-/* Footer */
-footer {
-    background: #2c3e50;
-    color: white;
-    padding: 30px 0;
-    margin-top: 50px;
-    text-align: center;
-}
-
-footer a {
-    color: #0099ff;
-    text-decoration: none;
-}
-
-footer a:hover {
-    color: #00ccff;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .hero-section h1 {
@@ -266,6 +349,17 @@ footer a:hover {
     
     .team-member {
         margin: 20px 0;
+    }
+    
+    /* On mobile, TOC should stack properly */
+    .tocify-wrapper {
+        position: relative !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    #TOC {
+        position: relative !important;
     }
 }
 

@@ -335,15 +335,25 @@ div.tocify {
     EDA &amp; Visualization
   </a>
 </li>
-<li>
-  <a href="model_and_spatial_analysis_STYLED.html">
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fa fa-calculator"></span>
      
     Statistical Analysis
+     
+    <span class="caret"></span>
   </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="statistical_analysis_RIDERSHIP_COMPLETE.html">Daily Ridership Analysis</a>
+    </li>
+    <li>
+      <a href="model_and_spatial_analysis_STYLED.html">Ride Duration Analysis</a>
+    </li>
+  </ul>
 </li>
 <li>
-  <a href="https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/">
+  <a href="https://YOUR_USERNAME.shinyapps.io/citibike_dashboard/">
     <span class="fa fa-dashboard"></span>
      
     Shiny Dashboard
@@ -409,8 +419,8 @@ Analyzing 100,000 rides from September 2025
 </p>
 </div>
 <p><br></p>
-<div id="project-overview" class="section level2">
-<h2>📊 Project Overview</h2>
+<div id="project-overview" class="section level1">
+<h1>📊 Project Overview</h1>
 <div class="info-card">
 <p>Citi Bike has become an integral part of New York City’s public
 transportation network, serving millions of rides. As a data-rich
@@ -423,30 +433,36 @@ visualizations, we explore the intricate relationship between urban
 mobility, temporal patterns, and environmental conditions.</p>
 </div>
 </div>
-<div id="core-research-questions" class="section level2">
-<h2>❓ Core Research Questions</h2>
+<div id="core-research-questions" class="section level1">
+<h1>❓ Core Research Questions</h1>
 <div class="info-card">
 <p>We will address the following key questions using our 100,000-ride
 sample from September 2025:</p>
-<p><strong>1. Temporal Patterns</strong><br />
-How do predictable daily and weekly rhythms (e.g., time of day, weekday
-vs. weekend) shape ridership? We investigate commuter peaks, weekend
-leisure patterns, and the daily pulse of urban mobility.</p>
-<p><strong>2. User Segmentation</strong><br />
-How do different user groups (members vs. casual riders) use the system
-differently in terms of trip volume and duration? Understanding these
-patterns helps inform system optimization and user experience
+<div id="temporal-patterns" class="section level2">
+<h2><strong>1. Temporal Patterns</strong></h2>
+<p>How do predictable daily and weekly rhythms (e.g., time of day,
+weekday vs. weekend) shape ridership? We investigate commuter peaks,
+weekend leisure patterns, and the daily pulse of urban mobility.</p>
+</div>
+<div id="user-segmentation" class="section level2">
+<h2><strong>2. User Segmentation</strong></h2>
+<p>How do different user groups (members vs. casual riders) use the
+system differently in terms of trip volume and duration? Understanding
+these patterns helps inform system optimization and user experience
 improvements.</p>
-<p><strong>3. Weather Quantification</strong><br />
-To what extent does daily weather (Max Temperature, Precipitation)
+</div>
+<div id="weather-quantification" class="section level2">
+<h2><strong>3. Weather Quantification</strong></h2>
+<p>To what extent does daily weather (Max Temperature, Precipitation)
 influence the decision to ride a bike and the duration of the trip? We
 quantify the specific impact of weather variables on ridership
 behavior.</p>
 </div>
 </div>
+</div>
 <div id="project-structure-and-analysis-pipeline"
-class="section level2">
-<h2>🛠️ Project Structure and Analysis Pipeline</h2>
+class="section level1">
+<h1>🛠️ Project Structure and Analysis Pipeline</h1>
 <div class="info-card">
 <p>The website is organized to follow our analytical workflow. Each
 section builds upon the previous, creating a comprehensive narrative of
@@ -482,8 +498,8 @@ real-time and discover insights through interactive exploration.</p>
 </div>
 </div>
 </div>
-<div id="key-findings-preview" class="section level2">
-<h2>📈 Key Findings Preview</h2>
+<div id="key-findings-preview" class="section level1">
+<h1>📈 Key Findings Preview</h1>
 <div class="info-card">
 <div class="row">
 <div class="col-md-4">
@@ -525,8 +541,8 @@ User segmentation analysis shows distinct behavioral differences between
 members and casual riders.</p>
 </div>
 </div>
-<div id="meet-the-team" class="section level2">
-<h2>🧑‍💻 Meet the Team</h2>
+<div id="meet-the-team" class="section level1">
+<h1>🧑‍💻 Meet the Team</h1>
 <div class="info-card">
 <p>Our interdisciplinary team brings together expertise in data science,
 public health, and urban analytics. Each member contributed specialized
@@ -577,8 +593,8 @@ skills to create this comprehensive analysis:</p>
 Us</a></strong> page!</p>
 </div>
 </div>
-<div id="why-this-matters" class="section level2">
-<h2>🎯 Why This Matters</h2>
+<div id="why-this-matters" class="section level1">
+<h1>🎯 Why This Matters</h1>
 <div class="highlight-box">
 <p>Understanding bike-share usage patterns has profound implications
 for:</p>
@@ -596,8 +612,8 @@ experience</li>
 data-driven urban mobility solutions.</p>
 </div>
 </div>
-<div id="get-started" class="section level2">
-<h2>🚀 Get Started</h2>
+<div id="get-started" class="section level1">
+<h1>🚀 Get Started</h1>
 <div class="info-card" style="text-align: center;">
 <p>Ready to explore? Navigate through our analysis using the menu bar
 above, or start with our <a href="data_wrangling.html">Data

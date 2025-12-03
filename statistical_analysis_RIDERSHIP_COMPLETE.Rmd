@@ -12,6 +12,17 @@ output:
     css: styles.css
 ---
 
+<a href="index_citibike.html" class="back-home">
+  <i class="fa fa-home"></i> Back to Home
+</a>
+
+<div class="hero-section">
+  <h1>📊 Statistical Analysis: Daily Ridership</h1>
+  <p>Weather and Temporal Effects on NYC Citi Bike Ridership</p>
+</div>
+
+<br>
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -22,6 +33,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+<div class="info-card">
+
 # Executive Summary
 
 This analysis examines daily NYC Citi Bike ridership patterns in September 2025 using a **proportional stratified random sample** of approximately 100,000 rides. The sampling design ensures that each day contributes rides proportional to its actual ridership, preserving natural variation patterns.
@@ -31,9 +44,6 @@ This analysis examines daily NYC Citi Bike ridership patterns in September 2025 
 - Precipitation strongly reduces ridership (~25-30% per inch)
 - Clear weekday/weekend patterns differ between members and casual users
 - Casual riders are 2-3× more weather-sensitive than members
-
----
-
 
 ## Proportional Stratified Sampling Design
 
@@ -51,7 +61,9 @@ Each day was sampled at the **same rate** (e.g., ~1.85%), meaning:
 **Key Advantage:**
 This design preserves all natural patterns. If Monday had 2× the ridership of Sunday in the population, our sample will show the same 2:1 ratio. All proportional effects (percentages, ratios, correlations) are valid population estimates.
 
----
+</div>
+
+<div class="info-card">
 
 # Load Libraries and Data
 
@@ -75,7 +87,9 @@ cat(sprintf("Date range: %s to %s\n", min(bike_weather$start_date), max(bike_wea
 cat(sprintf("User types: %s\n", paste(unique(bike_weather$member_casual), collapse = ", ")))
 ```
 
----
+</div>
+
+<div class="info-card">
 
 # Data Preparation
 
@@ -140,6 +154,8 @@ cat("✓ Days with more samples had higher actual ridership\n")
 cat("✓ All proportional effects are valid population estimates\n\n")
 ```
 
+## Descriptive Statistics
+
 ```{r descriptive_table}
 # Descriptive statistics
 desc_stats <- daily_ridership %>%
@@ -188,7 +204,9 @@ desc_stats %>%
   )
 ```
 
----
+</div>
+
+<div class="info-card">
 
 # Statistical Analysis
 
@@ -504,7 +522,9 @@ ggplot(r2_comp, aes(x = Model, y = R_squared, fill = Outcome)) +
   ylim(0, 1)
 ```
 
----
+</div>
+
+<div class="info-card">
 
 # CLEAR KEY FINDINGS
 
@@ -705,7 +725,9 @@ All statistical approaches yield consistent findings:
 
 The convergence across methods provides robust evidence for our conclusions.
 
----
+</div>
+
+<div class="info-card">
 
 # Model Diagnostics
 
@@ -720,7 +742,9 @@ plot(model_total_full, main = "Total Ridership: Model Diagnostics")
 - No extreme influential points
 - Model assumptions reasonably satisfied
 
----
+</div>
+
+<div class="info-card">
 
 # Discussion
 
@@ -789,7 +813,9 @@ plot(model_total_full, main = "Total Ridership: Model Diagnostics")
 - Focus expansion on commuter corridors for members
 - Enhance recreational routes for weekend casual users
 
----
+</div>
+
+<div class="info-card">
 
 # Conclusions
 

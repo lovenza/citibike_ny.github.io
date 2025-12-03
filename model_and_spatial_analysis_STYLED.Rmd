@@ -34,18 +34,22 @@ knitr::opts_chunk$set(
 
 <div class="info-card">
 
-## Introduction
+# Introduction
 
 This analysis examines how weather conditions and temporal patterns influence **individual ride duration** (riding time) for NYC Citi Bike users in September 2025. Unlike aggregate daily ridership analysis (which has only 30 observations), analyzing individual rides provides **100,000 observations**, offering much greater statistical power and more robust findings.
 
-### Research Questions
+---
+
+## Research Questions
 
 1. How do weather variables (maximum temperature, minimum temperature, precipitation) affect ride duration?
 2. What is the effect of day of the week and time of day on ride duration?
 3. How do these effects differ between member and casual riders?
 4. Do riders take longer trips in favorable weather conditions?
 
-### Advantages of Ride-Level Analysis
+---
+
+## Advantages of Ride-Level Analysis
 
 - **Statistical Power**: 100,000 observations vs. 30 daily observations
 - **Individual Variation**: Captures within-day and between-rider differences
@@ -56,7 +60,7 @@ This analysis examines how weather conditions and temporal patterns influence **
 
 <div class="info-card">
 
-## Load Libraries and Data
+# Load Libraries and Data
 
 ```{r libraries}
 library(tidyverse)
@@ -82,7 +86,7 @@ glimpse(bike_weather)
 
 <div class="info-card">
 
-## Data Preparation
+# Data Preparation
 
 ```{r data_prep}
 # Prepare ride-level data for analysis
@@ -168,9 +172,9 @@ summary_stats %>%
 
 <div class="info-card">
 
-## Exploratory Data Analysis
+# Exploratory Data Analysis
 
-### Ride Duration by User Type and Weather
+## Ride Duration by User Type and Weather
 
 ```{r duration_by_weather}
 # Duration by temperature category
@@ -205,7 +209,9 @@ p1 / p2 +
   )
 ```
 
-### Ride Duration by Time of Day and Day of Week
+---
+
+## Ride Duration by Time of Day and Day of Week
 
 ```{r duration_by_time}
 # By time of day
@@ -265,7 +271,9 @@ p3 / p4 +
   )
 ```
 
-### Relationship Between Temperature and Duration
+---
+
+## Relationship Between Temperature and Duration
 
 ```{r temp_duration_scatter}
 # Sample 5000 points for visualization (100k is too many for scatter)
@@ -291,11 +299,13 @@ ggplot(sample_data, aes(x = tmax, y = ride_duration_min, color = member_casual))
 
 <div class="info-card">
 
-## Statistical Methodology
+# Statistical Methodology
 
 We employ multiple linear regression to model individual ride duration as a function of weather and temporal predictors. The large sample size (N ≈ 100,000) provides excellent statistical power.
 
-### Model Specifications
+---
+
+## Model Specifications
 
 We fit three main models:
 
@@ -315,7 +325,9 @@ Where:
 - Day of week indicators (Monday as reference)
 - Time of day indicators (Morning Rush as reference)
 
-### Why Ride-Level Analysis is Better
+---
+
+## Why Ride-Level Analysis is Better
 
 **Advantages:**
 1. **100,000 observations** vs 30 daily observations
@@ -328,7 +340,7 @@ Where:
 
 <div class="info-card">
 
-## Correlation Analysis
+# Correlation Analysis
 
 ```{r correlation_analysis}
 # Select numeric variables for correlation
@@ -382,9 +394,9 @@ cat(sprintf("Distance vs Duration: r = %.3f, p < 0.001\n", test3$estimate))
 
 <div class="info-card">
 
-## Model Fitting
+# Model Fitting
 
-### Full Models with Weather and Temporal Variables
+## Full Models with Weather and Temporal Variables
 
 ```{r model_total}
 # Model 1: All Riders
@@ -430,7 +442,7 @@ summary(model_casual_full)
 
 <div class="info-card">
 
-## Comprehensive Results
+# Comprehensive Results
 
 ```{r comprehensive_results}
 # Extract coefficients for all models
@@ -482,7 +494,7 @@ model_stats %>%
 
 <div class="info-card">
 
-## CLEAR KEY FINDINGS
+# CLEAR KEY FINDINGS
 
 ```{r setup_findings, include=FALSE}
 # Extract key coefficients
@@ -516,7 +528,7 @@ pval_member <- setNames(coef_member$p.value, coef_member$term)
 pval_casual <- setNames(coef_casual$p.value, coef_casual$term)
 ```
 
-### KEY FINDING 1: Temperature Has Modest Effect on Duration
+## KEY FINDING 1: Temperature Has Modest Effect on Duration
 
 ```{r temp_findings_duration}
 temp_findings_duration <- tibble(
@@ -558,7 +570,9 @@ Temperature has a positive but modest effect on ride duration. For every 10°F i
 
 **User Comparison:** Both casual riders and members show similar small temperature effects.
 
-### KEY FINDING 2: Distance is the Strongest Predictor of Duration
+---
+
+## KEY FINDING 2: Distance is the Strongest Predictor of Duration
 
 ```{r distance_findings}
 distance_findings <- tibble(
@@ -587,7 +601,9 @@ distance_findings %>%
 
 Distance is by far the strongest predictor of ride duration. Each additional kilometer traveled adds approximately 4-5 minutes to ride duration. This makes intuitive sense: longer distances require more time. Weather and temporal effects are small in comparison.
 
-### KEY FINDING 3: Precipitation Slightly Reduces Ride Duration
+---
+
+## KEY FINDING 3: Precipitation Slightly Reduces Ride Duration
 
 ```{r precip_findings_duration}
 precip_findings_duration <- tibble(
@@ -616,7 +632,9 @@ precip_findings_duration %>%
 
 Riders take slightly shorter trips when it rains. Each inch of precipitation is associated with rides that are approximately 0.5 minutes shorter. This suggests riders minimize their time in the rain by taking more direct routes or shortening discretionary trips.
 
-### KEY FINDING 4: Casual Riders Take Much Longer Trips
+---
+
+## KEY FINDING 4: Casual Riders Take Much Longer Trips
 
 ```{r user_type_comparison}
 user_comparison <- tibble(
@@ -652,7 +670,9 @@ Casual riders take significantly longer trips than members. On average, casual r
 - **Members**: Quick, utilitarian trips (likely commuting)
 - **Casual**: Longer, leisurely rides (likely recreational/tourism)
 
-### KEY FINDING 5: Large Sample Provides Precise Estimates
+---
+
+## KEY FINDING 5: Large Sample Provides Precise Estimates
 
 ```{r precision_comparison}
 precision_metrics <- tibble(
@@ -683,7 +703,7 @@ Analyzing 100,000 individual rides provides much better statistical inference th
 
 <div class="info-card">
 
-## Model Diagnostics
+# Model Diagnostics
 
 ```{r diagnostics, fig.height=8}
 # Diagnostic plots for total model (sample 5000 for speed)
@@ -700,9 +720,9 @@ plot(model_total_full, which = 1:4, main = "Total Model Diagnostics (All Riders)
 
 <div class="info-card">
 
-## Discussion and Conclusions
+# Discussion and Conclusions
 
-### Main Findings Summary
+## Main Findings Summary
 
 **1. Distance Dominates Duration**  
 The strongest predictor of ride duration is trip distance (~4.3 minutes per km). Weather and temporal effects are small in comparison.
@@ -723,7 +743,9 @@ Analyzing 100,000 rides vs 30 daily observations provides:
 - Ability to detect small effects
 - High confidence in all findings
 
-### Comparison: Ridership vs Duration Analysis
+---
+
+## Comparison: Ridership vs Duration Analysis
 
 | Aspect | Daily Ridership (N=30) | Individual Duration (N=100,000) |
 |--------|------------------------|----------------------------------|
@@ -733,7 +755,9 @@ Analyzing 100,000 rides vs 30 daily observations provides:
 | **Main Finding** | Weather strongly affects WHETHER people ride | Distance strongly affects HOW LONG they ride |
 | **Confidence** | Moderate | Very High |
 
-### Why Both Analyses Matter
+---
+
+## Why Both Analyses Matter
 
 **Daily Ridership Analysis** answers: "What makes people decide to ride?"
 - Weather is VERY important (rain = -27% ridership)
@@ -744,13 +768,17 @@ Analyzing 100,000 rides vs 30 daily observations provides:
 - Weather has small effects on duration
 - User type drives duration differences
 
-### Practical Implications
+---
+
+## Practical Implications
 
 1. **For Operations**: Focus rebalancing on distance patterns, not just weather
 2. **For Marketing**: Emphasize quick trips for members, leisurely rides for casual
 3. **For Urban Planning**: Distance/destination matters more than weather for trip planning
 
-### Limitations
+---
+
+## Limitations
 
 1. Still cross-sectional (one month of data)
 2. Ride duration may have non-linear relationships
@@ -763,7 +791,7 @@ Analyzing 100,000 rides vs 30 daily observations provides:
 
 <div class="highlight-box">
 
-## Key Takeaways
+# Key Takeaways
 
 1. **Distance Dominates Duration**: The strongest predictor of ride duration is trip distance (~4.3 minutes per km)
 2. **Weather Has Modest Effects**: Temperature and precipitation have statistically significant but practically small effects

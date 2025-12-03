@@ -28,7 +28,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <div class="info-card">
 
-## Data Loading
+# Data Loading
 Load key packages and data. 
 
 ```{r}
@@ -53,7 +53,7 @@ glimpse(bike)
 
 <div class="info-card">
 
-## 1. Dataset Overview
+# 1. Dataset Overview
 
 The dataset contains **stratified sampled Citi Bike trips from September 2025**, enriched with **weather categories**.  
 Each row represents **a single bike ride** with detailed trip-level information including:
@@ -98,7 +98,7 @@ bike <- bike %>%
 
 <div class="info-card">
 
-## 2. Daily Aggregates
+# 2. Daily Aggregates
 
 ```{r}
 daily <- bike %>%
@@ -119,7 +119,7 @@ head(daily)
 
 <div class="info-card">
 
-## 3. Daily Ride Volume
+# 3. Daily Ride Volume
 
 ```{r}
 p_daily_rides <- ggplot(daily, aes(x = start_date, y = total_rides)) +
@@ -135,9 +135,9 @@ p_daily_rides
 
 <div class="info-card">
 
-## 4. Member vs Casual Ride Patterns
+# 4. Member vs Casual Ride Patterns
 
-### 4.1 Daily Average Duration
+## 4.1 Daily Average Duration
 
 ```{r}
 dur_ts <- bike %>%
@@ -151,7 +151,9 @@ ggplot(dur_ts, aes(start_date, mean_duration, color = member_casual)) +
   theme_minimal()
 ```
 
-### 4.2 Hourly Ride Count
+---
+
+## 4.2 Hourly Ride Count
 
 ```{r}
 hourly <- bike %>%
@@ -166,7 +168,9 @@ ggplot(hourly, aes(hour, rides, color = member_casual)) +
   theme_minimal()
 ```
 
-### 4.3 Day of Week Pattern
+---
+
+## 4.3 Day of Week Pattern
 
 ```{r}
 wday_daily <- bike %>%
@@ -211,7 +215,7 @@ p_dur_group
 
 <div class="info-card">
 
-## 5. Time Series of Average Ride Duration
+# 5. Time Series of Average Ride Duration
 
 ```{r}
 dur_ts <- bike %>%
@@ -231,9 +235,9 @@ p_dur_ts
 
 <div class="info-card">
 
-## 6. Weather Effects
+# 6. Weather Effects
 
-### 6.1 Ride Count vs Temperature Level Category
+## 6.1 Ride Count vs Temperature Level Category
 
 ```{r}
 p_temp_level <- bike %>%
@@ -250,7 +254,9 @@ p_temp_level
 
 This plot shows that higher temperatures are associated with increased ridership.
 
-### 6.2 Ride Count vs Rain Category
+---
+
+## 6.2 Ride Count vs Rain Category
 
 ```{r}
 p_rain <- bike %>%
@@ -267,7 +273,9 @@ p_rain
 
 The analysis reveals a negative correlation between rainfall and ridership.
 
-### 6.3 Weather Variables
+---
+
+## 6.3 Weather Variables
 
 ```{r}
 # tmax
@@ -291,7 +299,7 @@ ggplot(daily, aes(x = prcp, y = total_rides)) +
 
 <div class="info-card">
 
-## 7. Bike Type Analysis
+# 7. Bike Type Analysis
 
 ```{r}
 p_type <- bike %>%
@@ -311,7 +319,7 @@ p_type
 
 <div class="info-card">
 
-## 8. Time Series Analysis
+# 8. Time Series Analysis
 
 ```{r}
 library(tseries)
@@ -350,7 +358,9 @@ autoplot(fc, ts_data) +
 
 ```
 
-### 8.1 Decomposition
+---
+
+## 8.1 Decomposition
 
 ```{r}
 fit_ets <- ts_data %>% model(ETS(total_rides))
@@ -372,7 +382,7 @@ components_plot
 
 <div class="highlight-box">
 
-## Summary
+# Summary
 
 - Member and casual riders display distinct **daily and weekend/weekday patterns**.  
 - Daily ride volume shows clear **temporal trends** across September.  

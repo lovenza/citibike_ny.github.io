@@ -33,7 +33,7 @@ set.seed(235)
 
 <div class="info-card">
 
-## Overview
+# Overview
 
 This page documents our comprehensive data wrangling process for the NYC Citi Bike analysis. We transform raw trip data and weather observations into a clean, analysis-ready dataset through:
 
@@ -44,7 +44,7 @@ This page documents our comprehensive data wrangling process for the NYC Citi Bi
 
 </div>
 
-## Load and Pre-process Bike Data
+# Load and Pre-process Bike Data
 
 <div class="info-card">
 
@@ -75,7 +75,7 @@ bike_data <- read_csv(file_path, na = na_values) %>%
   )
 ```
 
-## Stratified Daily Sampling
+# Stratified Daily Sampling
 
 <div class="info-card">
 
@@ -105,7 +105,7 @@ sampled_bike_data %>%
   kable(col.names = c("Day", "Count"))
 ```
 
-## Feature Engineering and Weather Data Merge
+# Feature Engineering and Weather Data Merge
 
 <div class="info-card">
 
@@ -149,7 +149,7 @@ merged_data <- left_join(merged_data, noaa_data_clean, by = c("start_date" = "DA
   janitor::clean_names()
 ```
 
-## Final Categorization and Export
+# Final Categorization and Export
 
 <div class="info-card">
 
@@ -228,7 +228,7 @@ write_csv(final_categorized_data, "data/final_bike_weather_categorized.csv")
 
 <div class="highlight-box">
 
-### ✅ Data Wrangling Complete!
+## ✅ Data Wrangling Complete!
 
 Our final dataset contains **100,000 strategically sampled rides** from September 2025, enriched with:
 - Temporal features (hour, day, weekday/weekend)

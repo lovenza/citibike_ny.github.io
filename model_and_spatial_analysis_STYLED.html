@@ -449,15 +449,25 @@ div.tocify {
     EDA &amp; Visualization
   </a>
 </li>
-<li>
-  <a href="model_and_spatial_analysis_STYLED.html">
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fa fa-calculator"></span>
      
     Statistical Analysis
+     
+    <span class="caret"></span>
   </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="statistical_analysis_RIDERSHIP_COMPLETE.html">Daily Ridership Analysis</a>
+    </li>
+    <li>
+      <a href="model_and_spatial_analysis_STYLED.html">Ride Duration Analysis</a>
+    </li>
+  </ul>
 </li>
 <li>
-  <a href="https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/">
+  <a href="https://YOUR_USERNAME.shinyapps.io/citibike_dashboard/">
     <span class="fa fa-dashboard"></span>
      
     Shiny Dashboard
@@ -522,16 +532,17 @@ Quantifying Weather and Temporal Effects on Ridership
 </p>
 </div>
 <p><br></p>
-<div id="introduction" class="section level2 info-card">
-<h2>Introduction</h2>
+<div id="introduction" class="section level1 info-card">
+<h1>Introduction</h1>
 <p>This analysis examines how weather conditions and temporal patterns
 influence <strong>individual ride duration</strong> (riding time) for
 NYC Citi Bike users in September 2025. Unlike aggregate daily ridership
 analysis (which has only 30 observations), analyzing individual rides
 provides <strong>100,000 observations</strong>, offering much greater
 statistical power and more robust findings.</p>
-<div id="research-questions" class="section level3">
-<h3>Research Questions</h3>
+<hr />
+<div id="research-questions" class="section level2">
+<h2>Research Questions</h2>
 <ol style="list-style-type: decimal">
 <li>How do weather variables (maximum temperature, minimum temperature,
 precipitation) affect ride duration?</li>
@@ -540,9 +551,10 @@ duration?</li>
 <li>How do these effects differ between member and casual riders?</li>
 <li>Do riders take longer trips in favorable weather conditions?</li>
 </ol>
+<hr />
 </div>
-<div id="advantages-of-ride-level-analysis" class="section level3">
-<h3>Advantages of Ride-Level Analysis</h3>
+<div id="advantages-of-ride-level-analysis" class="section level2">
+<h2>Advantages of Ride-Level Analysis</h2>
 <ul>
 <li><strong>Statistical Power</strong>: 100,000 observations vs. 30
 daily observations</li>
@@ -555,8 +567,8 @@ reliable estimates</li>
 </ul>
 </div>
 </div>
-<div id="load-libraries-and-data" class="section level2 info-card">
-<h2>Load Libraries and Data</h2>
+<div id="load-libraries-and-data" class="section level1 info-card">
+<h1>Load Libraries and Data</h1>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
@@ -602,8 +614,8 @@ reliable estimates</li>
 ## $ rain_category       &lt;chr&gt; &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Ra…
 ## $ weekend_and_holiday &lt;chr&gt; &quot;weekend and holiday&quot;, &quot;weekend and holiday&quot;, &quot;wee…</code></pre>
 </div>
-<div id="data-preparation" class="section level2 info-card">
-<h2>Data Preparation</h2>
+<div id="data-preparation" class="section level1 info-card">
+<h1>Data Preparation</h1>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Prepare ride-level data for analysis</span></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>ride_analysis_data <span class="ot">&lt;-</span> bike_weather <span class="sc">%&gt;%</span></span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
@@ -758,10 +770,10 @@ member
 </tbody>
 </table>
 </div>
-<div id="exploratory-data-analysis" class="section level2 info-card">
-<h2>Exploratory Data Analysis</h2>
-<div id="ride-duration-by-user-type-and-weather" class="section level3">
-<h3>Ride Duration by User Type and Weather</h3>
+<div id="exploratory-data-analysis" class="section level1 info-card">
+<h1>Exploratory Data Analysis</h1>
+<div id="ride-duration-by-user-type-and-weather" class="section level2">
+<h2>Ride Duration by User Type and Weather</h2>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Duration by temperature category</span></span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ride_analysis_data, <span class="fu">aes</span>(<span class="at">x =</span> temp_category, <span class="at">y =</span> ride_duration_min, <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">outlier.alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
@@ -793,10 +805,11 @@ member
 <span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>))</span>
 <span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a>  )</span></code></pre></div>
 <p><img src="model_and_spatial_analysis_STYLED_files/figure-html/duration_by_weather-1.png" width="960" /></p>
+<hr />
 </div>
 <div id="ride-duration-by-time-of-day-and-day-of-week"
-class="section level3">
-<h3>Ride Duration by Time of Day and Day of Week</h3>
+class="section level2">
+<h2>Ride Duration by Time of Day and Day of Week</h2>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># By time of day</span></span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">group_by</span>(time_of_day, member_casual) <span class="sc">%&gt;%</span></span>
@@ -853,10 +866,11 @@ class="section level3">
 <span id="cb8-54"><a href="#cb8-54" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>))</span>
 <span id="cb8-55"><a href="#cb8-55" tabindex="-1"></a>  )</span></code></pre></div>
 <p><img src="model_and_spatial_analysis_STYLED_files/figure-html/duration_by_time-1.png" width="960" /></p>
+<hr />
 </div>
 <div id="relationship-between-temperature-and-duration"
-class="section level3">
-<h3>Relationship Between Temperature and Duration</h3>
+class="section level2">
+<h2>Relationship Between Temperature and Duration</h2>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Sample 5000 points for visualization (100k is too many for scatter)</span></span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>sample_data <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
@@ -877,13 +891,14 @@ class="section level3">
 <p><img src="model_and_spatial_analysis_STYLED_files/figure-html/temp_duration_scatter-1.png" width="960" /></p>
 </div>
 </div>
-<div id="statistical-methodology" class="section level2 info-card">
-<h2>Statistical Methodology</h2>
+<div id="statistical-methodology" class="section level1 info-card">
+<h1>Statistical Methodology</h1>
 <p>We employ multiple linear regression to model individual ride
 duration as a function of weather and temporal predictors. The large
 sample size (N ≈ 100,000) provides excellent statistical power.</p>
-<div id="model-specifications" class="section level3">
-<h3>Model Specifications</h3>
+<hr />
+<div id="model-specifications" class="section level2">
+<h2>Model Specifications</h2>
 <p>We fit three main models:</p>
 <ol style="list-style-type: decimal">
 <li><strong>Total Sample Model</strong>: All rides</li>
@@ -901,9 +916,10 @@ sample size (N ≈ 100,000) provides excellent statistical power.</p>
 ride duration in minutes - Weather variables: TMAX, TMIN, PRCP - Day of
 week indicators (Monday as reference) - Time of day indicators (Morning
 Rush as reference)</p>
+<hr />
 </div>
-<div id="why-ride-level-analysis-is-better" class="section level3">
-<h3>Why Ride-Level Analysis is Better</h3>
+<div id="why-ride-level-analysis-is-better" class="section level2">
+<h2>Why Ride-Level Analysis is Better</h2>
 <p><strong>Advantages:</strong> 1. <strong>100,000 observations</strong>
 vs 30 daily observations 2. Can control for time-of-day effects 3. Can
 analyze individual behavior patterns 4. More statistical power for
@@ -911,8 +927,8 @@ detecting effects 5. Can use robust standard errors to handle
 heteroscedasticity</p>
 </div>
 </div>
-<div id="correlation-analysis" class="section level2 info-card">
-<h2>Correlation Analysis</h2>
+<div id="correlation-analysis" class="section level1 info-card">
+<h1>Correlation Analysis</h1>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Select numeric variables for correlation</span></span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>cor_vars <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="fu">select</span>(ride_duration_min, tmax, tmin, prcp, distance_km, hour) <span class="sc">%&gt;%</span></span>
@@ -1294,11 +1310,11 @@ hour
 <span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Distance vs Duration: r = %.3f, p &lt; 0.001</span><span class="sc">\n</span><span class="st">&quot;</span>, test3<span class="sc">$</span>estimate))</span></code></pre></div>
 <pre><code>## Distance vs Duration: r = 0.651, p &lt; 0.001</code></pre>
 </div>
-<div id="model-fitting" class="section level2 info-card">
-<h2>Model Fitting</h2>
+<div id="model-fitting" class="section level1 info-card">
+<h1>Model Fitting</h1>
 <div id="full-models-with-weather-and-temporal-variables"
-class="section level3">
-<h3>Full Models with Weather and Temporal Variables</h3>
+class="section level2">
+<h2>Full Models with Weather and Temporal Variables</h2>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="co"># Model 1: All Riders</span></span>
 <span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>model_total_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
 <span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>  ride_duration_min <span class="sc">~</span> tmax <span class="sc">+</span> tmin <span class="sc">+</span> prcp <span class="sc">+</span> distance_km <span class="sc">+</span></span>
@@ -1431,8 +1447,8 @@ class="section level3">
 ## F-statistic: 412.9 on 13 and 18932 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
-<div id="comprehensive-results" class="section level2 info-card">
-<h2>Comprehensive Results</h2>
+<div id="comprehensive-results" class="section level1 info-card">
+<h1>Comprehensive Results</h1>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="co"># Extract coefficients for all models</span></span>
 <span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>coef_total <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model_total_full) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">&quot;All Riders&quot;</span>)</span>
 <span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>coef_member <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model_member_full) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">&quot;Members&quot;</span>)</span>
@@ -1771,11 +1787,11 @@ Casual
 </tbody>
 </table>
 </div>
-<div id="clear-key-findings" class="section level2 info-card">
-<h2>CLEAR KEY FINDINGS</h2>
+<div id="clear-key-findings" class="section level1 info-card">
+<h1>CLEAR KEY FINDINGS</h1>
 <div id="key-finding-1-temperature-has-modest-effect-on-duration"
-class="section level3">
-<h3>KEY FINDING 1: Temperature Has Modest Effect on Duration</h3>
+class="section level2">
+<h2>KEY FINDING 1: Temperature Has Modest Effect on Duration</h2>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>temp_findings_duration <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
 <span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>  <span class="st">`</span><span class="at">User Type</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;All Riders&quot;</span>, <span class="st">&quot;Members&quot;</span>, <span class="st">&quot;Casual&quot;</span>),</span>
 <span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">Effect per 10°F</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
@@ -1879,10 +1895,11 @@ every 10°F increase in maximum temperature, rides are approximately
 significant with our large sample but practically small.</p>
 <p><strong>User Comparison:</strong> Both casual riders and members show
 similar small temperature effects.</p>
+<hr />
 </div>
 <div id="key-finding-2-distance-is-the-strongest-predictor-of-duration"
-class="section level3">
-<h3>KEY FINDING 2: Distance is the Strongest Predictor of Duration</h3>
+class="section level2">
+<h2>KEY FINDING 2: Distance is the Strongest Predictor of Duration</h2>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>distance_findings <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
 <span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>  <span class="st">`</span><span class="at">User Type</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;All Riders&quot;</span>, <span class="st">&quot;Members&quot;</span>, <span class="st">&quot;Casual&quot;</span>),</span>
 <span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">Effect per km</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
@@ -1961,10 +1978,11 @@ High
 additional kilometer traveled adds approximately 4-5 minutes to ride
 duration. This makes intuitive sense: longer distances require more
 time. Weather and temporal effects are small in comparison.</p>
+<hr />
 </div>
 <div id="key-finding-3-precipitation-slightly-reduces-ride-duration"
-class="section level3">
-<h3>KEY FINDING 3: Precipitation Slightly Reduces Ride Duration</h3>
+class="section level2">
+<h2>KEY FINDING 3: Precipitation Slightly Reduces Ride Duration</h2>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>precip_findings_duration <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
 <span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>  <span class="st">`</span><span class="at">User Type</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;All Riders&quot;</span>, <span class="st">&quot;Members&quot;</span>, <span class="st">&quot;Casual&quot;</span>),</span>
 <span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">Effect per inch</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
@@ -2043,10 +2061,11 @@ Slightly shorter rides in rain
 precipitation is associated with rides that are approximately 0.5
 minutes shorter. This suggests riders minimize their time in the rain by
 taking more direct routes or shortening discretionary trips.</p>
+<hr />
 </div>
 <div id="key-finding-4-casual-riders-take-much-longer-trips"
-class="section level3">
-<h3>KEY FINDING 4: Casual Riders Take Much Longer Trips</h3>
+class="section level2">
+<h2>KEY FINDING 4: Casual Riders Take Much Longer Trips</h2>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>user_comparison <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
 <span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>  <span class="at">Metric =</span> <span class="fu">c</span>(<span class="st">&quot;Mean Duration&quot;</span>, <span class="st">&quot;Median Duration&quot;</span>, <span class="st">&quot;Sample Size&quot;</span>),</span>
 <span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a>  <span class="at">Members =</span> <span class="fu">c</span>(</span>
@@ -2142,10 +2161,11 @@ average, casual rides are 50-60% longer. This reflects different usage
 patterns: - <strong>Members</strong>: Quick, utilitarian trips (likely
 commuting) - <strong>Casual</strong>: Longer, leisurely rides (likely
 recreational/tourism)</p>
+<hr />
 </div>
 <div id="key-finding-5-large-sample-provides-precise-estimates"
-class="section level3">
-<h3>KEY FINDING 5: Large Sample Provides Precise Estimates</h3>
+class="section level2">
+<h2>KEY FINDING 5: Large Sample Provides Precise Estimates</h2>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>precision_metrics <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
 <span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>  <span class="at">Analysis =</span> <span class="fu">c</span>(<span class="st">&quot;Daily Ridership (N=30)&quot;</span>, <span class="st">&quot;Individual Rides (N=100,000)&quot;</span>),</span>
 <span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">Standard Errors</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Large (unstable)&quot;</span>, <span class="st">&quot;Small (precise)&quot;</span>),</span>
@@ -2228,8 +2248,8 @@ very small (more precise estimates) - All p-values &lt; 0.001 for
 significant effects - Results are highly reliable and reproducible</p>
 </div>
 </div>
-<div id="model-diagnostics" class="section level2 info-card">
-<h2>Model Diagnostics</h2>
+<div id="model-diagnostics" class="section level1 info-card">
+<h1>Model Diagnostics</h1>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="co"># Diagnostic plots for total model (sample 5000 for speed)</span></span>
 <span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
 <span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a><span class="fu">plot</span>(model_total_full, <span class="at">which =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">main =</span> <span class="st">&quot;Total Model Diagnostics (All Riders)&quot;</span>)</span></code></pre></div>
@@ -2239,10 +2259,10 @@ deviation from normality is expected but not problematic - Residual
 patterns show good model fit - Heteroscedasticity present (common with
 large samples) - can use robust standard errors if needed</p>
 </div>
-<div id="discussion-and-conclusions" class="section level2 info-card">
-<h2>Discussion and Conclusions</h2>
-<div id="main-findings-summary" class="section level3">
-<h3>Main Findings Summary</h3>
+<div id="discussion-and-conclusions" class="section level1 info-card">
+<h1>Discussion and Conclusions</h1>
+<div id="main-findings-summary" class="section level2">
+<h2>Main Findings Summary</h2>
 <p><strong>1. Distance Dominates Duration</strong><br />
 The strongest predictor of ride duration is trip distance (~4.3 minutes
 per km). Weather and temporal effects are small in comparison.</p>
@@ -2258,10 +2278,11 @@ recreational trips (tourism/leisure)</p>
 Analyzing 100,000 rides vs 30 daily observations provides: - Much
 smaller standard errors - Ability to detect small effects - High
 confidence in all findings</p>
+<hr />
 </div>
 <div id="comparison-ridership-vs-duration-analysis"
-class="section level3">
-<h3>Comparison: Ridership vs Duration Analysis</h3>
+class="section level2">
+<h2>Comparison: Ridership vs Duration Analysis</h2>
 <table>
 <colgroup>
 <col width="12%" />
@@ -2303,9 +2324,10 @@ class="section level3">
 </tr>
 </tbody>
 </table>
+<hr />
 </div>
-<div id="why-both-analyses-matter" class="section level3">
-<h3>Why Both Analyses Matter</h3>
+<div id="why-both-analyses-matter" class="section level2">
+<h2>Why Both Analyses Matter</h2>
 <p><strong>Daily Ridership Analysis</strong> answers: “What makes people
 decide to ride?” - Weather is VERY important (rain = -27% ridership) -
 Day of week matters (commuter patterns)</p>
@@ -2313,9 +2335,10 @@ Day of week matters (commuter patterns)</p>
 decides to ride, what affects their trip?” - Distance is most important
 - Weather has small effects on duration - User type drives duration
 differences</p>
+<hr />
 </div>
-<div id="practical-implications" class="section level3">
-<h3>Practical Implications</h3>
+<div id="practical-implications" class="section level2">
+<h2>Practical Implications</h2>
 <ol style="list-style-type: decimal">
 <li><strong>For Operations</strong>: Focus rebalancing on distance
 patterns, not just weather</li>
@@ -2324,9 +2347,10 @@ leisurely rides for casual</li>
 <li><strong>For Urban Planning</strong>: Distance/destination matters
 more than weather for trip planning</li>
 </ol>
+<hr />
 </div>
-<div id="limitations" class="section level3">
-<h3>Limitations</h3>
+<div id="limitations" class="section level2">
+<h2>Limitations</h2>
 <ol style="list-style-type: decimal">
 <li>Still cross-sectional (one month of data)</li>
 <li>Ride duration may have non-linear relationships</li>
@@ -2336,8 +2360,8 @@ more than weather for trip planning</li>
 </div>
 </div>
 <p><br></p>
-<div id="key-takeaways" class="section level2 highlight-box">
-<h2>Key Takeaways</h2>
+<div id="key-takeaways" class="section level1 highlight-box">
+<h1>Key Takeaways</h1>
 <ol style="list-style-type: decimal">
 <li><strong>Distance Dominates Duration</strong>: The strongest
 predictor of ride duration is trip distance (~4.3 minutes per km)</li>

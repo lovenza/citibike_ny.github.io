@@ -449,15 +449,25 @@ div.tocify {
     EDA &amp; Visualization
   </a>
 </li>
-<li>
-  <a href="model_and_spatial_analysis_STYLED.html">
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fa fa-calculator"></span>
      
     Statistical Analysis
+     
+    <span class="caret"></span>
   </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="statistical_analysis_RIDERSHIP_COMPLETE.html">Daily Ridership Analysis</a>
+    </li>
+    <li>
+      <a href="model_and_spatial_analysis_STYLED.html">Ride Duration Analysis</a>
+    </li>
+  </ul>
 </li>
 <li>
-  <a href="https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/">
+  <a href="https://YOUR_USERNAME.shinyapps.io/citibike_dashboard/">
     <span class="fa fa-dashboard"></span>
      
     Shiny Dashboard
@@ -513,7 +523,18 @@ Effects on NYC Citi Bike Ridership</h1>
 </div>
 
 
-<div id="executive-summary" class="section level1">
+<p><a href="index_citibike.html" class="back-home">
+<i class="fa fa-home"></i> Back to Home </a></p>
+<div class="hero-section">
+<h1>
+📊 Statistical Analysis: Daily Ridership
+</h1>
+<p>
+Weather and Temporal Effects on NYC Citi Bike Ridership
+</p>
+</div>
+<p><br></p>
+<div id="executive-summary" class="section level1 info-card">
 <h1>Executive Summary</h1>
 <p>This analysis examines daily NYC Citi Bike ridership patterns in
 September 2025 using a <strong>proportional stratified random
@@ -525,7 +546,6 @@ ridership (~7-8% increase per 10°F) - Precipitation strongly reduces
 ridership (~25-30% per inch) - Clear weekday/weekend patterns differ
 between members and casual users - Casual riders are 2-3× more
 weather-sensitive than members</p>
-<hr />
 <div id="proportional-stratified-sampling-design"
 class="section level2">
 <h2>Proportional Stratified Sampling Design</h2>
@@ -541,10 +561,9 @@ variation</strong></p>
 patterns. If Monday had 2× the ridership of Sunday in the population,
 our sample will show the same 2:1 ratio. All proportional effects
 (percentages, ratios, correlations) are valid population estimates.</p>
-<hr />
 </div>
 </div>
-<div id="load-libraries-and-data" class="section level1">
+<div id="load-libraries-and-data" class="section level1 info-card">
 <h1>Load Libraries and Data</h1>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
@@ -563,9 +582,8 @@ our sample will show the same 2:1 ratio. All proportional effects
 <pre><code>## Date range: 2025-09-01 to 2025-09-30</code></pre>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;User types: %s</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">paste</span>(<span class="fu">unique</span>(bike_weather<span class="sc">$</span>member_casual), <span class="at">collapse =</span> <span class="st">&quot;, &quot;</span>)))</span></code></pre></div>
 <pre><code>## User types: casual, member</code></pre>
-<hr />
 </div>
-<div id="data-preparation" class="section level1">
+<div id="data-preparation" class="section level1 info-card">
 <h1>Data Preparation</h1>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Aggregate to daily level</span></span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>daily_ridership <span class="ot">&lt;-</span> bike_weather <span class="sc">%&gt;%</span></span>
@@ -635,6 +653,8 @@ our sample will show the same 2:1 ratio. All proportional effects
 <pre><code>## ✓ Days with more samples had higher actual ridership</code></pre>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;✓ All proportional effects are valid population estimates</span><span class="sc">\n\n</span><span class="st">&quot;</span>)</span></code></pre></div>
 <pre><code>## ✓ All proportional effects are valid population estimates</code></pre>
+<div id="descriptive-statistics" class="section level2">
+<h2>Descriptive Statistics</h2>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="co"># Descriptive statistics</span></span>
 <span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>desc_stats <span class="ot">&lt;-</span> daily_ridership <span class="sc">%&gt;%</span></span>
 <span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
@@ -857,9 +877,9 @@ represents real population patterns
 </tr>
 </tfoot>
 </table>
-<hr />
 </div>
-<div id="statistical-analysis" class="section level1">
+</div>
+<div id="statistical-analysis" class="section level1 info-card">
 <h1>Statistical Analysis</h1>
 <div id="correlation-analysis" class="section level2">
 <h2>Correlation Analysis</h2>
@@ -2075,10 +2095,9 @@ Full Model
 <span id="cb46-22"><a href="#cb46-22" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb46-23"><a href="#cb46-23" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span></code></pre></div>
 <p><img src="statistical_analysis_RIDERSHIP_COMPLETE_files/figure-html/r2_viz-1.png" width="960" /></p>
-<hr />
 </div>
 </div>
-<div id="clear-key-findings" class="section level1">
+<div id="clear-key-findings" class="section level1 info-card">
 <h1>CLEAR KEY FINDINGS</h1>
 <div id="key-finding-1-temperature-affects-ridership"
 class="section level2">
@@ -2560,10 +2579,9 @@ confirmed</strong></p>
 coefficients → <strong>Differential patterns confirmed</strong></p>
 <p>The convergence across methods provides robust evidence for our
 conclusions.</p>
-<hr />
 </div>
 </div>
-<div id="model-diagnostics" class="section level1">
+<div id="model-diagnostics" class="section level1 info-card">
 <h1>Model Diagnostics</h1>
 <div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
 <span id="cb51-2"><a href="#cb51-2" tabindex="-1"></a><span class="fu">plot</span>(model_total_full, <span class="at">main =</span> <span class="st">&quot;Total Ridership: Model Diagnostics&quot;</span>)</span></code></pre></div>
@@ -2571,9 +2589,8 @@ conclusions.</p>
 <p><strong>Assessment:</strong> - Residuals show reasonable scatter -
 Q-Q plot indicates approximate normality - No extreme influential points
 - Model assumptions reasonably satisfied</p>
-<hr />
 </div>
-<div id="discussion" class="section level1">
+<div id="discussion" class="section level1 info-card">
 <h1>Discussion</h1>
 <div id="main-findings" class="section level2">
 <h2>Main Findings</h2>
@@ -2656,10 +2673,9 @@ recreationalists</p>
 infrastructure in high-traffic areas - Focus expansion on commuter
 corridors for members - Enhance recreational routes for weekend casual
 users</p>
-<hr />
 </div>
 </div>
-<div id="conclusions" class="section level1">
+<div id="conclusions" class="section level1 info-card">
 <h1>Conclusions</h1>
 <p>Based on proportional stratified sampling of ~100,000 rides across
 September 2025:</p>
