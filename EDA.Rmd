@@ -11,7 +11,7 @@ output:
     css: styles.css
 ---
 
-<a href="index_citibike.html" class="back-home">
+<a href="index.html" class="back-home">
   <i class="fa fa-home"></i> Back to Home
 </a>
 
@@ -461,7 +461,7 @@ Overall, the decomposition suggests daily ride counts have a clear upward trend 
 
 <br>
 
-<a href="index_citibike.html" class="back-home">
+<a href="index.html" class="back-home">
   <i class="fa fa-home"></i> Back to Home
 </a>
 
