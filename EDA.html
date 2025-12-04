@@ -59,9 +59,8 @@
   }
 </style>
 <style type="text/css" data-origin="pandoc">
-html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -72,7 +71,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -465,7 +464,7 @@ div.tocify {
   </ul>
 </li>
 <li>
-  <a href="https://YOUR_USERNAME.shinyapps.io/citibike_dashboard/">
+  <a href="https://kwokmungyu.shinyapps.io/shiny_app/">
     <span class="fa fa-dashboard"></span>
      
     Shiny Dashboard
@@ -532,102 +531,84 @@ Uncovering Patterns in NYC Citi Bike Usage
 <div id="data-loading" class="section level1 info-card">
 <h1>Data Loading</h1>
 <p>Load key packages and data.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
-<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-## ✔ dplyr     1.1.4     ✔ readr     2.1.5
-## ✔ forcats   1.0.0     ✔ stringr   1.5.1
-## ✔ ggplot2   3.5.2     ✔ tibble    3.3.0
-## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
-## ✔ purrr     1.1.0     
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span></code></pre></div>
 <pre><code>## 
-## Attaching package: &#39;gridExtra&#39;
-## 
-## The following object is masked from &#39;package:dplyr&#39;:
+## Attaching package: &#39;gridExtra&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
 ## 
 ##     combine</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">library</span>(tsibble)</span></code></pre></div>
-<pre><code>## Registered S3 method overwritten by &#39;tsibble&#39;:
-##   method               from 
-##   as_tibble.grouped_df dplyr
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(tsibble)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;tsibble&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:lubridate&#39;:
 ## 
-## Attaching package: &#39;tsibble&#39;
-## 
-## The following object is masked from &#39;package:lubridate&#39;:
-## 
-##     interval
-## 
-## The following objects are masked from &#39;package:base&#39;:
+##     interval</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, union</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">library</span>(feasts)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">library</span>(feasts)</span></code></pre></div>
 <pre><code>## Loading required package: fabletools</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">library</span>(scales)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">library</span>(scales)</span></code></pre></div>
 <pre><code>## 
-## Attaching package: &#39;scales&#39;
+## Attaching package: &#39;scales&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
 ## 
-## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     discard
-## 
-## The following object is masked from &#39;package:readr&#39;:
+##     discard</code></pre>
+<pre><code>## The following object is masked from &#39;package:readr&#39;:
 ## 
 ##     col_factor</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="fu">library</span>(forecast)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="fu">library</span>(forecast)</span></code></pre></div>
 <pre><code>## Registered S3 method overwritten by &#39;quantmod&#39;:
 ##   method            from
 ##   as.zoo.data.frame zoo</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>bike <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/final_bike_weather_categorized.csv&quot;</span>)</span></code></pre></div>
-<pre><code>## Rows: 99986 Columns: 28
-## ── Column specification ────────────────────────────────────────────────────────
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>bike <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/final_bike_weather_categorized.csv&quot;</span>)</span></code></pre></div>
+<pre><code>## Rows: 99986 Columns: 28</code></pre>
+<pre><code>## ── Column specification ───────────────────────────────────────────────────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
-## chr  (11): ride_id, rideable_type, start_station_name, start_station_id, end...
-## dbl  (12): start_lat, start_lng, end_lat, end_lng, start_month, start_day, r...
+## chr  (11): ride_id, rideable_type, start_station_name, start_station_id, end_station_name, end_station_id, member_casual, t...
+## dbl  (12): start_lat, start_lng, end_lat, end_lng, start_month, start_day, ride_duration_hours, distance_km, bearing_degree...
 ## dttm  (4): started_at, ended_at, datetime_start_obj, datetime_end_obj
 ## date  (1): start_date
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">glimpse</span>(bike)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">glimpse</span>(bike)</span></code></pre></div>
 <pre><code>## Rows: 99,986
 ## Columns: 28
-## $ ride_id             &lt;chr&gt; &quot;761B30A5B7B64236&quot;, &quot;FBEA1249070FDC8C&quot;, &quot;91A501973…
-## $ rideable_type       &lt;chr&gt; &quot;electric_bike&quot;, &quot;electric_bike&quot;, &quot;classic_bike&quot;, …
-## $ started_at          &lt;dttm&gt; 2025-09-01 11:38:30, 2025-09-01 19:38:52, 2025-09…
-## $ ended_at            &lt;dttm&gt; 2025-09-01 11:42:08, 2025-09-01 19:46:19, 2025-09…
-## $ start_station_name  &lt;chr&gt; &quot;5 Ave &amp; E 30 St&quot;, &quot;W 74 St &amp; Columbus Ave&quot;, &quot;Cumb…
-## $ start_station_id    &lt;chr&gt; &quot;6248.08&quot;, &quot;7230.10&quot;, &quot;4428.02&quot;, &quot;4467.03&quot;, &quot;5329.…
-## $ end_station_name    &lt;chr&gt; &quot;8 Ave &amp; W 31 St&quot;, &quot;3 Ave &amp; E 72 St&quot;, &quot;Lafayette A…
-## $ end_station_id      &lt;chr&gt; &quot;6450.05&quot;, &quot;7028.04&quot;, &quot;4470.09&quot;, &quot;4122.03&quot;, &quot;5989.…
-## $ start_lat           &lt;dbl&gt; 40.74598, 40.77857, 40.68753, 40.68672, 40.71755, …
-## $ start_lng           &lt;dbl&gt; -73.98629, -73.97755, -73.97265, -73.93899, -74.01…
-## $ end_lat             &lt;dbl&gt; 40.75059, 40.76994, 40.68700, 40.67686, 40.73805, …
-## $ end_lng             &lt;dbl&gt; -73.99468, -73.96061, -73.97665, -73.93607, -73.99…
-## $ member_casual       &lt;chr&gt; &quot;casual&quot;, &quot;casual&quot;, &quot;member&quot;, &quot;casual&quot;, &quot;casual&quot;, …
-## $ datetime_start_obj  &lt;dttm&gt; 2025-09-01 11:38:30, 2025-09-01 19:38:52, 2025-09…
-## $ datetime_end_obj    &lt;dttm&gt; 2025-09-01 11:42:08, 2025-09-01 19:46:19, 2025-09…
-## $ start_month         &lt;dbl&gt; 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,…
-## $ start_day           &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
-## $ ride_duration_hours &lt;dbl&gt; 0.06069722, 0.12432833, 0.04609028, 0.19654083, 0.…
-## $ distance_km         &lt;dbl&gt; 0.8734433, 1.7209451, 0.3426126, 1.1251295, 2.6857…
-## $ bearing_degrees     &lt;dbl&gt; -54.20579, 123.80039, -99.91008, 167.30502, 31.924…
-## $ start_date          &lt;date&gt; 2025-09-01, 2025-09-01, 2025-09-01, 2025-09-01, 2…
-## $ tmax                &lt;dbl&gt; 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78…
-## $ tmin                &lt;dbl&gt; 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64…
-## $ prcp                &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
-## $ temp_diff_category  &lt;chr&gt; &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, …
-## $ temp_level_category &lt;chr&gt; &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;…
-## $ rain_category       &lt;chr&gt; &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Ra…
-## $ weekend_and_holiday &lt;chr&gt; &quot;weekend and holiday&quot;, &quot;weekend and holiday&quot;, &quot;wee…</code></pre>
+## $ ride_id             &lt;chr&gt; &quot;761B30A5B7B64236&quot;, &quot;FBEA1249070FDC8C&quot;, &quot;91A5019736D417E6&quot;, &quot;F1CD7CB1CF230FBB&quot;, &quot;31C8B256EFAD12A9…
+## $ rideable_type       &lt;chr&gt; &quot;electric_bike&quot;, &quot;electric_bike&quot;, &quot;classic_bike&quot;, &quot;electric_bike&quot;, &quot;classic_bike&quot;, &quot;electric_bike…
+## $ started_at          &lt;dttm&gt; 2025-09-01 11:38:30, 2025-09-01 19:38:52, 2025-09-01 13:55:21, 2025-09-01 18:10:23, 2025-09-01 1…
+## $ ended_at            &lt;dttm&gt; 2025-09-01 11:42:08, 2025-09-01 19:46:19, 2025-09-01 13:58:07, 2025-09-01 18:22:11, 2025-09-01 1…
+## $ start_station_name  &lt;chr&gt; &quot;5 Ave &amp; E 30 St&quot;, &quot;W 74 St &amp; Columbus Ave&quot;, &quot;Cumberland St &amp; Lafayette Ave&quot;, &quot;Monroe St &amp; Marcus…
+## $ start_station_id    &lt;chr&gt; &quot;6248.08&quot;, &quot;7230.10&quot;, &quot;4428.02&quot;, &quot;4467.03&quot;, &quot;5329.03&quot;, &quot;4157.10&quot;, &quot;7606.01&quot;, &quot;6912.01&quot;, &quot;7260.09&quot;…
+## $ end_station_name    &lt;chr&gt; &quot;8 Ave &amp; W 31 St&quot;, &quot;3 Ave &amp; E 72 St&quot;, &quot;Lafayette Ave &amp; Ft Greene Pl&quot;, &quot;Pacific St &amp; Troy Ave&quot;, &quot;W…
+## $ end_station_id      &lt;chr&gt; &quot;6450.05&quot;, &quot;7028.04&quot;, &quot;4470.09&quot;, &quot;4122.03&quot;, &quot;5989.02&quot;, &quot;4231.04&quot;, &quot;7606.01&quot;, &quot;6912.01&quot;, &quot;7023.04&quot;…
+## $ start_lat           &lt;dbl&gt; 40.74598, 40.77857, 40.68753, 40.68672, 40.71755, 40.67944, 40.79819, 40.76674, 40.77967, 40.7466…
+## $ start_lng           &lt;dbl&gt; -73.98629, -73.97755, -73.97265, -73.93899, -74.01322, -73.96804, -73.96059, -73.97907, -73.98093…
+## $ end_lat             &lt;dbl&gt; 40.75059, 40.76994, 40.68700, 40.67686, 40.73805, 40.68048, 40.79819, 40.76674, 40.77051, 40.7340…
+## $ end_lng             &lt;dbl&gt; -73.99468, -73.96061, -73.97665, -73.93607, -73.99643, -73.96468, -73.96059, -73.97907, -73.98804…
+## $ member_casual       &lt;chr&gt; &quot;casual&quot;, &quot;casual&quot;, &quot;member&quot;, &quot;casual&quot;, &quot;casual&quot;, &quot;member&quot;, &quot;casual&quot;, &quot;casual&quot;, &quot;member&quot;, &quot;member…
+## $ datetime_start_obj  &lt;dttm&gt; 2025-09-01 11:38:30, 2025-09-01 19:38:52, 2025-09-01 13:55:21, 2025-09-01 18:10:23, 2025-09-01 1…
+## $ datetime_end_obj    &lt;dttm&gt; 2025-09-01 11:42:08, 2025-09-01 19:46:19, 2025-09-01 13:58:07, 2025-09-01 18:22:11, 2025-09-01 1…
+## $ start_month         &lt;dbl&gt; 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9…
+## $ start_day           &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ ride_duration_hours &lt;dbl&gt; 0.06069722, 0.12432833, 0.04609028, 0.19654083, 0.33333361, 0.50450139, 0.06815056, 0.23914194, 0…
+## $ distance_km         &lt;dbl&gt; 0.8734433, 1.7209451, 0.3426126, 1.1251295, 2.6857201, 0.3069076, 0.0000000, 0.0000000, 1.1822209…
+## $ bearing_degrees     &lt;dbl&gt; -54.205788, 123.800393, -99.910075, 167.305024, 31.924904, 67.807068, 180.000000, 180.000000, -14…
+## $ start_date          &lt;date&gt; 2025-09-01, 2025-09-01, 2025-09-01, 2025-09-01, 2025-09-01, 2025-09-01, 2025-09-01, 2025-09-01, …
+## $ tmax                &lt;dbl&gt; 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 7…
+## $ tmin                &lt;dbl&gt; 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 6…
+## $ prcp                &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+## $ temp_diff_category  &lt;chr&gt; &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium…
+## $ temp_level_category &lt;chr&gt; &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;,…
+## $ rain_category       &lt;chr&gt; &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;…
+## $ weekend_and_holiday &lt;chr&gt; &quot;weekend and holiday&quot;, &quot;weekend and holiday&quot;, &quot;weekend and holiday&quot;, &quot;weekend and holiday&quot;, &quot;week…</code></pre>
 </div>
 <div id="dataset-overview" class="section level1 info-card">
 <h1>1. Dataset Overview</h1>
@@ -665,45 +646,42 @@ rain category)<br />
 <p>In this part, we perform exploratory data analysis (EDA) and
 visualization for Citi Bike trips in September 2025 focusing on temporal
 patterns and weather influences.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="cf">if</span> (<span class="st">&quot;datetime_start_obj&quot;</span> <span class="sc">%in%</span> <span class="fu">names</span>(bike) <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">all</span>(<span class="fu">is.na</span>(bike<span class="sc">$</span>datetime_start_obj))) {</span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  bike <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">datetime_start =</span> <span class="fu">ymd_hms</span>(datetime_start_obj, <span class="at">quiet =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>  bike <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">datetime_start =</span> <span class="fu">ymd_hms</span>(started_at, <span class="at">quiet =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>}</span>
-<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>bike <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(datetime_start),</span>
-<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>  <span class="at">hour =</span> <span class="fu">hour</span>(datetime_start),</span>
-<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>  <span class="at">wday =</span> <span class="fu">wday</span>(datetime_start, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">week_start =</span> <span class="dv">1</span>),</span>
-<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a>  <span class="at">weekday_weekend =</span> <span class="fu">case_when</span>(</span>
-<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a>  weekend_and_holiday <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;weekend&quot;</span>, <span class="st">&quot;weekend and holiday&quot;</span>, <span class="st">&quot;Weekend&quot;</span>, <span class="st">&quot;weekend and holiday&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Weekend&quot;</span>, <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;Weekday&quot;</span>),</span>
-<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a>  <span class="at">user_type =</span> member_casual</span>
-<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="cf">if</span> (<span class="st">&quot;datetime_start_obj&quot;</span> <span class="sc">%in%</span> <span class="fu">names</span>(bike) <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">all</span>(<span class="fu">is.na</span>(bike<span class="sc">$</span>datetime_start_obj))) {</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>  bike <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">datetime_start =</span> <span class="fu">ymd_hms</span>(datetime_start_obj, <span class="at">quiet =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>  bike <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">datetime_start =</span> <span class="fu">ymd_hms</span>(started_at, <span class="at">quiet =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>}</span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>bike <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(datetime_start),</span>
+<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a>  <span class="at">hour =</span> <span class="fu">hour</span>(datetime_start),</span>
+<span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a>  <span class="at">wday =</span> <span class="fu">wday</span>(datetime_start, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">week_start =</span> <span class="dv">1</span>),</span>
+<span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a>  <span class="at">weekday_weekend =</span> <span class="fu">case_when</span>(</span>
+<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a>  weekend_and_holiday <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;weekend&quot;</span>, <span class="st">&quot;weekend and holiday&quot;</span>, <span class="st">&quot;Weekend&quot;</span>, <span class="st">&quot;weekend and holiday&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Weekend&quot;</span>, <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;Weekday&quot;</span>),</span>
+<span id="cb21-15"><a href="#cb21-15" tabindex="-1"></a>  <span class="at">user_type =</span> member_casual</span>
+<span id="cb21-16"><a href="#cb21-16" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div id="daily-aggregates" class="section level1 info-card">
 <h1>2. Daily Aggregates</h1>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>daily <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date) <span class="sc">%&gt;%</span></span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>    <span class="at">total_rides =</span> <span class="fu">n</span>(),</span>
-<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>    <span class="at">avg_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>    <span class="at">member_rides =</span> <span class="fu">sum</span>(member_casual <span class="sc">==</span> <span class="st">&quot;member&quot;</span>),</span>
-<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>    <span class="at">casual_rides =</span> <span class="fu">sum</span>(member_casual <span class="sc">==</span> <span class="st">&quot;casual&quot;</span>),</span>
-<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>    <span class="at">tmax =</span> tmax,</span>
-<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>    <span class="at">prcp =</span> prcp</span>
-<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>  )</span></code></pre></div>
-<pre><code>## Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
-## dplyr 1.1.0.
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>daily <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>    <span class="at">total_rides =</span> <span class="fu">n</span>(),</span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>    <span class="at">avg_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>    <span class="at">member_rides =</span> <span class="fu">sum</span>(member_casual <span class="sc">==</span> <span class="st">&quot;member&quot;</span>),</span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>    <span class="at">casual_rides =</span> <span class="fu">sum</span>(member_casual <span class="sc">==</span> <span class="st">&quot;casual&quot;</span>),</span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>    <span class="at">tmax =</span> tmax,</span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a>    <span class="at">prcp =</span> prcp</span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a>  )</span></code></pre></div>
+<pre><code>## Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in dplyr 1.1.0.
 ## ℹ Please use `reframe()` instead.
-## ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()`
-##   always returns an ungrouped data frame and adjust accordingly.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">head</span>(daily)</span></code></pre></div>
+## ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()` always returns an ungrouped data frame and
+##   adjust accordingly.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">head</span>(daily)</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 7
 ## # Groups:   start_date [1]
 ##   start_date total_rides avg_duration member_rides casual_rides  tmax  prcp
@@ -717,17 +695,16 @@ patterns and weather influences.</p>
 </div>
 <div id="daily-ride-volume" class="section level1 info-card">
 <h1>3. Daily Ride Volume</h1>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>p_daily_rides <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> start_date, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
-<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Ride Volume — September 2025&quot;</span>,</span>
-<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Count&quot;</span>) <span class="sc">+</span></span>
-<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>p_daily_rides <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> start_date, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Ride Volume — September 2025&quot;</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Count&quot;</span>) <span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 ## ℹ Please use `linewidth` instead.
 ## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.</code></pre>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>p_daily_rides</span></code></pre></div>
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>p_daily_rides</span></code></pre></div>
 <p><img src="EDA_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="member-vs-casual-ride-patterns"
@@ -735,49 +712,47 @@ class="section level1 info-card">
 <h1>4. Member vs Casual Ride Patterns</h1>
 <div id="daily-average-duration" class="section level2">
 <h2>4.1 Daily Average Duration</h2>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>dur_ts <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, member_casual) <span class="sc">%&gt;%</span></span>
-<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">ggplot</span>(dur_ts, <span class="fu">aes</span>(start_date, mean_duration, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Average Ride Duration — Member vs Casual&quot;</span>,</span>
-<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Duration (hours)&quot;</span>) <span class="sc">+</span></span>
-<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>dur_ts <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, member_casual) <span class="sc">%&gt;%</span></span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">ggplot</span>(dur_ts, <span class="fu">aes</span>(start_date, mean_duration, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
+<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Average Ride Duration — Member vs Casual&quot;</span>,</span>
+<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Duration (hours)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <p><img src="EDA_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="hourly-ride-count" class="section level2">
 <h2>4.2 Hourly Ride Count</h2>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>hourly <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>  <span class="fu">group_by</span>(hour, member_casual, weekend_and_holiday) <span class="sc">%&gt;%</span></span>
-<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>())</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;hour&#39;, &#39;member_casual&#39;. You can override
-## using the `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">ggplot</span>(hourly, <span class="fu">aes</span>(hour, rides, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> weekend_and_holiday) <span class="sc">+</span></span>
-<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Hourly Ride Patterns — Member vs Casual (Weekday vs Weekend)&quot;</span>,</span>
-<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Hour of Day&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Count&quot;</span>) <span class="sc">+</span></span>
-<span id="cb31-6"><a href="#cb31-6" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>hourly <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a>  <span class="fu">group_by</span>(hour, member_casual, weekend_and_holiday) <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>())</span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by &#39;hour&#39;, &#39;member_casual&#39;. You can override using the `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a><span class="fu">ggplot</span>(hourly, <span class="fu">aes</span>(hour, rides, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> weekend_and_holiday) <span class="sc">+</span></span>
+<span id="cb35-4"><a href="#cb35-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Hourly Ride Patterns — Member vs Casual (Weekday vs Weekend)&quot;</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Hour of Day&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Count&quot;</span>) <span class="sc">+</span></span>
+<span id="cb35-6"><a href="#cb35-6" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <p><img src="EDA_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="day-of-week-pattern" class="section level2">
 <h2>4.3 Day of Week Pattern</h2>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>wday_daily <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>  <span class="fu">group_by</span>(wday, user_type) <span class="sc">%&gt;%</span></span>
-<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">wday =</span> <span class="fu">factor</span>(wday, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Mon&quot;</span>,<span class="st">&quot;Tue&quot;</span>,<span class="st">&quot;Wed&quot;</span>,<span class="st">&quot;Thu&quot;</span>,<span class="st">&quot;Fri&quot;</span>,<span class="st">&quot;Sat&quot;</span>,<span class="st">&quot;Sun&quot;</span>)))</span>
-<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a></span>
-<span id="cb32-6"><a href="#cb32-6" tabindex="-1"></a>p_wday <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(wday_daily, <span class="fu">aes</span>(<span class="at">x =</span> wday, <span class="at">y =</span> rides, <span class="at">fill =</span> user_type)) <span class="sc">+</span></span>
-<span id="cb32-7"><a href="#cb32-7" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
-<span id="cb32-8"><a href="#cb32-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ridership by Day of Week (member vs casual)&quot;</span>,</span>
-<span id="cb32-9"><a href="#cb32-9" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Day of Week&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Count&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;User Type&quot;</span>) <span class="sc">+</span></span>
-<span id="cb32-10"><a href="#cb32-10" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb32-11"><a href="#cb32-11" tabindex="-1"></a></span>
-<span id="cb32-12"><a href="#cb32-12" tabindex="-1"></a>p_wday</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a>wday_daily <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a>  <span class="fu">group_by</span>(wday, user_type) <span class="sc">%&gt;%</span></span>
+<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb36-4"><a href="#cb36-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">wday =</span> <span class="fu">factor</span>(wday, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Mon&quot;</span>,<span class="st">&quot;Tue&quot;</span>,<span class="st">&quot;Wed&quot;</span>,<span class="st">&quot;Thu&quot;</span>,<span class="st">&quot;Fri&quot;</span>,<span class="st">&quot;Sat&quot;</span>,<span class="st">&quot;Sun&quot;</span>)))</span>
+<span id="cb36-5"><a href="#cb36-5" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" tabindex="-1"></a>p_wday <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(wday_daily, <span class="fu">aes</span>(<span class="at">x =</span> wday, <span class="at">y =</span> rides, <span class="at">fill =</span> user_type)) <span class="sc">+</span></span>
+<span id="cb36-7"><a href="#cb36-7" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
+<span id="cb36-8"><a href="#cb36-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ridership by Day of Week (member vs casual)&quot;</span>,</span>
+<span id="cb36-9"><a href="#cb36-9" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Day of Week&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Count&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;User Type&quot;</span>) <span class="sc">+</span></span>
+<span id="cb36-10"><a href="#cb36-10" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb36-11"><a href="#cb36-11" tabindex="-1"></a></span>
+<span id="cb36-12"><a href="#cb36-12" tabindex="-1"></a>p_wday</span></code></pre></div>
 <p><img src="EDA_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>As shown in the bar chart, it is clear that member users have much
 higher ride counts than casual users.</p>
@@ -786,38 +761,36 @@ Tuesdays and reach their lowest on weekends.</p>
 <p>In contrast, casual users’ ride counts are relatively consistent
 throughout the week, with slightly higher numbers on weekends. The
 observation confirms the previous conclusion.</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>p_dur_group <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a>  <span class="fu">group_by</span>(member_casual, weekend_and_holiday) <span class="sc">%&gt;%</span></span>
-<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb33-4"><a href="#cb33-4" tabindex="-1"></a>    <span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb33-5"><a href="#cb33-5" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb33-6"><a href="#cb33-6" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> weekend_and_holiday, <span class="at">y =</span> mean_duration,</span>
-<span id="cb33-7"><a href="#cb33-7" tabindex="-1"></a>             <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb33-8"><a href="#cb33-8" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
-<span id="cb33-9"><a href="#cb33-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Average Ride Duration — Member vs Casual across Weekday/Weekend&quot;</span>,</span>
-<span id="cb33-10"><a href="#cb33-10" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Day Type&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Duration (hours)&quot;</span>) <span class="sc">+</span></span>
-<span id="cb33-11"><a href="#cb33-11" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;member_casual&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>p_dur_group</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a>p_dur_group <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a>  <span class="fu">group_by</span>(member_casual, weekend_and_holiday) <span class="sc">%&gt;%</span></span>
+<span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb37-4"><a href="#cb37-4" tabindex="-1"></a>    <span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb37-5"><a href="#cb37-5" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb37-6"><a href="#cb37-6" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> weekend_and_holiday, <span class="at">y =</span> mean_duration,</span>
+<span id="cb37-7"><a href="#cb37-7" tabindex="-1"></a>             <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
+<span id="cb37-8"><a href="#cb37-8" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
+<span id="cb37-9"><a href="#cb37-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Average Ride Duration — Member vs Casual across Weekday/Weekend&quot;</span>,</span>
+<span id="cb37-10"><a href="#cb37-10" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Day Type&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Duration (hours)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb37-11"><a href="#cb37-11" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by &#39;member_casual&#39;. You can override using the `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>p_dur_group</span></code></pre></div>
 <p><img src="EDA_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 </div>
 </div>
 <div id="time-series-of-average-ride-duration"
 class="section level1 info-card">
 <h1>5. Time Series of Average Ride Duration</h1>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a>dur_ts <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, member_casual) <span class="sc">%&gt;%</span></span>
-<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a>p_dur_ts <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dur_ts, <span class="fu">aes</span>(start_date, mean_duration, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb38-3"><a href="#cb38-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Average Ride Duration — Member vs Casual&quot;</span>,</span>
-<span id="cb38-4"><a href="#cb38-4" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Duration (hours)&quot;</span>) <span class="sc">+</span></span>
-<span id="cb38-5"><a href="#cb38-5" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb38-6"><a href="#cb38-6" tabindex="-1"></a></span>
-<span id="cb38-7"><a href="#cb38-7" tabindex="-1"></a>p_dur_ts</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a>dur_ts <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, member_casual) <span class="sc">%&gt;%</span></span>
+<span id="cb40-3"><a href="#cb40-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>p_dur_ts <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dur_ts, <span class="fu">aes</span>(start_date, mean_duration, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
+<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb42-3"><a href="#cb42-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Average Ride Duration — Member vs Casual&quot;</span>,</span>
+<span id="cb42-4"><a href="#cb42-4" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Duration (hours)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb42-5"><a href="#cb42-5" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb42-6"><a href="#cb42-6" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" tabindex="-1"></a>p_dur_ts</span></code></pre></div>
 <p><img src="EDA_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
 <div id="weather-effects" class="section level1 info-card">
@@ -825,17 +798,16 @@ class="section level1 info-card">
 <div id="ride-count-vs-temperature-level-category"
 class="section level2">
 <h2>6.1 Ride Count vs Temperature Level Category</h2>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>p_temp_level <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, temp_level_category) <span class="sc">%&gt;%</span></span>
-<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb39-4"><a href="#cb39-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(temp_level_category, rides)) <span class="sc">+</span></span>
-<span id="cb39-5"><a href="#cb39-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb39-6"><a href="#cb39-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Counts by Temperature Level Category&quot;</span>,</span>
-<span id="cb39-7"><a href="#cb39-7" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Temperature Category&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Daily Ride Count&quot;</span>) <span class="sc">+</span></span>
-<span id="cb39-8"><a href="#cb39-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>p_temp_level</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a>p_temp_level <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, temp_level_category) <span class="sc">%&gt;%</span></span>
+<span id="cb43-3"><a href="#cb43-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb43-4"><a href="#cb43-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(temp_level_category, rides)) <span class="sc">+</span></span>
+<span id="cb43-5"><a href="#cb43-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb43-6"><a href="#cb43-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Counts by Temperature Level Category&quot;</span>,</span>
+<span id="cb43-7"><a href="#cb43-7" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Temperature Category&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Daily Ride Count&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-8"><a href="#cb43-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a>p_temp_level</span></code></pre></div>
 <p><img src="EDA_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>This plot shows that higher temperatures are associated with
 increased ridership.</p>
@@ -843,17 +815,16 @@ increased ridership.</p>
 </div>
 <div id="ride-count-vs-rain-category" class="section level2">
 <h2>6.2 Ride Count vs Rain Category</h2>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>p_rain <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, rain_category) <span class="sc">%&gt;%</span></span>
-<span id="cb42-3"><a href="#cb42-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb42-4"><a href="#cb42-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rain_category, rides)) <span class="sc">+</span></span>
-<span id="cb42-5"><a href="#cb42-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb42-6"><a href="#cb42-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Counts by Rain Category&quot;</span>,</span>
-<span id="cb42-7"><a href="#cb42-7" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Rain Category&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Daily Ride Count&quot;</span>) <span class="sc">+</span></span>
-<span id="cb42-8"><a href="#cb42-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a>p_rain</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a>p_rain <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, rain_category) <span class="sc">%&gt;%</span></span>
+<span id="cb46-3"><a href="#cb46-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb46-4"><a href="#cb46-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rain_category, rides)) <span class="sc">+</span></span>
+<span id="cb46-5"><a href="#cb46-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb46-6"><a href="#cb46-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Counts by Rain Category&quot;</span>,</span>
+<span id="cb46-7"><a href="#cb46-7" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Rain Category&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Daily Ride Count&quot;</span>) <span class="sc">+</span></span>
+<span id="cb46-8"><a href="#cb46-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a>p_rain</span></code></pre></div>
 <p><img src="EDA_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>The analysis reveals a negative correlation between rainfall and
 ridership.</p>
@@ -861,34 +832,31 @@ ridership.</p>
 </div>
 <div id="weather-variables" class="section level2">
 <h2>6.3 Weather Variables</h2>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a><span class="co"># tmax</span></span>
-<span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a><span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> tmax, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
-<span id="cb45-3"><a href="#cb45-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb45-4"><a href="#cb45-4" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;loess&quot;</span>) <span class="sc">+</span></span>
-<span id="cb45-5"><a href="#cb45-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Count vs Daily Maximum Temperature&quot;</span>,</span>
-<span id="cb45-6"><a href="#cb45-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;tmax&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rides&quot;</span>) <span class="sc">+</span></span>
-<span id="cb45-7"><a href="#cb45-7" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a><span class="co"># tmax</span></span>
+<span id="cb49-2"><a href="#cb49-2" tabindex="-1"></a><span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> tmax, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
+<span id="cb49-3"><a href="#cb49-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb49-4"><a href="#cb49-4" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;loess&quot;</span>) <span class="sc">+</span></span>
+<span id="cb49-5"><a href="#cb49-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Count vs Daily Maximum Temperature&quot;</span>,</span>
+<span id="cb49-6"><a href="#cb49-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;tmax&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rides&quot;</span>) <span class="sc">+</span></span>
+<span id="cb49-7"><a href="#cb49-7" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
 <pre><code>## Warning: Failed to fit group -1.
 ## Caused by error in `predLoess()`:
 ## ! workspace required (14996775205) is too large probably because of setting &#39;se = TRUE&#39;.</code></pre>
 <p><img src="EDA_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="co"># prcp</span></span>
-<span id="cb48-2"><a href="#cb48-2" tabindex="-1"></a><span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> prcp, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
-<span id="cb48-3"><a href="#cb48-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb48-4"><a href="#cb48-4" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;loess&quot;</span>) <span class="sc">+</span></span>
-<span id="cb48-5"><a href="#cb48-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Count vs Precipitation&quot;</span>,</span>
-<span id="cb48-6"><a href="#cb48-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Precipitation (mm)&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rides&quot;</span>) <span class="sc">+</span></span>
-<span id="cb48-7"><a href="#cb48-7" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="co"># prcp</span></span>
+<span id="cb52-2"><a href="#cb52-2" tabindex="-1"></a><span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> prcp, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
+<span id="cb52-3"><a href="#cb52-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb52-4"><a href="#cb52-4" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;loess&quot;</span>) <span class="sc">+</span></span>
+<span id="cb52-5"><a href="#cb52-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Count vs Precipitation&quot;</span>,</span>
+<span id="cb52-6"><a href="#cb52-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Precipitation (mm)&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rides&quot;</span>) <span class="sc">+</span></span>
+<span id="cb52-7"><a href="#cb52-7" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-## : pseudoinverse used at -0.00505</code></pre>
-<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-## : neighborhood radius 0.01505</code></pre>
-<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-## : reciprocal condition number 7.1893e-25</code></pre>
-<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-## : There are other near singularities as well. 0.0001</code></pre>
+<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric, : pseudoinverse used at -0.00505</code></pre>
+<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric, : neighborhood radius 0.01505</code></pre>
+<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric, : reciprocal condition number 7.1893e-25</code></pre>
+<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric, : There are other near singularities as well.
+## 0.0001</code></pre>
 <pre><code>## Warning: Failed to fit group -1.
 ## Caused by error in `predLoess()`:
 ## ! workspace required (14996775205) is too large probably because of setting &#39;se = TRUE&#39;.</code></pre>
@@ -897,41 +865,46 @@ ridership.</p>
 </div>
 <div id="bike-type-analysis" class="section level1 info-card">
 <h1>7. Bike Type Analysis</h1>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" tabindex="-1"></a>p_type <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb55-2"><a href="#cb55-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, rideable_type) <span class="sc">%&gt;%</span></span>
-<span id="cb55-3"><a href="#cb55-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb55-4"><a href="#cb55-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rideable_type, rides)) <span class="sc">+</span></span>
-<span id="cb55-5"><a href="#cb55-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb55-6"><a href="#cb55-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Duration by Bike Type&quot;</span>,</span>
-<span id="cb55-7"><a href="#cb55-7" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Bike Type&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Counts&quot;</span>) <span class="sc">+</span></span>
-<span id="cb55-8"><a href="#cb55-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" tabindex="-1"></a>p_type</span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a>p_type <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb59-2"><a href="#cb59-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, rideable_type) <span class="sc">%&gt;%</span></span>
+<span id="cb59-3"><a href="#cb59-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb59-4"><a href="#cb59-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rideable_type, rides)) <span class="sc">+</span></span>
+<span id="cb59-5"><a href="#cb59-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb59-6"><a href="#cb59-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Duration by Bike Type&quot;</span>,</span>
+<span id="cb59-7"><a href="#cb59-7" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Bike Type&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Counts&quot;</span>) <span class="sc">+</span></span>
+<span id="cb59-8"><a href="#cb59-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a>p_type</span></code></pre></div>
 <p><img src="EDA_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
 <div id="time-series-analysis" class="section level1 info-card">
 <h1>8. Time Series Analysis</h1>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" tabindex="-1"></a><span class="fu">library</span>(tseries)</span>
-<span id="cb58-2"><a href="#cb58-2" tabindex="-1"></a>daily_rides <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb58-3"><a href="#cb58-3" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date) <span class="sc">%&gt;%</span></span>
-<span id="cb58-4"><a href="#cb58-4" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
-<span id="cb58-5"><a href="#cb58-5" tabindex="-1"></a></span>
-<span id="cb58-6"><a href="#cb58-6" tabindex="-1"></a><span class="fu">library</span>(tsibble)</span>
-<span id="cb58-7"><a href="#cb58-7" tabindex="-1"></a><span class="fu">library</span>(fable)</span>
-<span id="cb58-8"><a href="#cb58-8" tabindex="-1"></a></span>
-<span id="cb58-9"><a href="#cb58-9" tabindex="-1"></a>ts_data <span class="ot">&lt;-</span> daily_rides <span class="sc">%&gt;%</span></span>
-<span id="cb58-10"><a href="#cb58-10" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span> start_date)</span>
-<span id="cb58-11"><a href="#cb58-11" tabindex="-1"></a></span>
-<span id="cb58-12"><a href="#cb58-12" tabindex="-1"></a><span class="fu">autoplot</span>(ts_data, total_rides) <span class="sc">+</span></span>
-<span id="cb58-13"><a href="#cb58-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Ride Counts&quot;</span>,</span>
-<span id="cb58-14"><a href="#cb58-14" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
-<span id="cb58-15"><a href="#cb58-15" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of Rides&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a><span class="fu">library</span>(tseries)</span></code></pre></div>
+<pre><code>## 
+##     &#39;tseries&#39; version: 0.10-58
+## 
+##     &#39;tseries&#39; is a package for time series analysis and computational finance.
+## 
+##     See &#39;library(help=&quot;tseries&quot;)&#39; for details.</code></pre>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" tabindex="-1"></a>daily_rides <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb64-2"><a href="#cb64-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date) <span class="sc">%&gt;%</span></span>
+<span id="cb64-3"><a href="#cb64-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb64-4"><a href="#cb64-4" tabindex="-1"></a></span>
+<span id="cb64-5"><a href="#cb64-5" tabindex="-1"></a><span class="fu">library</span>(tsibble)</span>
+<span id="cb64-6"><a href="#cb64-6" tabindex="-1"></a><span class="fu">library</span>(fable)</span>
+<span id="cb64-7"><a href="#cb64-7" tabindex="-1"></a></span>
+<span id="cb64-8"><a href="#cb64-8" tabindex="-1"></a>ts_data <span class="ot">&lt;-</span> daily_rides <span class="sc">%&gt;%</span></span>
+<span id="cb64-9"><a href="#cb64-9" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span> start_date)</span>
+<span id="cb64-10"><a href="#cb64-10" tabindex="-1"></a></span>
+<span id="cb64-11"><a href="#cb64-11" tabindex="-1"></a><span class="fu">autoplot</span>(ts_data, total_rides) <span class="sc">+</span></span>
+<span id="cb64-12"><a href="#cb64-12" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Ride Counts&quot;</span>,</span>
+<span id="cb64-13"><a href="#cb64-13" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
+<span id="cb64-14"><a href="#cb64-14" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of Rides&quot;</span>)</span></code></pre></div>
 <p><img src="EDA_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a>fit_arima <span class="ot">&lt;-</span> ts_data <span class="sc">%&gt;%</span></span>
-<span id="cb59-2"><a href="#cb59-2" tabindex="-1"></a>  <span class="fu">model</span>(<span class="fu">ARIMA</span>(total_rides))</span>
-<span id="cb59-3"><a href="#cb59-3" tabindex="-1"></a></span>
-<span id="cb59-4"><a href="#cb59-4" tabindex="-1"></a><span class="fu">report</span>(fit_arima)</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a>fit_arima <span class="ot">&lt;-</span> ts_data <span class="sc">%&gt;%</span></span>
+<span id="cb65-2"><a href="#cb65-2" tabindex="-1"></a>  <span class="fu">model</span>(<span class="fu">ARIMA</span>(total_rides))</span>
+<span id="cb65-3"><a href="#cb65-3" tabindex="-1"></a></span>
+<span id="cb65-4"><a href="#cb65-4" tabindex="-1"></a><span class="fu">report</span>(fit_arima)</span></code></pre></div>
 <pre><code>## Series: total_rides 
 ## Model: ARIMA(0,1,1)(1,0,0)[7] 
 ## 
@@ -942,30 +915,29 @@ ridership.</p>
 ## 
 ## sigma^2 estimated as 159701:  log likelihood=-214.82
 ## AIC=435.64   AICc=436.6   BIC=439.74</code></pre>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a>fc <span class="ot">&lt;-</span> fit_arima <span class="sc">%&gt;%</span> <span class="fu">forecast</span>(<span class="at">h =</span> <span class="dv">7</span>)</span>
-<span id="cb61-2"><a href="#cb61-2" tabindex="-1"></a></span>
-<span id="cb61-3"><a href="#cb61-3" tabindex="-1"></a><span class="fu">autoplot</span>(fc, ts_data) <span class="sc">+</span></span>
-<span id="cb61-4"><a href="#cb61-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;ARIMA Forecast of Daily Rides&quot;</span>,</span>
-<span id="cb61-5"><a href="#cb61-5" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
-<span id="cb61-6"><a href="#cb61-6" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of Rides&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a>fc <span class="ot">&lt;-</span> fit_arima <span class="sc">%&gt;%</span> <span class="fu">forecast</span>(<span class="at">h =</span> <span class="dv">7</span>)</span>
+<span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a></span>
+<span id="cb67-3"><a href="#cb67-3" tabindex="-1"></a><span class="fu">autoplot</span>(fc, ts_data) <span class="sc">+</span></span>
+<span id="cb67-4"><a href="#cb67-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;ARIMA Forecast of Daily Rides&quot;</span>,</span>
+<span id="cb67-5"><a href="#cb67-5" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
+<span id="cb67-6"><a href="#cb67-6" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of Rides&quot;</span>)</span></code></pre></div>
 <p><img src="EDA_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <hr />
 <div id="decomposition" class="section level2">
 <h2>8.1 Decomposition</h2>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a>fit_ets <span class="ot">&lt;-</span> ts_data <span class="sc">%&gt;%</span> <span class="fu">model</span>(<span class="fu">ETS</span>(total_rides))</span>
-<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a></span>
-<span id="cb62-3"><a href="#cb62-3" tabindex="-1"></a>components_plot <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(<span class="fu">components</span>(fit_ets)) <span class="sc">+</span></span>
-<span id="cb62-4"><a href="#cb62-4" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb62-5"><a href="#cb62-5" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;ETS Decomposition of Daily Ride Counts&quot;</span>,</span>
-<span id="cb62-6"><a href="#cb62-6" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Using Exponential Smoothing (suitable for short, non-periodic series)&quot;</span>,</span>
-<span id="cb62-7"><a href="#cb62-7" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
-<span id="cb62-8"><a href="#cb62-8" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Value&quot;</span></span>
-<span id="cb62-9"><a href="#cb62-9" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb62-10"><a href="#cb62-10" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb62-11"><a href="#cb62-11" tabindex="-1"></a></span>
-<span id="cb62-12"><a href="#cb62-12" tabindex="-1"></a>components_plot</span></code></pre></div>
-<pre><code>## Warning: Removed 1 row containing missing values or values outside the scale range
-## (`geom_line()`).</code></pre>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" tabindex="-1"></a>fit_ets <span class="ot">&lt;-</span> ts_data <span class="sc">%&gt;%</span> <span class="fu">model</span>(<span class="fu">ETS</span>(total_rides))</span>
+<span id="cb68-2"><a href="#cb68-2" tabindex="-1"></a></span>
+<span id="cb68-3"><a href="#cb68-3" tabindex="-1"></a>components_plot <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(<span class="fu">components</span>(fit_ets)) <span class="sc">+</span></span>
+<span id="cb68-4"><a href="#cb68-4" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb68-5"><a href="#cb68-5" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;ETS Decomposition of Daily Ride Counts&quot;</span>,</span>
+<span id="cb68-6"><a href="#cb68-6" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Using Exponential Smoothing (suitable for short, non-periodic series)&quot;</span>,</span>
+<span id="cb68-7"><a href="#cb68-7" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
+<span id="cb68-8"><a href="#cb68-8" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Value&quot;</span></span>
+<span id="cb68-9"><a href="#cb68-9" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb68-10"><a href="#cb68-10" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb68-11"><a href="#cb68-11" tabindex="-1"></a></span>
+<span id="cb68-12"><a href="#cb68-12" tabindex="-1"></a>components_plot</span></code></pre></div>
+<pre><code>## Warning: Removed 1 row containing missing values or values outside the scale range (`geom_line()`).</code></pre>
 <p><img src="EDA_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
 </div>
