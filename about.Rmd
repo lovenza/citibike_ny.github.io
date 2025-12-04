@@ -11,7 +11,7 @@ output:
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
-<a href="index_citibike.html" class="back-home">
+<a href="index.html" class="back-home">
   <i class="fa fa-home"></i> Back to Home
 </a>
 
@@ -188,7 +188,7 @@ You can also:
 
 <br>
 
-<a href="index_citibike.html" class="back-home">
+<a href="index.html" class="back-home">
   <i class="fa fa-home"></i> Back to Home
 </a>
 

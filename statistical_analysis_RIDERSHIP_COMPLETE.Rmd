@@ -12,7 +12,7 @@ output:
     css: styles.css
 ---
 
-<a href="index_citibike.html" class="back-home">
+<a href="index.html" class="back-home">
   <i class="fa fa-home"></i> Back to Home
 </a>
 
@@ -832,4 +832,10 @@ Based on proportional stratified sampling of ~100,000 rides across September 202
 **All findings are statistically significant (p < 0.05, most p < 0.001) and provide actionable insights for operations, marketing, and urban planning.**
 
 </div>
+
+<br>
+
+<a href="index.html" class="back-home">
+  <i class="fa fa-home"></i> Back to Home
+</a>
 

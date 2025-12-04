@@ -11,7 +11,7 @@ output:
     css: styles.css
 ---
 
-<a href="index_citibike.html" class="back-home">
+<a href="index.html" class="back-home">
   <i class="fa fa-home"></i> Back to Home
 </a>
 
@@ -186,6 +186,6 @@ All members will co-write the final report and participate in the screencast.
 
 <br>
 
-<a href="index_citibike.html" class="back-home">
+<a href="index.html" class="back-home">
   <i class="fa fa-home"></i> Back to Home
 </a>
