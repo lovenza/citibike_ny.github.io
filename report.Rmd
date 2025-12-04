@@ -505,12 +505,12 @@ ggplot(hourly_pattern, aes(x = hour, y = n, color = day_type)) +
 
 1. **Weekday Consistency:**
    - Tuesday-Thursday show highest ridership
-   - Monday slightly lower (post-weekend effect?)
-   - Friday drops off (early weekend departures?)
+   - Monday slightly lower (post-weekend effect)
+   - Friday drops off (early weekend departures)
 
 2. **Weekend Drop:**
    - Saturday and Sunday show 20-30% lower total ridership
-   - Despite longer individual trip durations
+   - Despite longer individual trip duration
    - Reflects the system's primary role in commuting
 
 ### Monthly Trends
