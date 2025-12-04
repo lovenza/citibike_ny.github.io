@@ -15,7 +15,7 @@
 
 <title>Statistical Analysis: Weather and Temporal Effects on NYC Citi Bike Ride Duration</title>
 
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -61,8 +61,9 @@
   }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -73,7 +74,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -547,18 +548,6 @@ analysis (which has only 30 observations), analyzing individual rides
 provides <strong>100,000 observations</strong>, offering much greater
 statistical power and more robust findings.</p>
 <hr />
-<div id="research-questions" class="section level2">
-<h2>Research Questions</h2>
-<ol style="list-style-type: decimal">
-<li>How do weather variables (maximum temperature, minimum temperature,
-precipitation) affect ride duration?</li>
-<li>What is the effect of day of the week and time of day on ride
-duration?</li>
-<li>How do these effects differ between member and casual riders?</li>
-<li>Do riders take longer trips in favorable weather conditions?</li>
-</ol>
-<hr />
-</div>
 <div id="advantages-of-ride-level-analysis" class="section level2">
 <h2>Advantages of Ride-Level Analysis</h2>
 <ul>
@@ -573,130 +562,28 @@ reliable estimates</li>
 </ul>
 </div>
 </div>
-<div id="load-libraries-and-data" class="section level1 info-card">
-<h1>Load Libraries and Data</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">library</span>(modelr)</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">library</span>(lmtest)  <span class="co"># For robust standard errors</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="fu">library</span>(sandwich)  <span class="co"># For robust covariance matrices</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Load the individual ride-level data</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>bike_weather <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/final_bike_weather_categorized.csv&quot;</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co"># Display data structure</span></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="fu">glimpse</span>(bike_weather)</span></code></pre></div>
-<pre><code>## Rows: 99,986
-## Columns: 28
-## $ ride_id             &lt;chr&gt; &quot;761B30A5B7B64236&quot;, &quot;FBEA1249070FDC8C&quot;, &quot;91A5019736D417E6&quot;, &quot;F1CD7CB1CF230FBB&quot;, &quot;31C8B256EFAD12A9…
-## $ rideable_type       &lt;chr&gt; &quot;electric_bike&quot;, &quot;electric_bike&quot;, &quot;classic_bike&quot;, &quot;electric_bike&quot;, &quot;classic_bike&quot;, &quot;electric_bike…
-## $ started_at          &lt;dttm&gt; 2025-09-01 11:38:30, 2025-09-01 19:38:52, 2025-09-01 13:55:21, 2025-09-01 18:10:23, 2025-09-01 1…
-## $ ended_at            &lt;dttm&gt; 2025-09-01 11:42:08, 2025-09-01 19:46:19, 2025-09-01 13:58:07, 2025-09-01 18:22:11, 2025-09-01 1…
-## $ start_station_name  &lt;chr&gt; &quot;5 Ave &amp; E 30 St&quot;, &quot;W 74 St &amp; Columbus Ave&quot;, &quot;Cumberland St &amp; Lafayette Ave&quot;, &quot;Monroe St &amp; Marcus…
-## $ start_station_id    &lt;chr&gt; &quot;6248.08&quot;, &quot;7230.10&quot;, &quot;4428.02&quot;, &quot;4467.03&quot;, &quot;5329.03&quot;, &quot;4157.10&quot;, &quot;7606.01&quot;, &quot;6912.01&quot;, &quot;7260.09&quot;…
-## $ end_station_name    &lt;chr&gt; &quot;8 Ave &amp; W 31 St&quot;, &quot;3 Ave &amp; E 72 St&quot;, &quot;Lafayette Ave &amp; Ft Greene Pl&quot;, &quot;Pacific St &amp; Troy Ave&quot;, &quot;W…
-## $ end_station_id      &lt;chr&gt; &quot;6450.05&quot;, &quot;7028.04&quot;, &quot;4470.09&quot;, &quot;4122.03&quot;, &quot;5989.02&quot;, &quot;4231.04&quot;, &quot;7606.01&quot;, &quot;6912.01&quot;, &quot;7023.04&quot;…
-## $ start_lat           &lt;dbl&gt; 40.74598, 40.77857, 40.68753, 40.68672, 40.71755, 40.67944, 40.79819, 40.76674, 40.77967, 40.7466…
-## $ start_lng           &lt;dbl&gt; -73.98629, -73.97755, -73.97265, -73.93899, -74.01322, -73.96804, -73.96059, -73.97907, -73.98093…
-## $ end_lat             &lt;dbl&gt; 40.75059, 40.76994, 40.68700, 40.67686, 40.73805, 40.68048, 40.79819, 40.76674, 40.77051, 40.7340…
-## $ end_lng             &lt;dbl&gt; -73.99468, -73.96061, -73.97665, -73.93607, -73.99643, -73.96468, -73.96059, -73.97907, -73.98804…
-## $ member_casual       &lt;chr&gt; &quot;casual&quot;, &quot;casual&quot;, &quot;member&quot;, &quot;casual&quot;, &quot;casual&quot;, &quot;member&quot;, &quot;casual&quot;, &quot;casual&quot;, &quot;member&quot;, &quot;member…
-## $ datetime_start_obj  &lt;dttm&gt; 2025-09-01 11:38:30, 2025-09-01 19:38:52, 2025-09-01 13:55:21, 2025-09-01 18:10:23, 2025-09-01 1…
-## $ datetime_end_obj    &lt;dttm&gt; 2025-09-01 11:42:08, 2025-09-01 19:46:19, 2025-09-01 13:58:07, 2025-09-01 18:22:11, 2025-09-01 1…
-## $ start_month         &lt;dbl&gt; 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9…
-## $ start_day           &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
-## $ ride_duration_hours &lt;dbl&gt; 0.06069722, 0.12432833, 0.04609028, 0.19654083, 0.33333361, 0.50450139, 0.06815056, 0.23914194, 0…
-## $ distance_km         &lt;dbl&gt; 0.8734433, 1.7209451, 0.3426126, 1.1251295, 2.6857201, 0.3069076, 0.0000000, 0.0000000, 1.1822209…
-## $ bearing_degrees     &lt;dbl&gt; -54.205788, 123.800393, -99.910075, 167.305024, 31.924904, 67.807068, 180.000000, 180.000000, -14…
-## $ start_date          &lt;date&gt; 2025-09-01, 2025-09-01, 2025-09-01, 2025-09-01, 2025-09-01, 2025-09-01, 2025-09-01, 2025-09-01, …
-## $ tmax                &lt;dbl&gt; 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 7…
-## $ tmin                &lt;dbl&gt; 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 6…
-## $ prcp                &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-## $ temp_diff_category  &lt;chr&gt; &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium…
-## $ temp_level_category &lt;chr&gt; &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;,…
-## $ rain_category       &lt;chr&gt; &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;…
-## $ weekend_and_holiday &lt;chr&gt; &quot;weekend and holiday&quot;, &quot;weekend and holiday&quot;, &quot;weekend and holiday&quot;, &quot;weekend and holiday&quot;, &quot;week…</code></pre>
-</div>
 <div id="data-preparation" class="section level1 info-card">
 <h1>Data Preparation</h1>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Prepare ride-level data for analysis</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>ride_analysis_data <span class="ot">&lt;-</span> bike_weather <span class="sc">%&gt;%</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>    <span class="co"># Convert datetime</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>    <span class="at">datetime_start =</span> <span class="fu">ymd_hms</span>(datetime_start_obj),</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">as.Date</span>(start_date),</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>    </span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>    <span class="co"># Extract temporal features</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>    <span class="at">hour =</span> <span class="fu">hour</span>(datetime_start),</span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>    <span class="at">day_of_week =</span> <span class="fu">wday</span>(date, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>),</span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>    <span class="at">is_weekend =</span> day_of_week <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Saturday&quot;</span>, <span class="st">&quot;Sunday&quot;</span>),</span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    </span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>    <span class="co"># Time of day categories</span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>    <span class="at">time_of_day =</span> <span class="fu">case_when</span>(</span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>      hour <span class="sc">&gt;=</span> <span class="dv">6</span> <span class="sc">&amp;</span> hour <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">&quot;Morning Rush (6-10am)&quot;</span>,</span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>      hour <span class="sc">&gt;=</span> <span class="dv">10</span> <span class="sc">&amp;</span> hour <span class="sc">&lt;</span> <span class="dv">16</span> <span class="sc">~</span> <span class="st">&quot;Midday (10am-4pm)&quot;</span>,</span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>      hour <span class="sc">&gt;=</span> <span class="dv">16</span> <span class="sc">&amp;</span> hour <span class="sc">&lt;</span> <span class="dv">20</span> <span class="sc">~</span> <span class="st">&quot;Evening Rush (4-8pm)&quot;</span>,</span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;Night (8pm-6am)&quot;</span></span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>    ),</span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>    <span class="at">time_of_day =</span> <span class="fu">factor</span>(time_of_day, <span class="at">levels =</span> <span class="fu">c</span>(</span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>      <span class="st">&quot;Morning Rush (6-10am)&quot;</span>, <span class="st">&quot;Midday (10am-4pm)&quot;</span>, </span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>      <span class="st">&quot;Evening Rush (4-8pm)&quot;</span>, <span class="st">&quot;Night (8pm-6am)&quot;</span></span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>    )),</span>
-<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>    </span>
-<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>    <span class="co"># Convert ride duration from hours to minutes for easier interpretation</span></span>
-<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>    <span class="at">ride_duration_min =</span> ride_duration_hours <span class="sc">*</span> <span class="dv">60</span>,</span>
-<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a>    </span>
-<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>    <span class="co"># Create categorical variables for weather</span></span>
-<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>    <span class="at">temp_category =</span> <span class="fu">case_when</span>(</span>
-<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>      tmax <span class="sc">&gt;=</span> <span class="dv">80</span> <span class="sc">~</span> <span class="st">&quot;Warm (≥80°F)&quot;</span>,</span>
-<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>      tmax <span class="sc">&gt;=</span> <span class="dv">70</span> <span class="sc">~</span> <span class="st">&quot;Mild (70-79°F)&quot;</span>,</span>
-<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;Cool (&lt;70°F)&quot;</span></span>
-<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>    ),</span>
-<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>    <span class="at">temp_category =</span> <span class="fu">factor</span>(temp_category, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Cool (&lt;70°F)&quot;</span>, <span class="st">&quot;Mild (70-79°F)&quot;</span>, <span class="st">&quot;Warm (≥80°F)&quot;</span>)),</span>
-<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>    </span>
-<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>    <span class="at">rain_yn =</span> <span class="fu">ifelse</span>(prcp <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">&quot;Rain&quot;</span>, <span class="st">&quot;No Rain&quot;</span>),</span>
-<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a>    </span>
-<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a>    <span class="co"># Day of week indicators (for regression)</span></span>
-<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>    <span class="at">is_monday =</span> day_of_week <span class="sc">==</span> <span class="st">&quot;Monday&quot;</span>,</span>
-<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a>    <span class="at">is_tuesday =</span> day_of_week <span class="sc">==</span> <span class="st">&quot;Tuesday&quot;</span>,</span>
-<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a>    <span class="at">is_wednesday =</span> day_of_week <span class="sc">==</span> <span class="st">&quot;Wednesday&quot;</span>,</span>
-<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>    <span class="at">is_thursday =</span> day_of_week <span class="sc">==</span> <span class="st">&quot;Thursday&quot;</span>,</span>
-<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>    <span class="at">is_friday =</span> day_of_week <span class="sc">==</span> <span class="st">&quot;Friday&quot;</span>,</span>
-<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>    <span class="at">is_saturday =</span> day_of_week <span class="sc">==</span> <span class="st">&quot;Saturday&quot;</span>,</span>
-<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a>    <span class="at">is_sunday =</span> day_of_week <span class="sc">==</span> <span class="st">&quot;Sunday&quot;</span></span>
-<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a>  <span class="co"># Remove extreme outliers (rides &gt; 2 hours are likely errors or overnight rentals)</span></span>
-<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a>  <span class="fu">filter</span>(ride_duration_min <span class="sc">&gt;</span> <span class="dv">0</span>, ride_duration_min <span class="sc">&lt;</span> <span class="dv">120</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a>  <span class="co"># Remove missing weather data</span></span>
-<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(tmax), <span class="sc">!</span><span class="fu">is.na</span>(tmin), <span class="sc">!</span><span class="fu">is.na</span>(prcp))</span>
-<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a></span>
-<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a><span class="co"># Check sample size</span></span>
-<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Sample size after filtering: %s rides</span><span class="sc">\n</span><span class="st">&quot;</span>, </span>
-<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a>            <span class="fu">format</span>(<span class="fu">nrow</span>(ride_analysis_data), <span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>)))</span></code></pre></div>
-<pre><code>## Sample size after filtering: 99,722 rides</code></pre>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Descriptive statistics</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>summary_stats <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">group_by</span>(member_casual) <span class="sc">%&gt;%</span></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    <span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>    <span class="at">sd_duration =</span> <span class="fu">sd</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>    <span class="at">median_duration =</span> <span class="fu">median</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>    <span class="at">q25 =</span> <span class="fu">quantile</span>(ride_duration_min, <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>    <span class="at">q75 =</span> <span class="fu">quantile</span>(ride_duration_min, <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>  )</span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>summary_stats <span class="sc">%&gt;%</span></span>
-<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
-<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 1: Descriptive Statistics of Ride Duration by User Type&quot;</span>,</span>
-<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">2</span>,</span>
-<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;User Type&quot;</span>, <span class="st">&quot;N&quot;</span>, <span class="st">&quot;Mean (min)&quot;</span>, <span class="st">&quot;SD&quot;</span>, <span class="st">&quot;Median&quot;</span>, <span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;Q75&quot;</span>)</span>
-<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Descriptive statistics</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>summary_stats <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="fu">group_by</span>(member_casual) <span class="sc">%&gt;%</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>    <span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>    <span class="at">sd_duration =</span> <span class="fu">sd</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>    <span class="at">median_duration =</span> <span class="fu">median</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>    <span class="at">q25 =</span> <span class="fu">quantile</span>(ride_duration_min, <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>    <span class="at">q75 =</span> <span class="fu">quantile</span>(ride_duration_min, <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>  )</span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>summary_stats <span class="sc">%&gt;%</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 1: Descriptive Statistics of Ride Duration by User Type&quot;</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;User Type&quot;</span>, <span class="st">&quot;N&quot;</span>, <span class="st">&quot;Mean (min)&quot;</span>, <span class="st">&quot;SD&quot;</span>, <span class="st">&quot;Median&quot;</span>, <span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;Q75&quot;</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 Table 1: Descriptive Statistics of Ride Duration by User Type
@@ -776,124 +663,124 @@ member
 </tbody>
 </table>
 </div>
-<div id="exploratory-data-analysis" class="section level1 info-card">
-<h1>Exploratory Data Analysis</h1>
+<div id="data-analysis" class="section level1 info-card">
+<h1>Data Analysis</h1>
 <div id="ride-duration-by-user-type-and-weather" class="section level2">
 <h2>Ride Duration by User Type and Weather</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Duration by temperature category</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ride_analysis_data, <span class="fu">aes</span>(<span class="at">x =</span> temp_category, <span class="at">y =</span> ride_duration_min, <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">outlier.alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set2&quot;</span>) <span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Ride Duration by Temperature Category&quot;</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Temperature Category&quot;</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Ride Duration (minutes)&quot;</span>,</span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">&quot;User Type&quot;</span></span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co"># Duration by rain</span></span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ride_analysis_data, <span class="fu">aes</span>(<span class="at">x =</span> rain_yn, <span class="at">y =</span> ride_duration_min, <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">outlier.alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set2&quot;</span>) <span class="sc">+</span></span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Ride Duration by Precipitation&quot;</span>,</span>
-<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Weather Condition&quot;</span>,</span>
-<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Ride Duration (minutes)&quot;</span>,</span>
-<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">&quot;User Type&quot;</span></span>
-<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a></span>
-<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a>p1 <span class="sc">/</span> p2 <span class="sc">+</span></span>
-<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
-<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Figure 1: Ride Duration by Weather Conditions and User Type&quot;</span>,</span>
-<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>))</span>
-<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Duration by temperature category</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ride_analysis_data, <span class="fu">aes</span>(<span class="at">x =</span> temp_category, <span class="at">y =</span> ride_duration_min, <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">outlier.alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set2&quot;</span>) <span class="sc">+</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Ride Duration by Temperature Category&quot;</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Temperature Category&quot;</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Ride Duration (minutes)&quot;</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">&quot;User Type&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co"># Duration by rain</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ride_analysis_data, <span class="fu">aes</span>(<span class="at">x =</span> rain_yn, <span class="at">y =</span> ride_duration_min, <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">outlier.alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set2&quot;</span>) <span class="sc">+</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Ride Duration by Precipitation&quot;</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Weather Condition&quot;</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Ride Duration (minutes)&quot;</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">&quot;User Type&quot;</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a>p1 <span class="sc">/</span> p2 <span class="sc">+</span></span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
+<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Figure 1: Ride Duration by Weather Conditions and User Type&quot;</span>,</span>
+<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>))</span>
+<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a>  )</span></code></pre></div>
 <p><img src="model_and_spatial_analysis_STYLED_files/figure-html/duration_by_weather-1.png" width="960" /></p>
 <hr />
 </div>
 <div id="ride-duration-by-time-of-day-and-day-of-week"
 class="section level2">
 <h2>Ride Duration by Time of Day and Day of Week</h2>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># By time of day</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">group_by</span>(time_of_day, member_casual) <span class="sc">%&gt;%</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    <span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">sd</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">n</span>()),</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> time_of_day, <span class="at">y =</span> mean_duration, <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(</span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> mean_duration <span class="sc">-</span> se, <span class="at">ymax =</span> mean_duration <span class="sc">+</span> se),</span>
-<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.9</span>),</span>
-<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.2</span></span>
-<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set2&quot;</span>) <span class="sc">+</span></span>
-<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Mean Ride Duration by Time of Day&quot;</span>,</span>
-<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Time of Day&quot;</span>,</span>
-<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Mean Duration (minutes)&quot;</span>,</span>
-<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">&quot;User Type&quot;</span></span>
-<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span>
-<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a></span>
-<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a><span class="co"># By day of week</span></span>
-<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
-<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a>  <span class="fu">group_by</span>(day_of_week, member_casual) <span class="sc">%&gt;%</span></span>
-<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a>    <span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">sd</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">n</span>()),</span>
-<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
-<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> day_of_week, <span class="at">y =</span> mean_duration, <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb8-35"><a href="#cb8-35" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
-<span id="cb8-36"><a href="#cb8-36" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(</span>
-<span id="cb8-37"><a href="#cb8-37" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> mean_duration <span class="sc">-</span> se, <span class="at">ymax =</span> mean_duration <span class="sc">+</span> se),</span>
-<span id="cb8-38"><a href="#cb8-38" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.9</span>),</span>
-<span id="cb8-39"><a href="#cb8-39" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.2</span></span>
-<span id="cb8-40"><a href="#cb8-40" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb8-41"><a href="#cb8-41" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set2&quot;</span>) <span class="sc">+</span></span>
-<span id="cb8-42"><a href="#cb8-42" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb8-43"><a href="#cb8-43" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Mean Ride Duration by Day of Week&quot;</span>,</span>
-<span id="cb8-44"><a href="#cb8-44" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Day of Week&quot;</span>,</span>
-<span id="cb8-45"><a href="#cb8-45" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Mean Duration (minutes)&quot;</span>,</span>
-<span id="cb8-46"><a href="#cb8-46" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">&quot;User Type&quot;</span></span>
-<span id="cb8-47"><a href="#cb8-47" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb8-48"><a href="#cb8-48" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() </span>
-<span id="cb8-49"><a href="#cb8-49" tabindex="-1"></a><span class="co">#  + theme(axis.text.x = element_text(angle = 45, hjust = 1))</span></span>
-<span id="cb8-50"><a href="#cb8-50" tabindex="-1"></a></span>
-<span id="cb8-51"><a href="#cb8-51" tabindex="-1"></a>p3 <span class="sc">/</span> p4 <span class="sc">+</span></span>
-<span id="cb8-52"><a href="#cb8-52" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
-<span id="cb8-53"><a href="#cb8-53" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Figure 2: Ride Duration by Temporal Patterns&quot;</span>,</span>
-<span id="cb8-54"><a href="#cb8-54" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>))</span>
-<span id="cb8-55"><a href="#cb8-55" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># By time of day</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="fu">group_by</span>(time_of_day, member_casual) <span class="sc">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">sd</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">n</span>()),</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> time_of_day, <span class="at">y =</span> mean_duration, <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> mean_duration <span class="sc">-</span> se, <span class="at">ymax =</span> mean_duration <span class="sc">+</span> se),</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.9</span>),</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.2</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set2&quot;</span>) <span class="sc">+</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Mean Ride Duration by Time of Day&quot;</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Time of Day&quot;</span>,</span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Mean Duration (minutes)&quot;</span>,</span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">&quot;User Type&quot;</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="co"># By day of week</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>  <span class="fu">group_by</span>(day_of_week, member_casual) <span class="sc">%&gt;%</span></span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>    <span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">sd</span>(ride_duration_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">n</span>()),</span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> day_of_week, <span class="at">y =</span> mean_duration, <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(</span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> mean_duration <span class="sc">-</span> se, <span class="at">ymax =</span> mean_duration <span class="sc">+</span> se),</span>
+<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.9</span>),</span>
+<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.2</span></span>
+<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set2&quot;</span>) <span class="sc">+</span></span>
+<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Mean Ride Duration by Day of Week&quot;</span>,</span>
+<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Day of Week&quot;</span>,</span>
+<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Mean Duration (minutes)&quot;</span>,</span>
+<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">&quot;User Type&quot;</span></span>
+<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() </span>
+<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a><span class="co">#  + theme(axis.text.x = element_text(angle = 45, hjust = 1))</span></span>
+<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a>p3 <span class="sc">/</span> p4 <span class="sc">+</span></span>
+<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
+<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Figure 2: Ride Duration by Temporal Patterns&quot;</span>,</span>
+<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>))</span>
+<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a>  )</span></code></pre></div>
 <p><img src="model_and_spatial_analysis_STYLED_files/figure-html/duration_by_time-1.png" width="960" /></p>
 <hr />
 </div>
 <div id="relationship-between-temperature-and-duration"
 class="section level2">
 <h2>Relationship Between Temperature and Duration</h2>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Sample 5000 points for visualization (100k is too many for scatter)</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>sample_data <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">5000</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="fu">ggplot</span>(sample_data, <span class="fu">aes</span>(<span class="at">x =</span> tmax, <span class="at">y =</span> ride_duration_min, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set1&quot;</span>) <span class="sc">+</span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Figure 3: Relationship Between Temperature and Ride Duration&quot;</span>,</span>
-<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Random sample of 5,000 rides&quot;</span>,</span>
-<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Maximum Temperature (°F)&quot;</span>,</span>
-<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Ride Duration (minutes)&quot;</span>,</span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;User Type&quot;</span></span>
-<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Sample 5000 points for visualization (100k is too many for scatter)</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>sample_data <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">5000</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="fu">ggplot</span>(sample_data, <span class="fu">aes</span>(<span class="at">x =</span> tmax, <span class="at">y =</span> ride_duration_min, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set1&quot;</span>) <span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Figure 3: Relationship Between Temperature and Ride Duration&quot;</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Random sample of 5,000 rides&quot;</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Maximum Temperature (°F)&quot;</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Ride Duration (minutes)&quot;</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;User Type&quot;</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <p><img src="model_and_spatial_analysis_STYLED_files/figure-html/temp_duration_scatter-1.png" width="960" /></p>
 </div>
 </div>
@@ -935,24 +822,24 @@ heteroscedasticity</p>
 </div>
 <div id="correlation-analysis" class="section level1 info-card">
 <h1>Correlation Analysis</h1>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Select numeric variables for correlation</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>cor_vars <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="fu">select</span>(ride_duration_min, tmax, tmin, prcp, distance_km, hour) <span class="sc">%&gt;%</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">complete.cases</span>(.))</span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co"># Pearson correlation</span></span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>cor_pearson <span class="ot">&lt;-</span> <span class="fu">cor</span>(cor_vars, <span class="at">method =</span> <span class="st">&quot;pearson&quot;</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co"># Spearman correlation</span></span>
-<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>cor_spearman <span class="ot">&lt;-</span> <span class="fu">cor</span>(cor_vars, <span class="at">method =</span> <span class="st">&quot;spearman&quot;</span>)</span>
-<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co"># Display Pearson correlation matrix</span></span>
-<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>cor_pearson <span class="sc">%&gt;%</span></span>
-<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
-<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 2A: Pearson Correlation Matrix (Ride-Level Data)&quot;</span>,</span>
-<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">3</span></span>
-<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Select numeric variables for correlation</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>cor_vars <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">select</span>(ride_duration_min, tmax, tmin, prcp, distance_km, hour) <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">complete.cases</span>(.))</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co"># Pearson correlation</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>cor_pearson <span class="ot">&lt;-</span> <span class="fu">cor</span>(cor_vars, <span class="at">method =</span> <span class="st">&quot;pearson&quot;</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co"># Spearman correlation</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>cor_spearman <span class="ot">&lt;-</span> <span class="fu">cor</span>(cor_vars, <span class="at">method =</span> <span class="st">&quot;spearman&quot;</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co"># Display Pearson correlation matrix</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>cor_pearson <span class="sc">%&gt;%</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 2A: Pearson Correlation Matrix (Ride-Level Data)&quot;</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">3</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 Table 2A: Pearson Correlation Matrix (Ride-Level Data)
@@ -1122,13 +1009,13 @@ hour
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Display Spearman correlation matrix</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>cor_spearman <span class="sc">%&gt;%</span></span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 2B: Spearman Correlation Matrix (Ride-Level Data)&quot;</span>,</span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">3</span></span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Display Spearman correlation matrix</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>cor_spearman <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 2B: Spearman Correlation Matrix (Ride-Level Data)&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">3</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 Table 2B: Spearman Correlation Matrix (Ride-Level Data)
@@ -1298,22 +1185,22 @@ hour
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Test key correlations</span></span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Key Correlation Tests (with 100,000 observations):</span><span class="sc">\n\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Test key correlations</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Key Correlation Tests (with 100,000 observations):</span><span class="sc">\n\n</span><span class="st">&quot;</span>)</span></code></pre></div>
 <pre><code>## Key Correlation Tests (with 100,000 observations):</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Temperature and duration</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>test1 <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(ride_analysis_data<span class="sc">$</span>tmax, ride_analysis_data<span class="sc">$</span>ride_duration_min)</span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Temperature vs Duration: r = %.3f, p &lt; 0.001</span><span class="sc">\n</span><span class="st">&quot;</span>, test1<span class="sc">$</span>estimate))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Temperature and duration</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>test1 <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(ride_analysis_data<span class="sc">$</span>tmax, ride_analysis_data<span class="sc">$</span>ride_duration_min)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Temperature vs Duration: r = %.3f, p &lt; 0.001</span><span class="sc">\n</span><span class="st">&quot;</span>, test1<span class="sc">$</span>estimate))</span></code></pre></div>
 <pre><code>## Temperature vs Duration: r = 0.006, p &lt; 0.001</code></pre>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># Precipitation and duration</span></span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>test2 <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(ride_analysis_data<span class="sc">$</span>prcp, ride_analysis_data<span class="sc">$</span>ride_duration_min)</span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Precipitation vs Duration: r = %.3f, p %s</span><span class="sc">\n</span><span class="st">&quot;</span>, </span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>            test2<span class="sc">$</span>estimate, </span>
-<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>            <span class="fu">ifelse</span>(test2<span class="sc">$</span>p.value <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">&quot;&lt; 0.001&quot;</span>, <span class="fu">sprintf</span>(<span class="st">&quot;= %.3f&quot;</span>, test2<span class="sc">$</span>p.value))))</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Precipitation and duration</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>test2 <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(ride_analysis_data<span class="sc">$</span>prcp, ride_analysis_data<span class="sc">$</span>ride_duration_min)</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Precipitation vs Duration: r = %.3f, p %s</span><span class="sc">\n</span><span class="st">&quot;</span>, </span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>            test2<span class="sc">$</span>estimate, </span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>            <span class="fu">ifelse</span>(test2<span class="sc">$</span>p.value <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">&quot;&lt; 0.001&quot;</span>, <span class="fu">sprintf</span>(<span class="st">&quot;= %.3f&quot;</span>, test2<span class="sc">$</span>p.value))))</span></code></pre></div>
 <pre><code>## Precipitation vs Duration: r = 0.001, p = 0.805</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># Distance and duration</span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>test3 <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(ride_analysis_data<span class="sc">$</span>distance_km, ride_analysis_data<span class="sc">$</span>ride_duration_min)</span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Distance vs Duration: r = %.3f, p &lt; 0.001</span><span class="sc">\n</span><span class="st">&quot;</span>, test3<span class="sc">$</span>estimate))</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Distance and duration</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>test3 <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(ride_analysis_data<span class="sc">$</span>distance_km, ride_analysis_data<span class="sc">$</span>ride_duration_min)</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Distance vs Duration: r = %.3f, p &lt; 0.001</span><span class="sc">\n</span><span class="st">&quot;</span>, test3<span class="sc">$</span>estimate))</span></code></pre></div>
 <pre><code>## Distance vs Duration: r = 0.651, p &lt; 0.001</code></pre>
 </div>
 <div id="model-fitting" class="section level1 info-card">
@@ -1321,15 +1208,15 @@ hour
 <div id="full-models-with-weather-and-temporal-variables"
 class="section level2">
 <h2>Full Models with Weather and Temporal Variables</h2>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="co"># Model 1: All Riders</span></span>
-<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>model_total_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
-<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>  ride_duration_min <span class="sc">~</span> tmax <span class="sc">+</span> tmin <span class="sc">+</span> prcp <span class="sc">+</span> distance_km <span class="sc">+</span></span>
-<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>    is_tuesday <span class="sc">+</span> is_wednesday <span class="sc">+</span> is_thursday <span class="sc">+</span> is_friday <span class="sc">+</span> is_saturday <span class="sc">+</span> is_sunday <span class="sc">+</span></span>
-<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>    time_of_day,</span>
-<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a>  <span class="at">data =</span> ride_analysis_data</span>
-<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a>)</span>
-<span id="cb20-8"><a href="#cb20-8" tabindex="-1"></a></span>
-<span id="cb20-9"><a href="#cb20-9" tabindex="-1"></a><span class="fu">summary</span>(model_total_full)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Model 1: All Riders</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>model_total_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  ride_duration_min <span class="sc">~</span> tmax <span class="sc">+</span> tmin <span class="sc">+</span> prcp <span class="sc">+</span> distance_km <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>    is_tuesday <span class="sc">+</span> is_wednesday <span class="sc">+</span> is_thursday <span class="sc">+</span> is_friday <span class="sc">+</span> is_saturday <span class="sc">+</span> is_sunday <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>    time_of_day,</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>  <span class="at">data =</span> ride_analysis_data</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>)</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="fu">summary</span>(model_total_full)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = ride_duration_min ~ tmax + tmin + prcp + distance_km + 
@@ -1363,17 +1250,17 @@ class="section level2">
 ##   (583 observations deleted due to missingness)
 ## Multiple R-squared:  0.4326, Adjusted R-squared:  0.4326 
 ## F-statistic:  5815 on 13 and 99125 DF,  p-value: &lt; 2.2e-16</code></pre>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># Model 2: Members Only</span></span>
-<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>ride_member <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(member_casual <span class="sc">==</span> <span class="st">&quot;member&quot;</span>)</span>
-<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a></span>
-<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>model_member_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
-<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>  ride_duration_min <span class="sc">~</span> tmax <span class="sc">+</span> tmin <span class="sc">+</span> prcp <span class="sc">+</span> distance_km <span class="sc">+</span></span>
-<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>    is_tuesday <span class="sc">+</span> is_wednesday <span class="sc">+</span> is_thursday <span class="sc">+</span> is_friday <span class="sc">+</span> is_saturday <span class="sc">+</span> is_sunday <span class="sc">+</span></span>
-<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>    time_of_day,</span>
-<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>  <span class="at">data =</span> ride_member</span>
-<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a>)</span>
-<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a></span>
-<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a><span class="fu">summary</span>(model_member_full)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># Model 2: Members Only</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>ride_member <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(member_casual <span class="sc">==</span> <span class="st">&quot;member&quot;</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>model_member_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>  ride_duration_min <span class="sc">~</span> tmax <span class="sc">+</span> tmin <span class="sc">+</span> prcp <span class="sc">+</span> distance_km <span class="sc">+</span></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>    is_tuesday <span class="sc">+</span> is_wednesday <span class="sc">+</span> is_thursday <span class="sc">+</span> is_friday <span class="sc">+</span> is_saturday <span class="sc">+</span> is_sunday <span class="sc">+</span></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>    time_of_day,</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>  <span class="at">data =</span> ride_member</span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>)</span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a><span class="fu">summary</span>(model_member_full)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = ride_duration_min ~ tmax + tmin + prcp + distance_km + 
@@ -1407,17 +1294,17 @@ class="section level2">
 ##   (415 observations deleted due to missingness)
 ## Multiple R-squared:  0.5678, Adjusted R-squared:  0.5677 
 ## F-statistic:  8102 on 13 and 80179 DF,  p-value: &lt; 2.2e-16</code></pre>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="co"># Model 3: Casual Users Only</span></span>
-<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>ride_casual <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(member_casual <span class="sc">==</span> <span class="st">&quot;casual&quot;</span>)</span>
-<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a>model_casual_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
-<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>  ride_duration_min <span class="sc">~</span> tmax <span class="sc">+</span> tmin <span class="sc">+</span> prcp <span class="sc">+</span> distance_km <span class="sc">+</span></span>
-<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a>    is_tuesday <span class="sc">+</span> is_wednesday <span class="sc">+</span> is_thursday <span class="sc">+</span> is_friday <span class="sc">+</span> is_saturday <span class="sc">+</span> is_sunday <span class="sc">+</span></span>
-<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a>    time_of_day,</span>
-<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a>  <span class="at">data =</span> ride_casual</span>
-<span id="cb24-9"><a href="#cb24-9" tabindex="-1"></a>)</span>
-<span id="cb24-10"><a href="#cb24-10" tabindex="-1"></a></span>
-<span id="cb24-11"><a href="#cb24-11" tabindex="-1"></a><span class="fu">summary</span>(model_casual_full)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="co"># Model 3: Casual Users Only</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>ride_casual <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(member_casual <span class="sc">==</span> <span class="st">&quot;casual&quot;</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>model_casual_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>  ride_duration_min <span class="sc">~</span> tmax <span class="sc">+</span> tmin <span class="sc">+</span> prcp <span class="sc">+</span> distance_km <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>    is_tuesday <span class="sc">+</span> is_wednesday <span class="sc">+</span> is_thursday <span class="sc">+</span> is_friday <span class="sc">+</span> is_saturday <span class="sc">+</span> is_sunday <span class="sc">+</span></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>    time_of_day,</span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>  <span class="at">data =</span> ride_casual</span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a>)</span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a><span class="fu">summary</span>(model_casual_full)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = ride_duration_min ~ tmax + tmin + prcp + distance_km + 
@@ -1455,25 +1342,25 @@ class="section level2">
 </div>
 <div id="comprehensive-results" class="section level1 info-card">
 <h1>Comprehensive Results</h1>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="co"># Extract coefficients for all models</span></span>
-<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>coef_total <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model_total_full) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">&quot;All Riders&quot;</span>)</span>
-<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>coef_member <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model_member_full) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">&quot;Members&quot;</span>)</span>
-<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>coef_casual <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model_casual_full) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">&quot;Casual&quot;</span>)</span>
-<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a></span>
-<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a><span class="co"># Combine and display key coefficients</span></span>
-<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a><span class="fu">bind_rows</span>(coef_total, coef_member, coef_casual) <span class="sc">%&gt;%</span></span>
-<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;distance_km&quot;</span>, <span class="st">&quot;tmax&quot;</span>, <span class="st">&quot;tmin&quot;</span>, <span class="st">&quot;prcp&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb26-9"><a href="#cb26-9" tabindex="-1"></a>  <span class="fu">select</span>(model, term, estimate, std.error, p.value) <span class="sc">%&gt;%</span></span>
-<span id="cb26-10"><a href="#cb26-10" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb26-11"><a href="#cb26-11" tabindex="-1"></a>    <span class="at">estimate =</span> <span class="fu">round</span>(estimate, <span class="dv">3</span>),</span>
-<span id="cb26-12"><a href="#cb26-12" tabindex="-1"></a>    <span class="at">std.error =</span> <span class="fu">round</span>(std.error, <span class="dv">3</span>),</span>
-<span id="cb26-13"><a href="#cb26-13" tabindex="-1"></a>    <span class="at">p.value =</span> <span class="fu">ifelse</span>(p.value <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">&quot;&lt;0.001&quot;</span>, <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, p.value))</span>
-<span id="cb26-14"><a href="#cb26-14" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb26-15"><a href="#cb26-15" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
-<span id="cb26-16"><a href="#cb26-16" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 3: Regression Results - Key Weather and Distance Effects&quot;</span>,</span>
-<span id="cb26-17"><a href="#cb26-17" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Model&quot;</span>, <span class="st">&quot;Variable&quot;</span>, <span class="st">&quot;Coefficient&quot;</span>, <span class="st">&quot;Std. Error&quot;</span>, <span class="st">&quot;P-value&quot;</span>)</span>
-<span id="cb26-18"><a href="#cb26-18" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb26-19"><a href="#cb26-19" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="co"># Extract coefficients for all models</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>coef_total <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model_total_full) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">&quot;All Riders&quot;</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>coef_member <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model_member_full) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">&quot;Members&quot;</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>coef_casual <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model_casual_full) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">&quot;Casual&quot;</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a><span class="co"># Combine and display key coefficients</span></span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a><span class="fu">bind_rows</span>(coef_total, coef_member, coef_casual) <span class="sc">%&gt;%</span></span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;distance_km&quot;</span>, <span class="st">&quot;tmax&quot;</span>, <span class="st">&quot;tmin&quot;</span>, <span class="st">&quot;prcp&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>  <span class="fu">select</span>(model, term, estimate, std.error, p.value) <span class="sc">%&gt;%</span></span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a>    <span class="at">estimate =</span> <span class="fu">round</span>(estimate, <span class="dv">3</span>),</span>
+<span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a>    <span class="at">std.error =</span> <span class="fu">round</span>(std.error, <span class="dv">3</span>),</span>
+<span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a>    <span class="at">p.value =</span> <span class="fu">ifelse</span>(p.value <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">&quot;&lt;0.001&quot;</span>, <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, p.value))</span>
+<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb21-15"><a href="#cb21-15" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb21-16"><a href="#cb21-16" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 3: Regression Results - Key Weather and Distance Effects&quot;</span>,</span>
+<span id="cb21-17"><a href="#cb21-17" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Model&quot;</span>, <span class="st">&quot;Variable&quot;</span>, <span class="st">&quot;Coefficient&quot;</span>, <span class="st">&quot;Std. Error&quot;</span>, <span class="st">&quot;P-value&quot;</span>)</span>
+<span id="cb21-18"><a href="#cb21-18" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb21-19"><a href="#cb21-19" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 Table 3: Regression Results - Key Weather and Distance Effects
@@ -1704,29 +1591,29 @@ distance_km
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="co"># Model fit statistics</span></span>
-<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>model_stats <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>  <span class="at">Model =</span> <span class="fu">c</span>(<span class="st">&quot;All Riders&quot;</span>, <span class="st">&quot;Members&quot;</span>, <span class="st">&quot;Casual&quot;</span>),</span>
-<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>  <span class="st">`</span><span class="at">R-squared</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, <span class="fu">summary</span>(model_total_full)<span class="sc">$</span>r.squared),</span>
-<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, <span class="fu">summary</span>(model_member_full)<span class="sc">$</span>r.squared),</span>
-<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, <span class="fu">summary</span>(model_casual_full)<span class="sc">$</span>r.squared)</span>
-<span id="cb27-8"><a href="#cb27-8" tabindex="-1"></a>  ),</span>
-<span id="cb27-9"><a href="#cb27-9" tabindex="-1"></a>  <span class="st">`</span><span class="at">Adj. R-squared</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb27-10"><a href="#cb27-10" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, <span class="fu">summary</span>(model_total_full)<span class="sc">$</span>adj.r.squared),</span>
-<span id="cb27-11"><a href="#cb27-11" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, <span class="fu">summary</span>(model_member_full)<span class="sc">$</span>adj.r.squared),</span>
-<span id="cb27-12"><a href="#cb27-12" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, <span class="fu">summary</span>(model_casual_full)<span class="sc">$</span>adj.r.squared)</span>
-<span id="cb27-13"><a href="#cb27-13" tabindex="-1"></a>  ),</span>
-<span id="cb27-14"><a href="#cb27-14" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">c</span>(</span>
-<span id="cb27-15"><a href="#cb27-15" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">nrow</span>(ride_analysis_data), <span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>),</span>
-<span id="cb27-16"><a href="#cb27-16" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">nrow</span>(ride_member), <span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>),</span>
-<span id="cb27-17"><a href="#cb27-17" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">nrow</span>(ride_casual), <span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>)</span>
-<span id="cb27-18"><a href="#cb27-18" tabindex="-1"></a>  )</span>
-<span id="cb27-19"><a href="#cb27-19" tabindex="-1"></a>)</span>
-<span id="cb27-20"><a href="#cb27-20" tabindex="-1"></a></span>
-<span id="cb27-21"><a href="#cb27-21" tabindex="-1"></a>model_stats <span class="sc">%&gt;%</span></span>
-<span id="cb27-22"><a href="#cb27-22" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">&quot;Table 4: Model Fit Statistics&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb27-23"><a href="#cb27-23" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># Model fit statistics</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>model_stats <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>  <span class="at">Model =</span> <span class="fu">c</span>(<span class="st">&quot;All Riders&quot;</span>, <span class="st">&quot;Members&quot;</span>, <span class="st">&quot;Casual&quot;</span>),</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>  <span class="st">`</span><span class="at">R-squared</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, <span class="fu">summary</span>(model_total_full)<span class="sc">$</span>r.squared),</span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, <span class="fu">summary</span>(model_member_full)<span class="sc">$</span>r.squared),</span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, <span class="fu">summary</span>(model_casual_full)<span class="sc">$</span>r.squared)</span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>  ),</span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a>  <span class="st">`</span><span class="at">Adj. R-squared</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, <span class="fu">summary</span>(model_total_full)<span class="sc">$</span>adj.r.squared),</span>
+<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, <span class="fu">summary</span>(model_member_full)<span class="sc">$</span>adj.r.squared),</span>
+<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.3f&quot;</span>, <span class="fu">summary</span>(model_casual_full)<span class="sc">$</span>adj.r.squared)</span>
+<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a>  ),</span>
+<span id="cb22-14"><a href="#cb22-14" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">c</span>(</span>
+<span id="cb22-15"><a href="#cb22-15" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">nrow</span>(ride_analysis_data), <span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>),</span>
+<span id="cb22-16"><a href="#cb22-16" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">nrow</span>(ride_member), <span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>),</span>
+<span id="cb22-17"><a href="#cb22-17" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">nrow</span>(ride_casual), <span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>)</span>
+<span id="cb22-18"><a href="#cb22-18" tabindex="-1"></a>  )</span>
+<span id="cb22-19"><a href="#cb22-19" tabindex="-1"></a>)</span>
+<span id="cb22-20"><a href="#cb22-20" tabindex="-1"></a></span>
+<span id="cb22-21"><a href="#cb22-21" tabindex="-1"></a>model_stats <span class="sc">%&gt;%</span></span>
+<span id="cb22-22"><a href="#cb22-22" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">&quot;Table 4: Model Fit Statistics&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-23"><a href="#cb22-23" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 Table 4: Model Fit Statistics
@@ -1798,37 +1685,37 @@ Casual
 <div id="key-finding-1-temperature-has-modest-effect-on-duration"
 class="section level2">
 <h2>KEY FINDING 1: Temperature Has Modest Effect on Duration</h2>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>temp_findings_duration <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>  <span class="st">`</span><span class="at">User Type</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;All Riders&quot;</span>, <span class="st">&quot;Members&quot;</span>, <span class="st">&quot;Casual&quot;</span>),</span>
-<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">Effect per 10°F</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.2f minutes&quot;</span>, temp_effect_10F_total),</span>
-<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.2f minutes&quot;</span>, temp_effect_10F_member),</span>
-<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.2f minutes&quot;</span>, temp_effect_10F_casual)</span>
-<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a>  ),</span>
-<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a>  <span class="st">`</span><span class="at">Percent Change</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.1f%%&quot;</span>, (temp_effect_10F_total<span class="sc">/</span>mean_duration_total)<span class="sc">*</span><span class="dv">100</span>),</span>
-<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.1f%%&quot;</span>, (temp_effect_10F_member<span class="sc">/</span>mean_duration_member)<span class="sc">*</span><span class="dv">100</span>),</span>
-<span id="cb28-11"><a href="#cb28-11" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.1f%%&quot;</span>, (temp_effect_10F_casual<span class="sc">/</span>mean_duration_casual)<span class="sc">*</span><span class="dv">100</span>)</span>
-<span id="cb28-12"><a href="#cb28-12" tabindex="-1"></a>  ),</span>
-<span id="cb28-13"><a href="#cb28-13" tabindex="-1"></a>  <span class="st">`</span><span class="at">Significance</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb28-14"><a href="#cb28-14" tabindex="-1"></a>    <span class="fu">ifelse</span>(pval_total[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">&quot;***&quot;</span>,</span>
-<span id="cb28-15"><a href="#cb28-15" tabindex="-1"></a>           <span class="fu">ifelse</span>(pval_total[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.01</span>, <span class="st">&quot;**&quot;</span>,</span>
-<span id="cb28-16"><a href="#cb28-16" tabindex="-1"></a>                  <span class="fu">ifelse</span>(pval_total[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">&quot;*&quot;</span>, <span class="st">&quot;ns&quot;</span>))),</span>
-<span id="cb28-17"><a href="#cb28-17" tabindex="-1"></a>    <span class="fu">ifelse</span>(pval_member[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">&quot;***&quot;</span>,</span>
-<span id="cb28-18"><a href="#cb28-18" tabindex="-1"></a>           <span class="fu">ifelse</span>(pval_member[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.01</span>, <span class="st">&quot;**&quot;</span>,</span>
-<span id="cb28-19"><a href="#cb28-19" tabindex="-1"></a>                  <span class="fu">ifelse</span>(pval_member[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">&quot;*&quot;</span>, <span class="st">&quot;ns&quot;</span>))),</span>
-<span id="cb28-20"><a href="#cb28-20" tabindex="-1"></a>    <span class="fu">ifelse</span>(pval_casual[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">&quot;***&quot;</span>,</span>
-<span id="cb28-21"><a href="#cb28-21" tabindex="-1"></a>           <span class="fu">ifelse</span>(pval_casual[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.01</span>, <span class="st">&quot;**&quot;</span>,</span>
-<span id="cb28-22"><a href="#cb28-22" tabindex="-1"></a>                  <span class="fu">ifelse</span>(pval_casual[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">&quot;*&quot;</span>, <span class="st">&quot;ns&quot;</span>)))</span>
-<span id="cb28-23"><a href="#cb28-23" tabindex="-1"></a>  )</span>
-<span id="cb28-24"><a href="#cb28-24" tabindex="-1"></a>)</span>
-<span id="cb28-25"><a href="#cb28-25" tabindex="-1"></a></span>
-<span id="cb28-26"><a href="#cb28-26" tabindex="-1"></a>temp_findings_duration <span class="sc">%&gt;%</span></span>
-<span id="cb28-27"><a href="#cb28-27" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
-<span id="cb28-28"><a href="#cb28-28" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 5: Effect of 10°F Temperature Increase on Ride Duration&quot;</span>,</span>
-<span id="cb28-29"><a href="#cb28-29" tabindex="-1"></a>    <span class="at">align =</span> <span class="fu">c</span>(<span class="st">&#39;l&#39;</span>, <span class="st">&#39;r&#39;</span>, <span class="st">&#39;r&#39;</span>, <span class="st">&#39;c&#39;</span>)</span>
-<span id="cb28-30"><a href="#cb28-30" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb28-31"><a href="#cb28-31" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>temp_findings_duration <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  <span class="st">`</span><span class="at">User Type</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;All Riders&quot;</span>, <span class="st">&quot;Members&quot;</span>, <span class="st">&quot;Casual&quot;</span>),</span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">Effect per 10°F</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.2f minutes&quot;</span>, temp_effect_10F_total),</span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.2f minutes&quot;</span>, temp_effect_10F_member),</span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.2f minutes&quot;</span>, temp_effect_10F_casual)</span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a>  ),</span>
+<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a>  <span class="st">`</span><span class="at">Percent Change</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb23-9"><a href="#cb23-9" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.1f%%&quot;</span>, (temp_effect_10F_total<span class="sc">/</span>mean_duration_total)<span class="sc">*</span><span class="dv">100</span>),</span>
+<span id="cb23-10"><a href="#cb23-10" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.1f%%&quot;</span>, (temp_effect_10F_member<span class="sc">/</span>mean_duration_member)<span class="sc">*</span><span class="dv">100</span>),</span>
+<span id="cb23-11"><a href="#cb23-11" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.1f%%&quot;</span>, (temp_effect_10F_casual<span class="sc">/</span>mean_duration_casual)<span class="sc">*</span><span class="dv">100</span>)</span>
+<span id="cb23-12"><a href="#cb23-12" tabindex="-1"></a>  ),</span>
+<span id="cb23-13"><a href="#cb23-13" tabindex="-1"></a>  <span class="st">`</span><span class="at">Significance</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb23-14"><a href="#cb23-14" tabindex="-1"></a>    <span class="fu">ifelse</span>(pval_total[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">&quot;***&quot;</span>,</span>
+<span id="cb23-15"><a href="#cb23-15" tabindex="-1"></a>           <span class="fu">ifelse</span>(pval_total[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.01</span>, <span class="st">&quot;**&quot;</span>,</span>
+<span id="cb23-16"><a href="#cb23-16" tabindex="-1"></a>                  <span class="fu">ifelse</span>(pval_total[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">&quot;*&quot;</span>, <span class="st">&quot;ns&quot;</span>))),</span>
+<span id="cb23-17"><a href="#cb23-17" tabindex="-1"></a>    <span class="fu">ifelse</span>(pval_member[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">&quot;***&quot;</span>,</span>
+<span id="cb23-18"><a href="#cb23-18" tabindex="-1"></a>           <span class="fu">ifelse</span>(pval_member[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.01</span>, <span class="st">&quot;**&quot;</span>,</span>
+<span id="cb23-19"><a href="#cb23-19" tabindex="-1"></a>                  <span class="fu">ifelse</span>(pval_member[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">&quot;*&quot;</span>, <span class="st">&quot;ns&quot;</span>))),</span>
+<span id="cb23-20"><a href="#cb23-20" tabindex="-1"></a>    <span class="fu">ifelse</span>(pval_casual[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">&quot;***&quot;</span>,</span>
+<span id="cb23-21"><a href="#cb23-21" tabindex="-1"></a>           <span class="fu">ifelse</span>(pval_casual[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.01</span>, <span class="st">&quot;**&quot;</span>,</span>
+<span id="cb23-22"><a href="#cb23-22" tabindex="-1"></a>                  <span class="fu">ifelse</span>(pval_casual[<span class="st">&quot;tmax&quot;</span>] <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">&quot;*&quot;</span>, <span class="st">&quot;ns&quot;</span>)))</span>
+<span id="cb23-23"><a href="#cb23-23" tabindex="-1"></a>  )</span>
+<span id="cb23-24"><a href="#cb23-24" tabindex="-1"></a>)</span>
+<span id="cb23-25"><a href="#cb23-25" tabindex="-1"></a></span>
+<span id="cb23-26"><a href="#cb23-26" tabindex="-1"></a>temp_findings_duration <span class="sc">%&gt;%</span></span>
+<span id="cb23-27"><a href="#cb23-27" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb23-28"><a href="#cb23-28" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 5: Effect of 10°F Temperature Increase on Ride Duration&quot;</span>,</span>
+<span id="cb23-29"><a href="#cb23-29" tabindex="-1"></a>    <span class="at">align =</span> <span class="fu">c</span>(<span class="st">&#39;l&#39;</span>, <span class="st">&#39;r&#39;</span>, <span class="st">&#39;r&#39;</span>, <span class="st">&#39;c&#39;</span>)</span>
+<span id="cb23-30"><a href="#cb23-30" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb23-31"><a href="#cb23-31" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 Table 5: Effect of 10°F Temperature Increase on Ride Duration
@@ -1906,26 +1793,26 @@ similar small temperature effects.</p>
 <div id="key-finding-2-distance-is-the-strongest-predictor-of-duration"
 class="section level2">
 <h2>KEY FINDING 2: Distance is the Strongest Predictor of Duration</h2>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>distance_findings <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>  <span class="st">`</span><span class="at">User Type</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;All Riders&quot;</span>, <span class="st">&quot;Members&quot;</span>, <span class="st">&quot;Casual&quot;</span>),</span>
-<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">Effect per km</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.2f minutes&quot;</span>, distance_effect_total),</span>
-<span id="cb29-5"><a href="#cb29-5" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.2f minutes&quot;</span>, distance_effect_member),</span>
-<span id="cb29-6"><a href="#cb29-6" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.2f minutes&quot;</span>, distance_effect_casual)</span>
-<span id="cb29-7"><a href="#cb29-7" tabindex="-1"></a>  ),</span>
-<span id="cb29-8"><a href="#cb29-8" tabindex="-1"></a>  <span class="st">`</span><span class="at">R² Contribution</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb29-9"><a href="#cb29-9" tabindex="-1"></a>    <span class="st">&quot;High&quot;</span>,</span>
-<span id="cb29-10"><a href="#cb29-10" tabindex="-1"></a>    <span class="st">&quot;High&quot;</span>,</span>
-<span id="cb29-11"><a href="#cb29-11" tabindex="-1"></a>    <span class="st">&quot;High&quot;</span></span>
-<span id="cb29-12"><a href="#cb29-12" tabindex="-1"></a>  )</span>
-<span id="cb29-13"><a href="#cb29-13" tabindex="-1"></a>)</span>
-<span id="cb29-14"><a href="#cb29-14" tabindex="-1"></a></span>
-<span id="cb29-15"><a href="#cb29-15" tabindex="-1"></a>distance_findings <span class="sc">%&gt;%</span></span>
-<span id="cb29-16"><a href="#cb29-16" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
-<span id="cb29-17"><a href="#cb29-17" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 6: Effect of Distance on Ride Duration&quot;</span>,</span>
-<span id="cb29-18"><a href="#cb29-18" tabindex="-1"></a>    <span class="at">align =</span> <span class="fu">c</span>(<span class="st">&#39;l&#39;</span>, <span class="st">&#39;r&#39;</span>, <span class="st">&#39;c&#39;</span>)</span>
-<span id="cb29-19"><a href="#cb29-19" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb29-20"><a href="#cb29-20" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>distance_findings <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>  <span class="st">`</span><span class="at">User Type</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;All Riders&quot;</span>, <span class="st">&quot;Members&quot;</span>, <span class="st">&quot;Casual&quot;</span>),</span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">Effect per km</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.2f minutes&quot;</span>, distance_effect_total),</span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.2f minutes&quot;</span>, distance_effect_member),</span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.2f minutes&quot;</span>, distance_effect_casual)</span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a>  ),</span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a>  <span class="st">`</span><span class="at">R² Contribution</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb24-9"><a href="#cb24-9" tabindex="-1"></a>    <span class="st">&quot;High&quot;</span>,</span>
+<span id="cb24-10"><a href="#cb24-10" tabindex="-1"></a>    <span class="st">&quot;High&quot;</span>,</span>
+<span id="cb24-11"><a href="#cb24-11" tabindex="-1"></a>    <span class="st">&quot;High&quot;</span></span>
+<span id="cb24-12"><a href="#cb24-12" tabindex="-1"></a>  )</span>
+<span id="cb24-13"><a href="#cb24-13" tabindex="-1"></a>)</span>
+<span id="cb24-14"><a href="#cb24-14" tabindex="-1"></a></span>
+<span id="cb24-15"><a href="#cb24-15" tabindex="-1"></a>distance_findings <span class="sc">%&gt;%</span></span>
+<span id="cb24-16"><a href="#cb24-16" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb24-17"><a href="#cb24-17" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 6: Effect of Distance on Ride Duration&quot;</span>,</span>
+<span id="cb24-18"><a href="#cb24-18" tabindex="-1"></a>    <span class="at">align =</span> <span class="fu">c</span>(<span class="st">&#39;l&#39;</span>, <span class="st">&#39;r&#39;</span>, <span class="st">&#39;c&#39;</span>)</span>
+<span id="cb24-19"><a href="#cb24-19" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb24-20"><a href="#cb24-20" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 Table 6: Effect of Distance on Ride Duration
@@ -1989,26 +1876,26 @@ time. Weather and temporal effects are small in comparison.</p>
 <div id="key-finding-3-precipitation-slightly-reduces-ride-duration"
 class="section level2">
 <h2>KEY FINDING 3: Precipitation Slightly Reduces Ride Duration</h2>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>precip_findings_duration <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>  <span class="st">`</span><span class="at">User Type</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;All Riders&quot;</span>, <span class="st">&quot;Members&quot;</span>, <span class="st">&quot;Casual&quot;</span>),</span>
-<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">Effect per inch</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.2f minutes&quot;</span>, prcp_effect_total),</span>
-<span id="cb30-5"><a href="#cb30-5" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.2f minutes&quot;</span>, prcp_effect_member),</span>
-<span id="cb30-6"><a href="#cb30-6" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.2f minutes&quot;</span>, prcp_effect_casual)</span>
-<span id="cb30-7"><a href="#cb30-7" tabindex="-1"></a>  ),</span>
-<span id="cb30-8"><a href="#cb30-8" tabindex="-1"></a>  <span class="st">`</span><span class="at">Interpretation</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb30-9"><a href="#cb30-9" tabindex="-1"></a>    <span class="st">&quot;Slightly shorter rides in rain&quot;</span>,</span>
-<span id="cb30-10"><a href="#cb30-10" tabindex="-1"></a>    <span class="st">&quot;Slightly shorter rides in rain&quot;</span>,</span>
-<span id="cb30-11"><a href="#cb30-11" tabindex="-1"></a>    <span class="st">&quot;Slightly shorter rides in rain&quot;</span></span>
-<span id="cb30-12"><a href="#cb30-12" tabindex="-1"></a>  )</span>
-<span id="cb30-13"><a href="#cb30-13" tabindex="-1"></a>)</span>
-<span id="cb30-14"><a href="#cb30-14" tabindex="-1"></a></span>
-<span id="cb30-15"><a href="#cb30-15" tabindex="-1"></a>precip_findings_duration <span class="sc">%&gt;%</span></span>
-<span id="cb30-16"><a href="#cb30-16" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
-<span id="cb30-17"><a href="#cb30-17" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 7: Effect of Precipitation on Ride Duration&quot;</span>,</span>
-<span id="cb30-18"><a href="#cb30-18" tabindex="-1"></a>    <span class="at">align =</span> <span class="fu">c</span>(<span class="st">&#39;l&#39;</span>, <span class="st">&#39;r&#39;</span>, <span class="st">&#39;l&#39;</span>)</span>
-<span id="cb30-19"><a href="#cb30-19" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb30-20"><a href="#cb30-20" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>precip_findings_duration <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>  <span class="st">`</span><span class="at">User Type</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;All Riders&quot;</span>, <span class="st">&quot;Members&quot;</span>, <span class="st">&quot;Casual&quot;</span>),</span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">Effect per inch</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.2f minutes&quot;</span>, prcp_effect_total),</span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.2f minutes&quot;</span>, prcp_effect_member),</span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%+.2f minutes&quot;</span>, prcp_effect_casual)</span>
+<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a>  ),</span>
+<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a>  <span class="st">`</span><span class="at">Interpretation</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb25-9"><a href="#cb25-9" tabindex="-1"></a>    <span class="st">&quot;Slightly shorter rides in rain&quot;</span>,</span>
+<span id="cb25-10"><a href="#cb25-10" tabindex="-1"></a>    <span class="st">&quot;Slightly shorter rides in rain&quot;</span>,</span>
+<span id="cb25-11"><a href="#cb25-11" tabindex="-1"></a>    <span class="st">&quot;Slightly shorter rides in rain&quot;</span></span>
+<span id="cb25-12"><a href="#cb25-12" tabindex="-1"></a>  )</span>
+<span id="cb25-13"><a href="#cb25-13" tabindex="-1"></a>)</span>
+<span id="cb25-14"><a href="#cb25-14" tabindex="-1"></a></span>
+<span id="cb25-15"><a href="#cb25-15" tabindex="-1"></a>precip_findings_duration <span class="sc">%&gt;%</span></span>
+<span id="cb25-16"><a href="#cb25-16" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb25-17"><a href="#cb25-17" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 7: Effect of Precipitation on Ride Duration&quot;</span>,</span>
+<span id="cb25-18"><a href="#cb25-18" tabindex="-1"></a>    <span class="at">align =</span> <span class="fu">c</span>(<span class="st">&#39;l&#39;</span>, <span class="st">&#39;r&#39;</span>, <span class="st">&#39;l&#39;</span>)</span>
+<span id="cb25-19"><a href="#cb25-19" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb25-20"><a href="#cb25-20" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 Table 7: Effect of Precipitation on Ride Duration
@@ -2072,31 +1959,31 @@ taking more direct routes or shortening discretionary trips.</p>
 <div id="key-finding-4-casual-riders-take-much-longer-trips"
 class="section level2">
 <h2>KEY FINDING 4: Casual Riders Take Much Longer Trips</h2>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>user_comparison <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>  <span class="at">Metric =</span> <span class="fu">c</span>(<span class="st">&quot;Mean Duration&quot;</span>, <span class="st">&quot;Median Duration&quot;</span>, <span class="st">&quot;Sample Size&quot;</span>),</span>
-<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a>  <span class="at">Members =</span> <span class="fu">c</span>(</span>
-<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.1f minutes&quot;</span>, mean_duration_member),</span>
-<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.1f minutes&quot;</span>, <span class="fu">median</span>(ride_member<span class="sc">$</span>ride_duration_min)),</span>
-<span id="cb31-6"><a href="#cb31-6" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">nrow</span>(ride_member), <span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>)</span>
-<span id="cb31-7"><a href="#cb31-7" tabindex="-1"></a>  ),</span>
-<span id="cb31-8"><a href="#cb31-8" tabindex="-1"></a>  <span class="at">Casual =</span> <span class="fu">c</span>(</span>
-<span id="cb31-9"><a href="#cb31-9" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.1f minutes&quot;</span>, mean_duration_casual),</span>
-<span id="cb31-10"><a href="#cb31-10" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.1f minutes&quot;</span>, <span class="fu">median</span>(ride_casual<span class="sc">$</span>ride_duration_min)),</span>
-<span id="cb31-11"><a href="#cb31-11" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">nrow</span>(ride_casual), <span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>)</span>
-<span id="cb31-12"><a href="#cb31-12" tabindex="-1"></a>  ),</span>
-<span id="cb31-13"><a href="#cb31-13" tabindex="-1"></a>  <span class="at">Difference =</span> <span class="fu">c</span>(</span>
-<span id="cb31-14"><a href="#cb31-14" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.1f minutes longer&quot;</span>, mean_duration_casual <span class="sc">-</span> mean_duration_member),</span>
-<span id="cb31-15"><a href="#cb31-15" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.1f minutes longer&quot;</span>, <span class="fu">median</span>(ride_casual<span class="sc">$</span>ride_duration_min) <span class="sc">-</span> <span class="fu">median</span>(ride_member<span class="sc">$</span>ride_duration_min)),</span>
-<span id="cb31-16"><a href="#cb31-16" tabindex="-1"></a>    <span class="st">&quot;&quot;</span></span>
-<span id="cb31-17"><a href="#cb31-17" tabindex="-1"></a>  )</span>
-<span id="cb31-18"><a href="#cb31-18" tabindex="-1"></a>)</span>
-<span id="cb31-19"><a href="#cb31-19" tabindex="-1"></a></span>
-<span id="cb31-20"><a href="#cb31-20" tabindex="-1"></a>user_comparison <span class="sc">%&gt;%</span></span>
-<span id="cb31-21"><a href="#cb31-21" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
-<span id="cb31-22"><a href="#cb31-22" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 8: Member vs Casual Ride Duration Comparison&quot;</span>,</span>
-<span id="cb31-23"><a href="#cb31-23" tabindex="-1"></a>    <span class="at">align =</span> <span class="fu">c</span>(<span class="st">&#39;l&#39;</span>, <span class="st">&#39;r&#39;</span>, <span class="st">&#39;r&#39;</span>, <span class="st">&#39;r&#39;</span>)</span>
-<span id="cb31-24"><a href="#cb31-24" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb31-25"><a href="#cb31-25" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>user_comparison <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>  <span class="at">Metric =</span> <span class="fu">c</span>(<span class="st">&quot;Mean Duration&quot;</span>, <span class="st">&quot;Median Duration&quot;</span>, <span class="st">&quot;Sample Size&quot;</span>),</span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>  <span class="at">Members =</span> <span class="fu">c</span>(</span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.1f minutes&quot;</span>, mean_duration_member),</span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.1f minutes&quot;</span>, <span class="fu">median</span>(ride_member<span class="sc">$</span>ride_duration_min)),</span>
+<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">nrow</span>(ride_member), <span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>)</span>
+<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a>  ),</span>
+<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a>  <span class="at">Casual =</span> <span class="fu">c</span>(</span>
+<span id="cb26-9"><a href="#cb26-9" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.1f minutes&quot;</span>, mean_duration_casual),</span>
+<span id="cb26-10"><a href="#cb26-10" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.1f minutes&quot;</span>, <span class="fu">median</span>(ride_casual<span class="sc">$</span>ride_duration_min)),</span>
+<span id="cb26-11"><a href="#cb26-11" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">nrow</span>(ride_casual), <span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>)</span>
+<span id="cb26-12"><a href="#cb26-12" tabindex="-1"></a>  ),</span>
+<span id="cb26-13"><a href="#cb26-13" tabindex="-1"></a>  <span class="at">Difference =</span> <span class="fu">c</span>(</span>
+<span id="cb26-14"><a href="#cb26-14" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.1f minutes longer&quot;</span>, mean_duration_casual <span class="sc">-</span> mean_duration_member),</span>
+<span id="cb26-15"><a href="#cb26-15" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&quot;%.1f minutes longer&quot;</span>, <span class="fu">median</span>(ride_casual<span class="sc">$</span>ride_duration_min) <span class="sc">-</span> <span class="fu">median</span>(ride_member<span class="sc">$</span>ride_duration_min)),</span>
+<span id="cb26-16"><a href="#cb26-16" tabindex="-1"></a>    <span class="st">&quot;&quot;</span></span>
+<span id="cb26-17"><a href="#cb26-17" tabindex="-1"></a>  )</span>
+<span id="cb26-18"><a href="#cb26-18" tabindex="-1"></a>)</span>
+<span id="cb26-19"><a href="#cb26-19" tabindex="-1"></a></span>
+<span id="cb26-20"><a href="#cb26-20" tabindex="-1"></a>user_comparison <span class="sc">%&gt;%</span></span>
+<span id="cb26-21"><a href="#cb26-21" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb26-22"><a href="#cb26-22" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 8: Member vs Casual Ride Duration Comparison&quot;</span>,</span>
+<span id="cb26-23"><a href="#cb26-23" tabindex="-1"></a>    <span class="at">align =</span> <span class="fu">c</span>(<span class="st">&#39;l&#39;</span>, <span class="st">&#39;r&#39;</span>, <span class="st">&#39;r&#39;</span>, <span class="st">&#39;r&#39;</span>)</span>
+<span id="cb26-24"><a href="#cb26-24" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb26-25"><a href="#cb26-25" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 Table 8: Member vs Casual Ride Duration Comparison
@@ -2172,20 +2059,20 @@ recreational/tourism)</p>
 <div id="key-finding-5-large-sample-provides-precise-estimates"
 class="section level2">
 <h2>KEY FINDING 5: Large Sample Provides Precise Estimates</h2>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>precision_metrics <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>  <span class="at">Analysis =</span> <span class="fu">c</span>(<span class="st">&quot;Daily Ridership (N=30)&quot;</span>, <span class="st">&quot;Individual Rides (N=100,000)&quot;</span>),</span>
-<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">Standard Errors</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Large (unstable)&quot;</span>, <span class="st">&quot;Small (precise)&quot;</span>),</span>
-<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a>  <span class="st">`</span><span class="at">Statistical Power</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Low&quot;</span>, <span class="st">&quot;High&quot;</span>),</span>
-<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a>  <span class="st">`</span><span class="at">Can Detect</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Only large effects&quot;</span>, <span class="st">&quot;Even small effects&quot;</span>),</span>
-<span id="cb32-6"><a href="#cb32-6" tabindex="-1"></a>  <span class="st">`</span><span class="at">Confidence in Results</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Moderate&quot;</span>, <span class="st">&quot;Very High&quot;</span>)</span>
-<span id="cb32-7"><a href="#cb32-7" tabindex="-1"></a>)</span>
-<span id="cb32-8"><a href="#cb32-8" tabindex="-1"></a></span>
-<span id="cb32-9"><a href="#cb32-9" tabindex="-1"></a>precision_metrics <span class="sc">%&gt;%</span></span>
-<span id="cb32-10"><a href="#cb32-10" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
-<span id="cb32-11"><a href="#cb32-11" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 9: Comparison of Statistical Power&quot;</span>,</span>
-<span id="cb32-12"><a href="#cb32-12" tabindex="-1"></a>    <span class="at">align =</span> <span class="fu">c</span>(<span class="st">&#39;l&#39;</span>, <span class="st">&#39;c&#39;</span>, <span class="st">&#39;c&#39;</span>, <span class="st">&#39;c&#39;</span>, <span class="st">&#39;c&#39;</span>)</span>
-<span id="cb32-13"><a href="#cb32-13" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb32-14"><a href="#cb32-14" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>precision_metrics <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>  <span class="at">Analysis =</span> <span class="fu">c</span>(<span class="st">&quot;Daily Ridership (N=30)&quot;</span>, <span class="st">&quot;Individual Rides (N=100,000)&quot;</span>),</span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>  <span class="st">`</span><span class="at">Standard Errors</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Large (unstable)&quot;</span>, <span class="st">&quot;Small (precise)&quot;</span>),</span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>  <span class="st">`</span><span class="at">Statistical Power</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Low&quot;</span>, <span class="st">&quot;High&quot;</span>),</span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a>  <span class="st">`</span><span class="at">Can Detect</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Only large effects&quot;</span>, <span class="st">&quot;Even small effects&quot;</span>),</span>
+<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a>  <span class="st">`</span><span class="at">Confidence in Results</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Moderate&quot;</span>, <span class="st">&quot;Very High&quot;</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a>)</span>
+<span id="cb27-8"><a href="#cb27-8" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" tabindex="-1"></a>precision_metrics <span class="sc">%&gt;%</span></span>
+<span id="cb27-10"><a href="#cb27-10" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb27-11"><a href="#cb27-11" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Table 9: Comparison of Statistical Power&quot;</span>,</span>
+<span id="cb27-12"><a href="#cb27-12" tabindex="-1"></a>    <span class="at">align =</span> <span class="fu">c</span>(<span class="st">&#39;l&#39;</span>, <span class="st">&#39;c&#39;</span>, <span class="st">&#39;c&#39;</span>, <span class="st">&#39;c&#39;</span>, <span class="st">&#39;c&#39;</span>)</span>
+<span id="cb27-13"><a href="#cb27-13" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb27-14"><a href="#cb27-14" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 Table 9: Comparison of Statistical Power
@@ -2256,9 +2143,9 @@ significant effects - Results are highly reliable and reproducible</p>
 </div>
 <div id="model-diagnostics" class="section level1 info-card">
 <h1>Model Diagnostics</h1>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="co"># Diagnostic plots for total model (sample 5000 for speed)</span></span>
-<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
-<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a><span class="fu">plot</span>(model_total_full, <span class="at">which =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">main =</span> <span class="st">&quot;Total Model Diagnostics (All Riders)&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="co"># Diagnostic plots for total model (sample 5000 for speed)</span></span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a><span class="fu">plot</span>(model_total_full, <span class="at">which =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">main =</span> <span class="st">&quot;Total Model Diagnostics (All Riders)&quot;</span>)</span></code></pre></div>
 <p><img src="model_and_spatial_analysis_STYLED_files/figure-html/diagnostics-1.png" width="960" /></p>
 <p><strong>Diagnostic Notes:</strong> - With 100,000 observations, some
 deviation from normality is expected but not problematic - Residual

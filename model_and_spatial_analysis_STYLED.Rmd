@@ -40,15 +40,6 @@ This analysis examines how weather conditions and temporal patterns influence **
 
 ---
 
-## Research Questions
-
-1. How do weather variables (maximum temperature, minimum temperature, precipitation) affect ride duration?
-2. What is the effect of day of the week and time of day on ride duration?
-3. How do these effects differ between member and casual riders?
-4. Do riders take longer trips in favorable weather conditions?
-
----
-
 ## Advantages of Ride-Level Analysis
 
 - **Statistical Power**: 100,000 observations vs. 30 daily observations
@@ -60,9 +51,8 @@ This analysis examines how weather conditions and temporal patterns influence **
 
 <div class="info-card">
 
-# Load Libraries and Data
 
-```{r libraries}
+```{r libraries, include=FALSE}
 library(tidyverse)
 library(lubridate)
 library(broom)
@@ -74,7 +64,7 @@ library(lmtest)  # For robust standard errors
 library(sandwich)  # For robust covariance matrices
 ```
 
-```{r load_data}
+```{r load_data, include=FALSE}
 # Load the individual ride-level data
 bike_weather <- read_csv("data/final_bike_weather_categorized.csv")
 
@@ -82,13 +72,10 @@ bike_weather <- read_csv("data/final_bike_weather_categorized.csv")
 glimpse(bike_weather)
 ```
 
-</div>
-
-<div class="info-card">
 
 # Data Preparation
 
-```{r data_prep}
+```{r data_prep,include=FALSE}
 # Prepare ride-level data for analysis
 ride_analysis_data <- bike_weather %>%
   mutate(
@@ -172,7 +159,7 @@ summary_stats %>%
 
 <div class="info-card">
 
-# Exploratory Data Analysis
+# Data Analysis
 
 ## Ride Duration by User Type and Weather
 

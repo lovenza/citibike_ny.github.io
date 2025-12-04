@@ -47,12 +47,6 @@ This analysis examines daily NYC Citi Bike ridership patterns in September 2025 
 
 ## Proportional Stratified Sampling Design
 
-**Sampling Method:**
-```
-target_size <- 100,000 rides
-sampling_rate <- target_size / total_population_rides
-```
-
 Each day was sampled at the **same rate** (e.g., ~1.85%), meaning:
 - **Busy days** (high ridership) → More samples
 - **Quiet days** (low ridership) → Fewer samples
@@ -65,9 +59,8 @@ This design preserves all natural patterns. If Monday had 2× the ridership of S
 
 <div class="info-card">
 
-# Load Libraries and Data
 
-```{r libraries}
+```{r libraries, include=FALSE}
 library(tidyverse)
 library(lubridate)
 library(broom)
@@ -78,7 +71,7 @@ library(modelr)
 library(corrplot)
 ```
 
-```{r load_data}
+```{r load_data, include=FALSE}
 bike_weather <- read_csv("data/final_bike_weather_categorized.csv")
 
 # Display basic information
@@ -87,13 +80,11 @@ cat(sprintf("Date range: %s to %s\n", min(bike_weather$start_date), max(bike_wea
 cat(sprintf("User types: %s\n", paste(unique(bike_weather$member_casual), collapse = ", ")))
 ```
 
-</div>
 
-<div class="info-card">
 
 # Data Preparation
 
-```{r daily_aggregation}
+```{r daily_aggregation, include=FALSE}
 # Aggregate to daily level
 daily_ridership <- bike_weather %>%
   mutate(
