@@ -6,7 +6,7 @@ navbar:
   left:
     - text: "Home"
       icon: fa-home
-      href: index_citibike.html
+      href: index.html
     - text: "Data Wrangling"
       icon: fa-database
       href: data_wrangling.html
