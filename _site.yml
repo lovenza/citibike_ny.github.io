@@ -29,6 +29,9 @@ navbar:
     - text: "Proposal"
       icon: fa-file-text
       href: proposal.html
+    - text: "Final Report"
+      icon: fa-file-text-o
+      href: report.html
   right:
     - icon: fa-github fa-lg
       href: https://github.com/lovenza/citibike_ny.github.io

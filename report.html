@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Mungyu Kwok, Ziang Niu, Bowen Xia, Zihan Zhou" />
+
+
+<title>The Pulse of the City: NYC Citi Bike Ridership Analysis</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+.sourceCode .row {
+  width: 100%;
+}
+.sourceCode {
+  overflow-x: auto;
+}
+.code-folding-btn {
+  margin-right: -30px;
+}
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">🚴 Citi Bike NYC</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="data_wrangling.html">
+    <span class="fa fa-database"></span>
+     
+    Data Wrangling
+  </a>
+</li>
+<li>
+  <a href="EDA.html">
+    <span class="fa fa-chart-bar"></span>
+     
+    EDA &amp; Visualization
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-calculator"></span>
+     
+    Statistical Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="statistical_analysis_RIDERSHIP_COMPLETE.html">Daily Ridership Analysis</a>
+    </li>
+    <li>
+      <a href="model_and_spatial_analysis_STYLED.html">Ride Duration Analysis</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="https://kwokmungyu.shinyapps.io/shiny_app/">
+    <span class="fa fa-dashboard"></span>
+     
+    Shiny Dashboard
+  </a>
+</li>
+<li>
+  <a href="about.html">
+    <span class="fa fa-users"></span>
+     
+    About Us
+  </a>
+</li>
+<li>
+  <a href="proposal.html">
+    <span class="fa fa-file-text"></span>
+     
+    Proposal
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/lovenza/citibike_ny.github.io">
+    <span class="fa fa-github fa-lg"></span>
+     
+    GitHub
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">The Pulse of the City: NYC Citi Bike
+Ridership Analysis</h1>
+<h3 class="subtitle">Understanding Urban Mobility Through Weather and
+Temporal Patterns</h3>
+<h4 class="author">Mungyu Kwok, Ziang Niu, Bowen Xia, Zihan Zhou</h4>
+<h4 class="date">December 2025</h4>
+
+</div>
+
+
+<p><a href="index.html" class="back-home"> <i class="fa fa-home"></i>
+Back to Home </a></p>
+<div class="hero-section">
+<h1>
+📊 Final Project Report
+</h1>
+<p>
+<strong>Analyzing NYC Citi Bike Ridership Patterns in Response to Daily
+Rhythms and Weather</strong>
+</p>
+<p>
+Columbia University Mailman School of Public Health | Data Science I
+(P8105) | Fall 2025
+</p>
+</div>
+<p><br></p>
+<hr />
+<div id="motivation" class="section level1">
+<h1>Motivation</h1>
+<div class="info-card">
+<p>Citi Bike has become an integral part of New York City’s public
+transportation network since its launch in 2013, serving millions of
+rides annually to commuters, residents, and tourists. As one of the
+largest bike-share systems in North America, it generates a wealth of
+trip-level data that provides a unique window into urban mobility
+patterns in one of the world’s most dynamic cities.</p>
+<p>Understanding how people use Citi Bike—and what factors influence
+their decisions to ride—has important implications across multiple
+domains:</p>
+<p><strong>Urban Planning &amp; Infrastructure:</strong> Identifying
+peak usage times and popular routes helps city planners optimize bike
+lane placement, station locations, and dock capacity. This data-driven
+approach to infrastructure investment can improve safety, reduce
+congestion, and make cycling a more attractive transportation
+option.</p>
+<p><strong>Public Health:</strong> Active transportation like cycling
+contributes to physical activity levels and can help address chronic
+disease prevention. Understanding usage patterns among different user
+groups can inform public health interventions and promote active
+commuting.</p>
+<p><strong>Environmental Sustainability:</strong> Bike-sharing reduces
+car trips and associated greenhouse gas emissions. Quantifying weather’s
+impact on ridership helps us understand barriers to sustainable
+transportation adoption and design interventions to encourage year-round
+cycling.</p>
+<p><strong>Operational Efficiency:</strong> For Citi Bike operators,
+understanding demand patterns is crucial for bike redistribution,
+maintenance scheduling, and capacity planning. Predictive models based
+on weather and temporal factors can optimize operations and improve user
+experience.</p>
+<p><strong>Academic Interest:</strong> This project applies statistical
+methods learned in P8105 (Data Science I) to a rich, real-world dataset.
+It demonstrates the practical application of data wrangling,
+visualization, exploratory analysis, and statistical modeling techniques
+to answer meaningful research questions.</p>
+<p>Our analysis focuses on three core research questions:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Temporal Patterns:</strong> How do predictable daily and
+weekly rhythms (time of day, weekday vs. weekend) shape ridership? When
+are the commuter peaks? How do weekends differ?</p></li>
+<li><p><strong>User Segmentation:</strong> How do different user groups
+(annual members vs. casual riders) use the system differently in terms
+of trip volume, duration, and timing?</p></li>
+<li><p><strong>Weather Impact:</strong> To what extent does daily
+weather—temperature and precipitation—influence the decision to ride a
+bike? Can we quantify these effects?</p></li>
+</ol>
+<p>By combining granular trip-level data with daily weather records, we
+aim to paint a comprehensive picture of the factors that drive urban
+cycling behavior in New York City.</p>
+</div>
+<hr />
+</div>
+<div id="related-work" class="section level1">
+<h1>Related Work</h1>
+<div class="info-card">
+<p>This project draws inspiration from several sources:</p>
+<p><strong>Course Materials:</strong> The project builds directly on
+concepts and techniques covered in P8105 (Data Science I), including: -
+Data wrangling with <code>tidyverse</code> (Lectures 3-4) -
+Visualization with <code>ggplot2</code> (Lectures 5-6)<br />
+- Exploratory data analysis techniques (Lectures 7-8) - Linear
+regression and statistical modeling (Lectures 10-11) - Interactive
+visualization with Shiny (Lecture on building dashboards) - Website
+creation with R Markdown (Lecture on project organization)</p>
+<p><strong>Academic Research:</strong> Previous studies have examined
+bike-share usage patterns in various cities, often finding strong
+effects of weather (especially precipitation and extreme temperatures)
+and time-of-day peaks corresponding to commute hours. These studies
+informed our hypotheses and analytical approach.</p>
+<p><strong>Citi Bike System Data:</strong> The official Citi Bike System
+Data published monthly by Lyft provides the foundation for our analysis.
+The comprehensive trip-level data, updated regularly, enables
+reproducible research on urban mobility patterns.</p>
+<p><strong>NYC Open Data &amp; NOAA:</strong> Integration with weather
+data from NOAA’s Global Historical Climatology Network demonstrates the
+value of combining multiple public datasets to answer complex research
+questions.</p>
+<p><strong>Past P8105 Projects:</strong> We reviewed exemplary final
+projects from previous years, including: - Inflammatory Indices analysis
+(<a href="https://danglin1214.github.io/Inflammatory_Indices.github.io/"
+class="uri">https://danglin1214.github.io/Inflammatory_Indices.github.io/</a>)
+- NYC Air Quality project (<a
+href="https://joielizeqi.github.io/p8105_final.github.io/"
+class="uri">https://joielizeqi.github.io/p8105_final.github.io/</a>)<br />
+- NYC Gardens project (<a
+href="https://kd2942.github.io/nycgardens.github.io/"
+class="uri">https://kd2942.github.io/nycgardens.github.io/</a>)</p>
+<p>These projects provided valuable examples of effective data
+presentation, visualization strategies, and website organization.</p>
+<p><strong>Visualization Inspiration:</strong> Best practices from data
+visualization literature (Tufte, Few, Cairo) guided our chart design
+choices, with emphasis on clarity, appropriate chart types, and avoiding
+chartjunk.</p>
+</div>
+<hr />
+</div>
+<div id="initial-questions-evolution" class="section level1">
+<h1>Initial Questions &amp; Evolution</h1>
+<div class="info-card">
+<div id="initial-research-questions" class="section level2">
+<h2>Initial Research Questions</h2>
+<p>At the project’s inception (November 2025), we formulated three
+primary research questions:</p>
+<ol style="list-style-type: decimal">
+<li><strong>How do predictable daily and weekly rhythms (time of day,
+weekday vs. weekend) shape ridership?</strong>
+<ul>
+<li>When are the peak usage hours?</li>
+<li>Do weekends show different patterns than weekdays?</li>
+<li>Are there distinct commuter peaks?</li>
+</ul></li>
+<li><strong>How do members and casual riders differ in their usage
+patterns?</strong>
+<ul>
+<li>Do they ride at different times of day?</li>
+<li>Do they have different trip durations?</li>
+<li>Which stations do they prefer?</li>
+</ul></li>
+<li><strong>How does weather influence ridership volume?</strong>
+<ul>
+<li>What’s the effect of temperature on daily rides?</li>
+<li>How does precipitation affect ridership?</li>
+<li>Can we build predictive models?</li>
+</ul></li>
+</ol>
+</div>
+<div id="questions-that-evolved" class="section level2">
+<h2>Questions That Evolved</h2>
+<p>As we dove into the data, several questions evolved or emerged:</p>
+<p><strong>Refined Temporal Analysis:</strong> - We discovered strong
+commuter patterns with distinct morning (7-9 AM) and evening (5-7 PM)
+peaks, leading us to focus more on weekday vs. weekend comparisons -
+Weekend patterns revealed more recreational usage spread throughout
+midday hours - We added analysis of holiday effects when we noticed
+September data included Labor Day</p>
+<p><strong>User Behavior Deep Dives:</strong> - Initial analysis showed
+members had shorter, more utilitarian trips while casual riders took
+longer leisure trips - This led us to examine bike type preferences
+(classic vs. electric) across user groups - We explored geographic
+differences: members dominated in outer boroughs while casual riders
+concentrated in tourist areas</p>
+<p><strong>Weather Effects:</strong> - We initially planned simple
+correlations but expanded to multiple regression models - We separated
+models by user type (member vs. casual) when we discovered different
+weather sensitivities - We added precipitation as a key variable after
+seeing its dramatic effect on ridership - We incorporated day-of-week
+effects into regression models after EDA revealed their importance</p>
+<p><strong>Spatial Patterns:</strong> - We added geospatial analysis to
+identify popular stations and routes - Created interactive maps to
+explore station-level patterns - Examined borough-level differences in
+usage</p>
+</div>
+<div id="new-questions-considered" class="section level2">
+<h2>New Questions Considered</h2>
+<p>During the course of analysis, we considered several additional
+questions:</p>
+<p><strong>Bike Type Analysis:</strong> - How do electric bikes
+vs. classic bikes affect trip duration and distance? - Do certain user
+types prefer electric bikes?</p>
+<p><strong>Station Capacity:</strong> - Are popular stations showing
+signs of capacity constraints? - Should Citi Bike expand certain
+stations?</p>
+<p><strong>Predictive Modeling:</strong> - Can we build models to
+predict daily ridership based on weather forecasts? - What’s the
+practical accuracy for operational planning?</p>
+<p><strong>Time Series Analysis:</strong> - Are there longer-term trends
+across September? - How do ridership patterns change throughout the
+month?</p>
+<p>While we touched on many of these questions in our exploratory
+analysis, we maintained focus on our three core research questions to
+ensure depth over breadth. Future work could expand on these emerging
+areas of interest.</p>
+</div>
+</div>
+<hr />
+</div>
+<div id="data" class="section level1">
+<h1>Data</h1>
+<div class="info-card">
+<div id="data-sources" class="section level2">
+<h2>Data Sources</h2>
+<p>Our analysis combines two primary datasets:</p>
+<div id="citi-bike-system-data-september-2025" class="section level3">
+<h3>1. Citi Bike System Data (September 2025)</h3>
+<p><strong>Source:</strong> Official Citi Bike trip data published by
+Lyft<br />
+<strong>URL:</strong> <a
+href="https://s3.amazonaws.com/tripdata/index.html"
+class="uri">https://s3.amazonaws.com/tripdata/index.html</a><br />
+<strong>Original Size:</strong> ~3 million rides in September 2025<br />
+<strong>Coverage:</strong> All Citi Bike trips in NYC service area</p>
+<p><strong>Variables:</strong> - <code>ride_id</code>: Unique identifier
+for each trip - <code>rideable_type</code>: Bike type (classic_bike,
+electric_bike) - <code>started_at</code>, <code>ended_at</code>: Trip
+start/end timestamps - <code>start_station_name</code>,
+<code>end_station_name</code>: Station names -
+<code>start_station_id</code>, <code>end_station_id</code>: Station IDs
+- <code>start_lat</code>, <code>start_lng</code>, <code>end_lat</code>,
+<code>end_lng</code>: GPS coordinates - <code>member_casual</code>: User
+type (member = annual subscriber, casual = day pass or single ride)</p>
+</div>
+<div id="noaa-weather-data-september-2025" class="section level3">
+<h3>2. NOAA Weather Data (September 2025)</h3>
+<p><strong>Source:</strong> NOAA Global Historical Climatology
+Network<br />
+<strong>Station:</strong> Central Park (USW00094728)<br />
+<strong>URL:</strong> <a href="https://www.ncdc.noaa.gov/cdo-web/"
+class="uri">https://www.ncdc.noaa.gov/cdo-web/</a><br />
+<strong>Coverage:</strong> Daily weather observations for NYC</p>
+<p><strong>Variables:</strong> - <code>date</code>: Observation date -
+<code>tmax</code>: Maximum temperature (°F) - <code>tmin</code>: Minimum
+temperature (°F) - <code>prcp</code>: Precipitation (inches) -
+<code>snow</code>: Snowfall (inches, not applicable for September)</p>
+</div>
+</div>
+<div id="data-collection-sampling" class="section level2">
+<h2>Data Collection &amp; Sampling</h2>
+<div id="stratified-sampling-strategy" class="section level3">
+<h3>Stratified Sampling Strategy</h3>
+<p>Given computational constraints and the pedagogical focus of this
+course, we implemented a <strong>proportional stratified
+sampling</strong> approach:</p>
+<p><strong>Rationale:</strong> September 2025 had approximately 3
+million rides. To create a manageable dataset for analysis while
+preserving the statistical properties of the full population, we:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Grouped by date:</strong> Calculated daily ride counts for
+all 30 days in September</li>
+<li><strong>Computed proportions:</strong> Determined each day’s
+proportion of total monthly rides</li>
+<li><strong>Sampled proportionally:</strong> Drew 100,000 total rides,
+with each day contributing its proportional share</li>
+</ol>
+<p><strong>Statistical Justification:</strong> - This approach ensures
+our sample reflects the true temporal distribution - Preserves
+relationships between ridership and day-of-week - Maintains
+weather-ridership correlations - Enables valid inference to the full
+September population - Sample size (n=100,000) provides sufficient power
+for regression analyses</p>
+<p><strong>Code Implementation:</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Calculate daily proportions</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>daily_proportions <span class="ot">&lt;-</span> full_data <span class="sc">%&gt;%</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="fu">count</span>(date) <span class="sc">%&gt;%</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">proportion =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co"># Sample proportionally from each day</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>sampled_data <span class="ot">&lt;-</span> full_data <span class="sc">%&gt;%</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  <span class="fu">group_by</span>(date) <span class="sc">%&gt;%</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">prop =</span> daily_proportions<span class="sc">$</span>proportion[<span class="fu">cur_group_id</span>()]) <span class="sc">%&gt;%</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div>
+</div>
+<div id="data-download-process" class="section level3">
+<h3>Data Download Process</h3>
+<p><strong>Citi Bike Data:</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Download September 2025 data</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">&quot;https://s3.amazonaws.com/tripdata/202509-citibike-tripdata.csv.zip&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">download.file</span>(url, <span class="st">&quot;citibike_sept_2025.zip&quot;</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">unzip</span>(<span class="st">&quot;citibike_sept_2025.zip&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>bike_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;202509-citibike-tripdata.csv&quot;</span>)</span></code></pre></div>
+<p><strong>Weather Data:</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Download from NOAA using rnoaa package</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">library</span>(rnoaa)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>weather_data <span class="ot">&lt;-</span> <span class="fu">ncdc</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">datasetid =</span> <span class="st">&quot;GHCND&quot;</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">stationid =</span> <span class="st">&quot;GHCND:USW00094728&quot;</span>,  <span class="co"># Central Park</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">startdate =</span> <span class="st">&quot;2025-09-01&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">enddate =</span> <span class="st">&quot;2025-09-30&quot;</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">datatypeid =</span> <span class="fu">c</span>(<span class="st">&quot;TMAX&quot;</span>, <span class="st">&quot;TMIN&quot;</span>, <span class="st">&quot;PRCP&quot;</span>),</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="at">limit =</span> <span class="dv">1000</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+</div>
+<div id="data-cleaning" class="section level2">
+<h2>Data Cleaning</h2>
+<div id="citi-bike-data-cleaning" class="section level3">
+<h3>Citi Bike Data Cleaning</h3>
+<p><strong>1. Timestamp Parsing:</strong></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>bike_data_clean <span class="ot">&lt;-</span> bike_data <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="at">started_at =</span> <span class="fu">ymd_hms</span>(started_at),</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>    <span class="at">ended_at =</span> <span class="fu">ymd_hms</span>(ended_at),</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>    <span class="at">start_date =</span> <span class="fu">as.Date</span>(started_at)</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  )</span></code></pre></div>
+<p><strong>2. Temporal Variable Creation:</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>bike_data_clean <span class="ot">&lt;-</span> bike_data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    <span class="at">hour =</span> <span class="fu">hour</span>(started_at),</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    <span class="at">day_of_week =</span> <span class="fu">wday</span>(started_at, <span class="at">label =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="at">is_weekend =</span> day_of_week <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Sat&quot;</span>, <span class="st">&quot;Sun&quot;</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>    <span class="at">month =</span> <span class="fu">month</span>(started_at),</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>    <span class="at">day =</span> <span class="fu">day</span>(started_at)</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  )</span></code></pre></div>
+<p><strong>3. Duration Calculation:</strong></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>bike_data_clean <span class="ot">&lt;-</span> bike_data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">ride_duration_min =</span> <span class="fu">as.numeric</span>(<span class="fu">difftime</span>(ended_at, started_at, <span class="at">units =</span> <span class="st">&quot;mins&quot;</span>))</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  )</span></code></pre></div>
+<p><strong>4. Distance Calculation (Haversine Formula):</strong></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Calculate straight-line distance between start and end points</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>bike_data_clean <span class="ot">&lt;-</span> bike_data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">distance_km =</span> {</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>      R <span class="ot">&lt;-</span> <span class="dv">6371</span>  <span class="co"># Earth radius in km</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>      lat1 <span class="ot">&lt;-</span> start_lat <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>      lat2 <span class="ot">&lt;-</span> end_lat <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>      dlat <span class="ot">&lt;-</span> (end_lat <span class="sc">-</span> start_lat) <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>      dlon <span class="ot">&lt;-</span> (end_lng <span class="sc">-</span> start_lng) <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>      </span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>      a <span class="ot">&lt;-</span> <span class="fu">sin</span>(dlat<span class="sc">/</span><span class="dv">2</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="fu">cos</span>(lat1) <span class="sc">*</span> <span class="fu">cos</span>(lat2) <span class="sc">*</span> <span class="fu">sin</span>(dlon<span class="sc">/</span><span class="dv">2</span>)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>      c <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">atan2</span>(<span class="fu">sqrt</span>(a), <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>a))</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>      R <span class="sc">*</span> c</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>    }</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>  )</span></code></pre></div>
+<p><strong>5. Outlier Removal:</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>bike_data_clean <span class="ot">&lt;-</span> bike_data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    ride_duration_min <span class="sc">&gt;</span> <span class="dv">0</span>,           <span class="co"># Remove negative/zero durations</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>    ride_duration_min <span class="sc">&lt;</span> <span class="dv">120</span>,         <span class="co"># Remove extremely long trips (&gt;2 hours)</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    distance_km <span class="sc">&gt;</span> <span class="dv">0</span>,                 <span class="co"># Remove zero-distance trips</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    distance_km <span class="sc">&lt;</span> <span class="dv">50</span>,                <span class="co"># Remove unrealistic distances</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(start_station_name),      <span class="co"># Remove trips without station info</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(end_station_name)</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  )</span></code></pre></div>
+<p><strong>6. Factor Encoding:</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>bike_data_clean <span class="ot">&lt;-</span> bike_data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    <span class="at">member_casual =</span> <span class="fu">factor</span>(member_casual, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;member&quot;</span>, <span class="st">&quot;casual&quot;</span>)),</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    <span class="at">rideable_type =</span> <span class="fu">factor</span>(rideable_type)</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  )</span></code></pre></div>
+</div>
+<div id="weather-data-cleaning" class="section level3">
+<h3>Weather Data Cleaning</h3>
+<p><strong>1. Temperature Conversion:</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>weather_clean <span class="ot">&lt;-</span> weather_data <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>    <span class="at">tmax =</span> (tmax <span class="sc">/</span> <span class="dv">10</span>) <span class="sc">*</span> <span class="dv">9</span><span class="sc">/</span><span class="dv">5</span> <span class="sc">+</span> <span class="dv">32</span>,  <span class="co"># Convert from tenths of °C to °F</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>    <span class="at">tmin =</span> (tmin <span class="sc">/</span> <span class="dv">10</span>) <span class="sc">*</span> <span class="dv">9</span><span class="sc">/</span><span class="dv">5</span> <span class="sc">+</span> <span class="dv">32</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>    <span class="at">prcp =</span> prcp <span class="sc">/</span> <span class="dv">254</span>                <span class="co"># Convert from tenths of mm to inches</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  )</span></code></pre></div>
+<p><strong>2. Missing Value Handling:</strong></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Check for missing values</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>weather_clean <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    <span class="at">missing_tmax =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(tmax)),</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    <span class="at">missing_tmin =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(tmin)),</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>    <span class="at">missing_prcp =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(prcp))</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  )</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="co"># Impute missing precipitation as 0 (no rain)</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>weather_clean <span class="ot">&lt;-</span> weather_clean <span class="sc">%&gt;%</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prcp =</span> <span class="fu">replace_na</span>(prcp, <span class="dv">0</span>))</span></code></pre></div>
+</div>
+<div id="data-merging" class="section level3">
+<h3>Data Merging</h3>
+<p><strong>Join bike trips with weather data:</strong></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Aggregate bike data to daily level for weather analysis</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>daily_rides <span class="ot">&lt;-</span> bike_data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, member_casual) <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>    <span class="at">total_rides =</span> <span class="fu">n</span>(),</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>    <span class="at">avg_duration =</span> <span class="fu">mean</span>(ride_duration_min),</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>    <span class="at">avg_distance =</span> <span class="fu">mean</span>(distance_km)</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>  )</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co"># Merge with weather</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>analysis_data <span class="ot">&lt;-</span> daily_rides <span class="sc">%&gt;%</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>  <span class="fu">left_join</span>(weather_clean, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;start_date&quot;</span> <span class="ot">=</span> <span class="st">&quot;date&quot;</span>))</span></code></pre></div>
+</div>
+</div>
+<div id="data-quality-checks" class="section level2">
+<h2>Data Quality Checks</h2>
+<p><strong>Final Dataset Characteristics:</strong></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Summary statistics</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>summary_stats <span class="ot">&lt;-</span> bike_data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>    <span class="at">total_rides =</span> <span class="fu">n</span>(),</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>    <span class="at">date_range =</span> <span class="fu">paste</span>(<span class="fu">min</span>(start_date), <span class="st">&quot;to&quot;</span>, <span class="fu">max</span>(start_date)),</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>    <span class="at">avg_duration =</span> <span class="fu">mean</span>(ride_duration_min),</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>    <span class="at">avg_distance =</span> <span class="fu">mean</span>(distance_km),</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>    <span class="at">pct_member =</span> <span class="fu">mean</span>(member_casual <span class="sc">==</span> <span class="st">&quot;member&quot;</span>) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>    <span class="at">unique_start_stations =</span> <span class="fu">n_distinct</span>(start_station_name),</span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>    <span class="at">unique_end_stations =</span> <span class="fu">n_distinct</span>(end_station_name)</span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a>  )</span></code></pre></div>
+<p><strong>Data Completeness:</strong> - 100% of trips have valid
+timestamps - 99.5% have station names (0.5% filtered as missing) - 100%
+have user type classification - 100% have geographic coordinates -
+Weather data: Complete for all 30 days</p>
+<p><strong>Validation Checks:</strong> - All durations between 0 and 120
+minutes ✓ - All distances between 0 and 50 km ✓ - All dates within
+September 2025 ✓ - Member/casual classifications valid ✓ - Temperature
+values reasonable for September in NYC (50-85°F) ✓</p>
+</div>
+<div id="final-dataset-structure" class="section level2">
+<h2>Final Dataset Structure</h2>
+<p><strong>Trip-Level Data (bike_data_light.csv):</strong> -
+<strong>Rows:</strong> 100,000 trips - <strong>Columns:</strong> 24
+variables - <strong>Size:</strong> ~31 MB - <strong>Key
+Variables:</strong> timestamps, stations, user type, duration, distance,
+weather (merged)</p>
+<p><strong>Daily Aggregated Data:</strong> - <strong>Rows:</strong> 30
+days × 2 user types = 60 observations - <strong>Columns:</strong> 8
+variables<br />
+- <strong>Used For:</strong> Regression modeling of daily ridership</p>
+<p>This clean, well-structured dataset forms the foundation for all
+subsequent exploratory analyses and statistical modeling described in
+the following sections.</p>
+</div>
+</div>
+<hr />
+</div>
+<div id="exploratory-analysis" class="section level1">
+<h1>Exploratory Analysis</h1>
+<div class="info-card">
+<p>Our exploratory data analysis (EDA) systematically investigated the
+three core research questions through visualization and summary
+statistics. This section documents the major findings and insights that
+emerged.</p>
+<div id="temporal-patterns" class="section level2">
+<h2>Temporal Patterns</h2>
+<div id="hourly-usage-patterns" class="section level3">
+<h3>Hourly Usage Patterns</h3>
+<p><strong>Research Question:</strong> When do people ride Citi Bikes?
+How do patterns differ between weekdays and weekends?</p>
+<p><strong>Key Findings:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Clear Commuter Peaks on Weekdays:</strong>
+<ul>
+<li>Morning peak: 7-9 AM (especially 8 AM)</li>
+<li>Evening peak: 5-7 PM (peak at 6 PM)</li>
+<li>These align with typical NYC commute times</li>
+<li>Midday (12-2 PM) shows moderate “lunch hour” activity</li>
+</ul></li>
+<li><strong>Weekend Recreational Pattern:</strong>
+<ul>
+<li>No sharp commuter peaks</li>
+<li>Gradual rise from 10 AM to peak around 2-4 PM</li>
+<li>More spread-out usage throughout daylight hours</li>
+<li>Suggests leisure/recreational trips rather than commuting</li>
+</ul></li>
+</ol>
+<p><strong>Visualization:</strong></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Hourly pattern by weekend/weekday</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>hourly_pattern <span class="ot">&lt;-</span> bike_data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">day_type =</span> <span class="fu">ifelse</span>(is_weekend, <span class="st">&quot;Weekend&quot;</span>, <span class="st">&quot;Weekday&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="fu">count</span>(hour, day_type)</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="fu">ggplot</span>(hourly_pattern, <span class="fu">aes</span>(<span class="at">x =</span> hour, <span class="at">y =</span> n, <span class="at">color =</span> day_type)) <span class="sc">+</span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">23</span>) <span class="sc">+</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>comma) <span class="sc">+</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Hourly Ridership Patterns: Weekday vs Weekend&quot;</span>,</span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Hour of Day&quot;</span>,</span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Number of Rides&quot;</span>,</span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;Day Type&quot;</span></span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+</div>
+<div id="day-of-week-patterns" class="section level3">
+<h3>Day-of-Week Patterns</h3>
+<p><strong>Key Findings:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Weekday Consistency:</strong>
+<ul>
+<li>Tuesday-Thursday show highest ridership</li>
+<li>Monday slightly lower (post-weekend effect?)</li>
+<li>Friday drops off (early weekend departures?)</li>
+</ul></li>
+<li><strong>Weekend Drop:</strong>
+<ul>
+<li>Saturday and Sunday show 20-30% lower total ridership</li>
+<li>Despite longer individual trip durations</li>
+<li>Reflects the system’s primary role in commuting</li>
+</ul></li>
+</ol>
+</div>
+<div id="monthly-trends" class="section level3">
+<h3>Monthly Trends</h3>
+<p><strong>Key Findings:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Weather-Driven Variation:</strong>
+<ul>
+<li>Early September (Labor Day weekend): High recreational use</li>
+<li>Mid-month peaks coincide with warm, dry weather</li>
+<li>Late September decline as temperatures cool</li>
+</ul></li>
+<li><strong>No Strong Day-of-Month Effects:</strong>
+<ul>
+<li>No obvious pay-cycle or monthly patterns</li>
+<li>Variability mostly explained by weather and day-of-week</li>
+</ul></li>
+</ol>
+</div>
+</div>
+<div id="user-segmentation-analysis" class="section level2">
+<h2>User Segmentation Analysis</h2>
+<div id="members-vs.-casual-riders-volume" class="section level3">
+<h3>Members vs. Casual Riders: Volume</h3>
+<p><strong>Key Findings:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Members Dominate Overall:</strong>
+<ul>
+<li>75% of all rides are by members</li>
+<li>25% by casual riders</li>
+<li>Reflects the system’s strong commuter base</li>
+</ul></li>
+<li><strong>Different Time Patterns:</strong>
+<ul>
+<li><strong>Members:</strong> Strong weekday peaks (commuting)</li>
+<li><strong>Casual:</strong> More weekend/midday usage (recreation)</li>
+</ul></li>
+</ol>
+</div>
+<div id="trip-duration-differences" class="section level3">
+<h3>Trip Duration Differences</h3>
+<p><strong>Key Findings:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Casual Riders Take Longer Trips:</strong>
+<ul>
+<li>Casual: Average 15-18 minutes</li>
+<li>Members: Average 10-12 minutes</li>
+<li>Casual trips 40-50% longer on average</li>
+</ul></li>
+<li><strong>Members Are More Utilitarian:</strong>
+<ul>
+<li>Shorter, more direct trips</li>
+<li>Consistent duration across days/times</li>
+<li>Suggests goal-oriented commuting behavior</li>
+</ul></li>
+<li><strong>Casual Riders Are More Exploratory:</strong>
+<ul>
+<li>Longer, more variable durations</li>
+<li>Peak durations on weekends</li>
+<li>Suggests leisure/sightseeing trips</li>
+</ul></li>
+</ol>
+</div>
+<div id="bike-type-preferences" class="section level3">
+<h3>Bike Type Preferences</h3>
+<p><strong>Key Findings:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Electric Bike Adoption:</strong>
+<ul>
+<li>Electric bikes: 45% of rides</li>
+<li>Classic bikes: 55% of rides</li>
+<li>Growing preference for electric, especially in hilly areas</li>
+</ul></li>
+<li><strong>User Type Differences:</strong>
+<ul>
+<li>Members: Slight preference for classic bikes (58%)</li>
+<li>Casual: Stronger preference for electric bikes (52%)</li>
+<li>May reflect trip purpose (commute vs. leisure)</li>
+</ul></li>
+</ol>
+</div>
+<div id="geographic-patterns" class="section level3">
+<h3>Geographic Patterns</h3>
+<p><strong>Key Findings:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Member Stations (Top 5 Start Stations):</strong>
+<ul>
+<li>Outer borough stations near residential areas</li>
+<li>Brooklyn and Queens commuter hubs</li>
+<li>Near subway connections</li>
+</ul></li>
+<li><strong>Casual Rider Stations (Top 5):</strong>
+<ul>
+<li>Manhattan tourist areas</li>
+<li>Central Park entrances</li>
+<li>Waterfront locations</li>
+<li>Major attractions (Times Square area, Brooklyn Bridge)</li>
+</ul></li>
+<li><strong>Spatial Concentration:</strong>
+<ul>
+<li>Casual riders highly concentrated in Manhattan core</li>
+<li>Members more dispersed across boroughs</li>
+<li>Reflects different trip purposes</li>
+</ul></li>
+</ol>
+</div>
+</div>
+<div id="weather-impact-analysis" class="section level2">
+<h2>Weather Impact Analysis</h2>
+<div id="temperature-effects" class="section level3">
+<h3>Temperature Effects</h3>
+<p><strong>Key Findings:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Strong Positive Correlation:</strong>
+<ul>
+<li>As temperature increases, ridership increases</li>
+<li>Correlation coefficient: r = 0.68 (p &lt; 0.001)</li>
+<li>Relationship appears roughly linear in 60-85°F range</li>
+</ul></li>
+<li><strong>Optimal Temperature Range:</strong>
+<ul>
+<li>Peak ridership: 70-80°F</li>
+<li>Below 60°F: Noticeable decline</li>
+<li>Above 85°F: Slight decline (too hot?)</li>
+</ul></li>
+<li><strong>Different Sensitivities by User Type:</strong>
+<ul>
+<li>Casual riders more temperature-sensitive</li>
+<li>Members show more consistent ridership across temperatures</li>
+<li>Suggests members are “committed” riders (commuting)</li>
+</ul></li>
+</ol>
+<p><strong>Visualization:</strong></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Temperature vs. daily rides</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>daily_weather <span class="ot">&lt;-</span> bike_data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, tmax) <span class="sc">%&gt;%</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_rides =</span> <span class="fu">n</span>())</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="fu">ggplot</span>(daily_weather, <span class="fu">aes</span>(<span class="at">x =</span> tmax, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se =</span> <span class="cn">TRUE</span>, <span class="at">color =</span> <span class="st">&quot;blue&quot;</span>) <span class="sc">+</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Daily Ridership vs. Maximum Temperature&quot;</span>,</span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Maximum Temperature (°F)&quot;</span>,</span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Total Daily Rides&quot;</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+</div>
+<div id="precipitation-effects" class="section level3">
+<h3>Precipitation Effects</h3>
+<p><strong>Key Findings:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Dramatic Impact:</strong>
+<ul>
+<li>Rain significantly reduces ridership</li>
+<li>Days with &gt;0.5 inches precipitation: 30-40% fewer rides</li>
+<li>Even light rain (&lt;0.1 inches): 10-15% reduction</li>
+</ul></li>
+<li><strong>Threshold Effects:</strong>
+<ul>
+<li>0-0.1 inches: Minimal impact</li>
+<li>0.1-0.5 inches: Moderate decline</li>
+<li><blockquote>
+<p>0.5 inches: Severe decline</p>
+</blockquote></li>
+</ul></li>
+<li><strong>User Type Differences:</strong>
+<ul>
+<li>Casual riders: Very sensitive to rain (50%+ decline)</li>
+<li>Members: More resilient (20-30% decline)</li>
+<li>Members still need to commute despite weather</li>
+</ul></li>
+</ol>
+</div>
+<div id="combined-weather-factors" class="section level3">
+<h3>Combined Weather Factors</h3>
+<p><strong>Key Findings:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Interactive Effects:</strong>
+<ul>
+<li>Warm + Dry = Maximum ridership</li>
+<li>Cool + Rainy = Minimum ridership</li>
+<li>Temperature matters more when dry</li>
+<li>Rain matters regardless of temperature</li>
+</ul></li>
+<li><strong>Weather “Threshold” for Cycling:</strong>
+<ul>
+<li>Below 55°F + Rain: Very low ridership</li>
+<li>Above 70°F + Dry: Very high ridership</li>
+<li>Middle ranges show more variability</li>
+</ul></li>
+</ol>
+</div>
+</div>
+<div id="time-series-decomposition" class="section level2">
+<h2>Time Series Decomposition</h2>
+<p><strong>Key Findings:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Trend Component:</strong>
+<ul>
+<li>Slight downward trend through September</li>
+<li>Likely reflects cooling temperatures toward fall</li>
+</ul></li>
+<li><strong>Seasonal Component:</strong>
+<ul>
+<li>Strong 7-day weekly cycle</li>
+<li>Reflects weekday vs. weekend patterns</li>
+</ul></li>
+<li><strong>Residual Variation:</strong>
+<ul>
+<li>Mostly explained by day-to-day weather variation</li>
+<li>Some random noise remains</li>
+</ul></li>
+</ol>
+</div>
+<div id="major-changes-to-initial-ideas" class="section level2">
+<h2>Major Changes to Initial Ideas</h2>
+<p>Through EDA, several initial assumptions were challenged or
+refined:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Initial Idea:</strong> Weather would show moderate
+effects<br />
+<strong>Revised:</strong> Weather effects are strong and clearly
+quantifiable, especially precipitation</p></li>
+<li><p><strong>Initial Idea:</strong> Weekends would show similar total
+ridership<br />
+<strong>Revised:</strong> Weekends show 20-30% lower volume, despite
+longer individual trips</p></li>
+<li><p><strong>Initial Idea:</strong> User types differ mainly in
+volume<br />
+<strong>Revised:</strong> User types show fundamentally different
+behavioral patterns (commute vs. recreation)</p></li>
+<li><p><strong>Initial Idea:</strong> Simple linear models would
+suffice<br />
+<strong>Revised:</strong> Need separate models by user type to capture
+different sensitivities</p></li>
+<li><p><strong>Initial Idea:</strong> All Manhattan stations would be
+similar<br />
+<strong>Revised:</strong> Clear geographic stratification: tourist areas
+vs. residential commuter hubs</p></li>
+</ol>
+<p>These insights motivated the statistical analyses and modeling
+approach described in the next section, where we formally test these
+relationships and quantify effect sizes.</p>
+</div>
+</div>
+<hr />
+</div>
+<div id="statistical-analysis" class="section level1">
+<h1>Statistical Analysis</h1>
+<div class="info-card">
+<p>Building on insights from exploratory analysis, we conducted formal
+statistical analyses to quantify relationships and test hypotheses. This
+section describes our modeling approach, results, and
+interpretation.</p>
+<div id="analysis-objectives" class="section level2">
+<h2>Analysis Objectives</h2>
+<ol style="list-style-type: decimal">
+<li>Quantify the effects of temperature and precipitation on daily
+ridership</li>
+<li>Assess day-of-week effects on ridership</li>
+<li>Compare weather sensitivity between member and casual riders</li>
+<li>Build predictive models for operational planning</li>
+</ol>
+</div>
+<div id="data-preparation-for-modeling" class="section level2">
+<h2>Data Preparation for Modeling</h2>
+<div id="daily-aggregation" class="section level3">
+<h3>Daily Aggregation</h3>
+<p>We aggregated trip-level data to the daily level for regression
+analysis:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>daily_analysis <span class="ot">&lt;-</span> bike_data_clean <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, member_casual) <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>    <span class="at">total_rides =</span> <span class="fu">n</span>(),</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>    <span class="at">avg_duration =</span> <span class="fu">mean</span>(ride_duration_min),</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>    <span class="at">avg_distance =</span> <span class="fu">mean</span>(distance_km)</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>  <span class="fu">left_join</span>(weather_clean, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;start_date&quot;</span> <span class="ot">=</span> <span class="st">&quot;date&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>    <span class="at">day_of_week =</span> <span class="fu">wday</span>(start_date, <span class="at">label =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>    <span class="at">is_weekend =</span> day_of_week <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Sat&quot;</span>, <span class="st">&quot;Sun&quot;</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>  )</span></code></pre></div>
+<p><strong>Final dataset for modeling:</strong> - <strong>Unit of
+analysis:</strong> Day × User Type - <strong>Sample size:</strong> 60
+observations (30 days × 2 user types) - <strong>Outcome
+variable:</strong> Total rides per day - <strong>Predictors:</strong>
+Temperature (°F), Precipitation (inches), Day of week</p>
+</div>
+</div>
+<div id="correlation-analysis" class="section level2">
+<h2>Correlation Analysis</h2>
+<div id="pearson-correlations" class="section level3">
+<h3>Pearson Correlations</h3>
+<p><strong>Temperature and Ridership:</strong> - Total rides: r = 0.68,
+p &lt; 0.001 - Member rides: r = 0.64, p &lt; 0.001<br />
+- Casual rides: r = 0.71, p &lt; 0.001</p>
+<p><strong>Interpretation:</strong> Strong positive relationship between
+temperature and ridership across all user types, with casual riders
+showing slightly higher correlation.</p>
+<p><strong>Precipitation and Ridership:</strong> - Total rides: r =
+-0.58, p &lt; 0.001 - Member rides: r = -0.52, p &lt; 0.001 - Casual
+rides: r = -0.65, p &lt; 0.001</p>
+<p><strong>Interpretation:</strong> Strong negative relationship between
+precipitation and ridership, with casual riders again more
+sensitive.</p>
+</div>
+<div id="spearman-correlations" class="section level3">
+<h3>Spearman Correlations</h3>
+<p>Given the non-normal distribution of precipitation (many zero days),
+we also computed Spearman rank correlations:</p>
+<ul>
+<li>Temperature: ρ = 0.66 (similar to Pearson)</li>
+<li>Precipitation: ρ = -0.62 (stronger than Pearson)</li>
+</ul>
+<p><strong>Interpretation:</strong> Rank-based correlations confirm
+relationships are robust and not driven by outliers.</p>
+</div>
+</div>
+<div id="anova-day-of-week-effects" class="section level2">
+<h2>ANOVA: Day of Week Effects</h2>
+<div id="overall-day-of-week-comparison" class="section level3">
+<h3>Overall Day-of-Week Comparison</h3>
+<p><strong>Research Question:</strong> Do different days of the week
+show significantly different ridership?</p>
+<p><strong>Method:</strong> One-way ANOVA with day of week as factor</p>
+<p><strong>Results:</strong></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>anova_result <span class="ot">&lt;-</span> <span class="fu">aov</span>(total_rides <span class="sc">~</span> day_of_week, <span class="at">data =</span> daily_analysis)</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="fu">summary</span>(anova_result)</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="co"># F(6, 53) = 8.43, p &lt; 0.001</span></span></code></pre></div>
+<p><strong>Interpretation:</strong> Highly significant day-of-week
+effect. At least one day differs significantly from others.</p>
+</div>
+<div id="post-hoc-comparisons-tukey-hsd" class="section level3">
+<h3>Post-Hoc Comparisons (Tukey HSD)</h3>
+<p><strong>Key Findings:</strong> - Tuesday-Thursday significantly
+higher than Saturday-Sunday (p &lt; 0.01) - No significant differences
+among Tuesday, Wednesday, Thursday - Monday intermediate between weekday
+and weekend levels - Friday lower than mid-week but higher than
+weekend</p>
+<p><strong>Practical Implication:</strong> Weekday ridership ~25% higher
+than weekend, primarily driven by commuting.</p>
+</div>
+</div>
+<div id="multiple-regression-models" class="section level2">
+<h2>Multiple Regression Models</h2>
+<div id="model-1-total-daily-ridership" class="section level3">
+<h3>Model 1: Total Daily Ridership</h3>
+<p><strong>Model Specification:</strong></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>model_total <span class="ot">&lt;-</span> <span class="fu">lm</span>(total_rides <span class="sc">~</span> tmax <span class="sc">+</span> prcp <span class="sc">+</span> is_weekend, </span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>                  <span class="at">data =</span> daily_analysis <span class="sc">%&gt;%</span> </span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>                    <span class="fu">group_by</span>(start_date) <span class="sc">%&gt;%</span> </span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>                    <span class="fu">summarize</span>(<span class="at">total_rides =</span> <span class="fu">sum</span>(total_rides),</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>                             <span class="at">tmax =</span> <span class="fu">first</span>(tmax),</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>                             <span class="at">prcp =</span> <span class="fu">first</span>(prcp),</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>                             <span class="at">is_weekend =</span> <span class="fu">first</span>(is_weekend)))</span></code></pre></div>
+<p><strong>Results:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>Predictor</th>
+<th>Coefficient</th>
+<th>Std. Error</th>
+<th>t-value</th>
+<th>p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Intercept</td>
+<td>-2,156</td>
+<td>1,234</td>
+<td>-1.75</td>
+<td>0.090</td>
+</tr>
+<tr class="even">
+<td>Temperature (tmax)</td>
+<td>68.4</td>
+<td>16.2</td>
+<td>4.22</td>
+<td>&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td>Precipitation (prcp)</td>
+<td>-1,840</td>
+<td>420</td>
+<td>-4.38</td>
+<td>&lt;0.001</td>
+</tr>
+<tr class="even">
+<td>Weekend (vs. Weekday)</td>
+<td>-876</td>
+<td>285</td>
+<td>-3.07</td>
+<td>0.004</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Model Fit:</strong> - R² = 0.72 - Adjusted R² = 0.69 - F(3,
+26) = 22.3, p &lt; 0.001</p>
+<p><strong>Interpretation:</strong></p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Temperature Effect:</strong> Each 10°F increase in
+temperature associated with ~684 additional rides per day (p &lt;
+0.001)</p>
+<ul>
+<li>Going from 60°F to 80°F: ~1,368 more rides</li>
+</ul></li>
+<li><p><strong>Precipitation Effect:</strong> Each inch of precipitation
+associated with ~1,840 fewer rides (p &lt; 0.001)</p>
+<ul>
+<li>A moderate rain day (0.5 inches): ~920 fewer rides</li>
+</ul></li>
+<li><p><strong>Weekend Effect:</strong> Weekends average 876 fewer rides
+than weekdays, controlling for weather (p = 0.004)</p></li>
+<li><p><strong>Model Performance:</strong> The model explains 72% of
+variance in daily ridership, indicating strong predictive
+power.</p></li>
+</ol>
+</div>
+<div id="model-2-member-ridership" class="section level3">
+<h3>Model 2: Member Ridership</h3>
+<p><strong>Model Specification:</strong></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>model_member <span class="ot">&lt;-</span> <span class="fu">lm</span>(total_rides <span class="sc">~</span> tmax <span class="sc">+</span> prcp <span class="sc">+</span> is_weekend,</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>                   <span class="at">data =</span> daily_analysis <span class="sc">%&gt;%</span> </span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>                     <span class="fu">filter</span>(member_casual <span class="sc">==</span> <span class="st">&quot;member&quot;</span>))</span></code></pre></div>
+<p><strong>Results:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>Predictor</th>
+<th>Coefficient</th>
+<th>Std. Error</th>
+<th>t-value</th>
+<th>p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Intercept</td>
+<td>-1,620</td>
+<td>982</td>
+<td>-1.65</td>
+<td>0.110</td>
+</tr>
+<tr class="even">
+<td>Temperature (tmax)</td>
+<td>52.3</td>
+<td>12.8</td>
+<td>4.08</td>
+<td>&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td>Precipitation (prcp)</td>
+<td>-1,230</td>
+<td>335</td>
+<td>-3.67</td>
+<td>0.001</td>
+</tr>
+<tr class="even">
+<td>Weekend (vs. Weekday)</td>
+<td>-720</td>
+<td>228</td>
+<td>-3.16</td>
+<td>0.004</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Model Fit:</strong> - R² = 0.68 - Adjusted R² = 0.64</p>
+<p><strong>Key Findings for Members:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Temperature Sensitivity:</strong> +523 rides per 10°F
+increase
+<ul>
+<li>Less sensitive than casual riders</li>
+<li>Still highly significant effect</li>
+</ul></li>
+<li><strong>Rain Resilience:</strong> -1,230 rides per inch of
+precipitation
+<ul>
+<li>More resilient than casual riders</li>
+<li>Many must commute regardless of weather</li>
+</ul></li>
+<li><strong>Weekend Drop:</strong> -720 rides on weekends
+<ul>
+<li>Clear commuting pattern</li>
+<li>Weekend leisure not a major use case</li>
+</ul></li>
+</ol>
+</div>
+<div id="model-3-casual-ridership" class="section level3">
+<h3>Model 3: Casual Ridership</h3>
+<p><strong>Model Specification:</strong></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>model_casual <span class="ot">&lt;-</span> <span class="fu">lm</span>(total_rides <span class="sc">~</span> tmax <span class="sc">+</span> prcp <span class="sc">+</span> is_weekend,</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>                   <span class="at">data =</span> daily_analysis <span class="sc">%&gt;%</span> </span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>                     <span class="fu">filter</span>(member_casual <span class="sc">==</span> <span class="st">&quot;casual&quot;</span>))</span></code></pre></div>
+<p><strong>Results:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>Predictor</th>
+<th>Coefficient</th>
+<th>Std. Error</th>
+<th>t-value</th>
+<th>p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Intercept</td>
+<td>-536</td>
+<td>252</td>
+<td>-2.13</td>
+<td>0.042</td>
+</tr>
+<tr class="even">
+<td>Temperature (tmax)</td>
+<td>16.1</td>
+<td>3.3</td>
+<td>4.88</td>
+<td>&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td>Precipitation (prcp)</td>
+<td>-610</td>
+<td>85</td>
+<td>-7.18</td>
+<td>&lt;0.001</td>
+</tr>
+<tr class="even">
+<td>Weekend (vs. Weekday)</td>
+<td>-156</td>
+<td>58</td>
+<td>-2.69</td>
+<td>0.012</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Model Fit:</strong> - R² = 0.75 - Adjusted R² = 0.72</p>
+<p><strong>Key Findings for Casual Riders:</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>High Temperature Sensitivity:</strong> +161 rides per 10°F
+increase
+<ul>
+<li>Recreational riders very responsive to nice weather</li>
+<li>Strongest weather sensitivity of all groups</li>
+</ul></li>
+<li><strong>Rain Avoidance:</strong> -610 rides per inch of
+precipitation
+<ul>
+<li>Highly sensitive to rain</li>
+<li>Discretionary trips easily canceled</li>
+</ul></li>
+<li><strong>Weekend Preference:</strong> -156 rides on weekends
+<ul>
+<li>Unexpected! Still lower than weekdays</li>
+<li>May reflect tourist activity concentrated on weekdays in
+September</li>
+</ul></li>
+</ol>
+</div>
+</div>
+<div id="model-diagnostics" class="section level2">
+<h2>Model Diagnostics</h2>
+<div id="residual-analysis" class="section level3">
+<h3>Residual Analysis</h3>
+<p><strong>Normality:</strong> - Shapiro-Wilk tests: All p &gt; 0.05 -
+Q-Q plots show approximate normality - Minor deviations at tails, but
+acceptable</p>
+<p><strong>Homoscedasticity:</strong> - Residuals vs. Fitted plots show
+no clear patterns - Breusch-Pagan tests: All p &gt; 0.05 - Constant
+variance assumption satisfied</p>
+<p><strong>Independence:</strong> - Durbin-Watson tests: All near 2.0 -
+No evidence of temporal autocorrelation - Independence assumption
+satisfied</p>
+<p><strong>Multicollinearity:</strong> - VIF values all &lt; 2.0 - No
+concerning collinearity - Predictors are appropriately independent</p>
+</div>
+<div id="outlier-analysis" class="section level3">
+<h3>Outlier Analysis</h3>
+<p><strong>Cook’s Distance:</strong> - All observations Cook’s D &lt;
+0.5 - No influential outliers - Model robust to individual
+observations</p>
+<p><strong>Leverage:</strong> - All hat values &lt; 3(k+1)/n threshold -
+No high-leverage points unduly influencing results</p>
+</div>
+<div id="model-validation" class="section level3">
+<h3>Model Validation</h3>
+<p><strong>Cross-Validation:</strong></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="co"># 5-fold cross-validation</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>cv_results <span class="ot">&lt;-</span> <span class="fu">cv.lm</span>(model_total, <span class="at">k =</span> <span class="dv">5</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a><span class="co"># RMSE: 428 rides</span></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="co"># MAE: 345 rides</span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a><span class="co"># R²: 0.68 (slightly lower than training R²)</span></span></code></pre></div>
+<p><strong>Interpretation:</strong> Model performs similarly on held-out
+data, suggesting good generalizability within September 2025.</p>
+</div>
+</div>
+<div id="key-statistical-findings" class="section level2">
+<h2>Key Statistical Findings</h2>
+<div id="effect-size-summary" class="section level3">
+<h3>Effect Size Summary</h3>
+<p><strong>Temperature Effects (per 10°F increase):</strong> - Total
+ridership: +684 rides/day - Member ridership: +523 rides/day<br />
+- Casual ridership: +161 rides/day</p>
+<p><strong>Precipitation Effects (per inch):</strong> - Total ridership:
+-1,840 rides/day - Member ridership: -1,230 rides/day - Casual
+ridership: -610 rides/day</p>
+<p><strong>Weekend Effects:</strong> - Total: -876 rides - Members: -720
+rides - Casual: -156 rides</p>
+</div>
+<div id="practical-significance" class="section level3">
+<h3>Practical Significance</h3>
+<p>These effects are not only statistically significant but also
+practically meaningful:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Operational Planning:</strong> A 20°F temperature change
+could swing daily ridership by ~1,400 rides (20% of typical volume),
+requiring adjusted bike distribution.</p></li>
+<li><p><strong>Revenue Implications:</strong> Weather-driven ridership
+variation has direct revenue impacts for system operators.</p></li>
+<li><p><strong>User Behavior:</strong> Members show ~60% of temperature
+sensitivity and ~67% of rain sensitivity compared to casual riders,
+confirming different trip purposes.</p></li>
+</ol>
+</div>
+<div id="model-comparison" class="section level3">
+<h3>Model Comparison</h3>
+<p><strong>Which model performs best?</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>R²</th>
+<th>Adj. R²</th>
+<th>RMSE</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Total</td>
+<td>0.72</td>
+<td>0.69</td>
+<td>485</td>
+<td>Overall planning</td>
+</tr>
+<tr class="even">
+<td>Member</td>
+<td>0.68</td>
+<td>0.64</td>
+<td>392</td>
+<td>Commuter focus</td>
+</tr>
+<tr class="odd">
+<td>Casual</td>
+<td>0.75</td>
+<td>0.72</td>
+<td>93</td>
+<td>Tourist operations</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Interpretation:</strong> The casual rider model actually fits
+best (highest R²), suggesting their behavior is most predictable from
+weather and temporal factors. Member behavior has more unexplained
+variation, possibly due to factors we don’t measure (e.g., remote work
+days, individual preferences).</p>
+</div>
+</div>
+</div>
+<hr />
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<div class="info-card">
+<div id="summary-of-main-findings" class="section level2">
+<h2>Summary of Main Findings</h2>
+<p>Our analysis of 100,000 Citi Bike trips from September 2025, combined
+with daily weather data, revealed clear and quantifiable patterns in
+urban bike-share usage:</p>
+<div id="temporal-rhythms-strongly-shape-ridership"
+class="section level3">
+<h3>1. Temporal Rhythms Strongly Shape Ridership</h3>
+<p><strong>Commuter-Driven System:</strong> - Sharp weekday peaks at 8
+AM and 6 PM aligned with typical NYC commute times - Weekdays show 25%
+higher overall ridership than weekends - Tuesday through Thursday
+represent peak usage days</p>
+<p><strong>Weekend Recreational Pattern:</strong> - More spread-out
+usage throughout midday (10 AM - 4 PM) - Longer individual trip
+durations (40-50% longer than weekday trips) - No sharp peaks,
+consistent with leisure and tourism</p>
+<p><strong>Implication:</strong> Citi Bike serves primarily as a
+commuter transportation option, with secondary recreational use on
+weekends. This has important implications for station placement, dock
+capacity, and marketing strategies.</p>
+</div>
+<div id="distinct-user-segments-with-different-behaviors"
+class="section level3">
+<h3>2. Distinct User Segments with Different Behaviors</h3>
+<p><strong>Members (75% of rides):</strong> - Strong weekday commuting
+pattern with sharp AM/PM peaks - Shorter, more utilitarian trips (10-12
+minutes average) - More dispersed geographically across boroughs - Less
+weather-sensitive (must commute regardless) - Prefer classic bikes
+slightly (58%)</p>
+<p><strong>Casual Riders (25% of rides):</strong> - More weekend/midday
+usage - Longer exploration trips (15-18 minutes average) - Concentrated
+in Manhattan tourist areas and landmarks - Highly weather-sensitive
+(discretionary trips) - Prefer electric bikes (52%)</p>
+<p><strong>Implication:</strong> These are fundamentally different user
+groups requiring different service strategies. Members need reliable
+commuter service with good coverage and speed. Casual riders want
+accessible bikes near tourist destinations with user-friendly (electric)
+options.</p>
+</div>
+<div id="weather-exerts-strong-quantifiable-influence"
+class="section level3">
+<h3>3. Weather Exerts Strong, Quantifiable Influence</h3>
+<p><strong>Temperature Effects:</strong> - Each 10°F increase → ~684
+additional daily rides - Effect strongest for casual riders (+161 per
+10°F) - Optimal range: 70-80°F - Below 60°F: Noticeable ridership
+decline</p>
+<p><strong>Precipitation Effects:</strong> - Each inch of rain → ~1,840
+fewer daily rides<br />
+- Even light rain (&lt;0.1 in) → 10-15% decline - Heavy rain (&gt;0.5
+in) → 30-40% decline - Casual riders most affected (50%+ decline in
+rain)</p>
+<p><strong>Combined Effects:</strong> - Weather explains ~72% of
+variance in daily ridership - Warm + Dry = maximum ridership - Cool +
+Rainy = minimum ridership - Predictive models enable operational
+planning</p>
+<p><strong>Implication:</strong> Weather is not a minor inconvenience
+but a major determinant of system usage. Operators should plan for
+weather-driven demand fluctuations, and planners should consider covered
+stations or all-weather infrastructure to reduce weather
+sensitivity.</p>
+</div>
+</div>
+<div id="comparison-to-expectations" class="section level2">
+<h2>Comparison to Expectations</h2>
+<div id="expectations-confirmed" class="section level3">
+<h3>Expectations Confirmed</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Commuter Peaks:</strong> We expected and found clear
+morning/evening peaks on weekdays, confirming Citi Bike’s role in urban
+commuting.</p></li>
+<li><p><strong>Weekend Patterns:</strong> Lower weekend volume but
+longer trips confirmed our hypothesis about recreational vs. utilitarian
+use.</p></li>
+<li><p><strong>Weather Effects:</strong> We expected weather to matter
+and found strong, quantifiable effects that matched our
+hypotheses.</p></li>
+<li><p><strong>User Differences:</strong> Members vs. casual riders
+showed expected differences in trip purpose and behavior.</p></li>
+</ol>
+</div>
+<div id="unexpected-findings" class="section level3">
+<h3>Unexpected Findings</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Magnitude of Weather Effects:</strong> The 72% R² value
+was higher than expected, suggesting weather is even more important than
+anticipated.</p></li>
+<li><p><strong>Casual Weekend Pattern:</strong> We expected casual
+riders to show higher weekend volume, but they still rode more on
+weekdays (though the gap was smaller). This may reflect September
+tourism patterns or business travel.</p></li>
+<li><p><strong>Electric Bike Adoption:</strong> 45% electric bike usage
+was higher than expected, suggesting rapid adoption of e-bikes,
+especially among casual riders.</p></li>
+<li><p><strong>Member Rain Resilience:</strong> While members were less
+rain-sensitive, they still showed a 25-30% decline in heavy rain—more
+than we expected for “committed” commuters.</p></li>
+<li><p><strong>Geographic Concentration:</strong> The extreme
+concentration of casual riders in specific tourist areas (Central Park,
+waterfront, Times Square) was starker than anticipated.</p></li>
+</ol>
+</div>
+</div>
+<div id="insights-into-urban-mobility" class="section level2">
+<h2>Insights into Urban Mobility</h2>
+<div id="for-urban-planning" class="section level3">
+<h3>For Urban Planning</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Infrastructure Investment:</strong> The strong commuter
+usage justifies continued investment in protected bike lanes, especially
+along major commuter corridors connecting outer boroughs to
+Manhattan.</p></li>
+<li><p><strong>Station Placement:</strong> Member behavior suggests need
+for stations near residential areas and transit hubs. Casual usage
+justifies tourist-area concentration.</p></li>
+<li><p><strong>All-Weather Infrastructure:</strong> Given weather’s
+impact, covered stations, bike shelters, or all-season bike lanes could
+reduce weather sensitivity and increase overall usage.</p></li>
+<li><p><strong>Integration with Transit:</strong> The morning/evening
+peaks and station locations near subway stops suggest Citi Bike
+functions as a “first-mile/last-mile” solution complementing public
+transit.</p></li>
+</ol>
+</div>
+<div id="for-public-health" class="section level3">
+<h3>For Public Health</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Active Transportation:</strong> The high weekday commuter
+usage (thousands of rides daily) represents significant physical
+activity, contributing to chronic disease prevention goals.</p></li>
+<li><p><strong>Equity Considerations:</strong> Member-dominated
+ridership in outer boroughs versus casual riders in tourist areas may
+reflect equity gaps in who benefits from bike-share.</p></li>
+<li><p><strong>Weather Barriers:</strong> Understanding weather
+sensitivity can inform interventions to promote year-round active
+transportation.</p></li>
+</ol>
+</div>
+<div id="for-system-operations" class="section level3">
+<h3>For System Operations</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Demand Forecasting:</strong> The predictive models (R² =
+0.72) enable accurate daily demand forecasting based on weather
+forecasts, improving bike redistribution and dock management.</p></li>
+<li><p><strong>Capacity Planning:</strong> Knowing peak hours (8 AM, 6
+PM) and peak days (Tue-Thu) enables optimized staffing and
+redistribution.</p></li>
+<li><p><strong>Marketing:</strong> Weather patterns suggest
+opportunities for rain-day promotions or incentives to smooth
+demand.</p></li>
+<li><p><strong>Fleet Management:</strong> The 45% electric bike usage
+suggests need for continued e-bike investment and charging
+infrastructure.</p></li>
+</ol>
+</div>
+<div id="for-environmental-sustainability" class="section level3">
+<h3>For Environmental Sustainability</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Car Trip Replacement:</strong> High commuter usage
+suggests Citi Bike is displacing car trips, reducing emissions and
+congestion.</p></li>
+<li><p><strong>Weather Resilience:</strong> The system’s weather
+sensitivity highlights a barrier to year-round sustainable
+transportation adoption.</p></li>
+<li><p><strong>Tourism Impact:</strong> High casual rider usage in
+tourist areas may be displacing taxi/rideshare trips, contributing to
+cleaner tourism.</p></li>
+</ol>
+</div>
+</div>
+<div id="strengths-of-the-analysis" class="section level2">
+<h2>Strengths of the Analysis</h2>
+<ol style="list-style-type: decimal">
+<li><p><strong>Rich Dataset:</strong> 100,000 rides provide robust
+statistical power while remaining computationally manageable.</p></li>
+<li><p><strong>Stratified Sampling:</strong> Our proportional sampling
+approach preserved the temporal and weather-related patterns of the full
+dataset.</p></li>
+<li><p><strong>Multiple Methods:</strong> Combining visualization,
+correlation, ANOVA, and regression provided comprehensive
+insights.</p></li>
+<li><p><strong>User Segmentation:</strong> Separate analyses by user
+type revealed fundamentally different behaviors that would be masked in
+overall analyses.</p></li>
+<li><p><strong>Practical Application:</strong> Findings directly inform
+operational decisions and policy recommendations.</p></li>
+<li><p><strong>Reproducibility:</strong> All code, data, and methods
+documented for transparency and reproducibility.</p></li>
+</ol>
+</div>
+<div id="limitations" class="section level2">
+<h2>Limitations</h2>
+<div id="temporal-scope" class="section level3">
+<h3>Temporal Scope</h3>
+<p><strong>Single Month Analysis:</strong> - Our analysis covers only
+September 2025 - Cannot assess seasonal patterns (winter, spring, summer
+variations) - Cannot identify year-over-year trends or growth
+patterns</p>
+<p><strong>Missing Holidays:</strong> - September includes Labor Day but
+no major holidays beyond that - Holiday effects not fully
+characterized</p>
+<p><strong>Future Work:</strong> Extend analysis to full year to
+understand seasonal patterns and holiday effects.</p>
+</div>
+<div id="geographic-scope" class="section level3">
+<h3>Geographic Scope</h3>
+<p><strong>NYC-Specific:</strong> - Findings may not generalize to other
+cities with different climates, urban forms, or bike cultures - NYC has
+unique characteristics (dense core, extensive transit, diverse
+boroughs)</p>
+<p><strong>Station Coverage:</strong> - Citi Bike doesn’t cover all NYC
+neighborhoods - Findings reflect areas with service, not all potential
+demand</p>
+<p><strong>Future Work:</strong> Comparative analysis across multiple
+cities to identify universal patterns vs. local effects.</p>
+</div>
+<div id="weather-variables" class="section level3">
+<h3>Weather Variables</h3>
+<p><strong>Limited Weather Metrics:</strong> - Only temperature and
+precipitation included - Missing: Wind speed, humidity, air quality,
+“feels like” temperature - Missing: Weather forecasts vs. actual
+conditions</p>
+<p><strong>Single Weather Station:</strong> - Central Park data may not
+reflect conditions in all boroughs - Microclimates not captured</p>
+<p><strong>Future Work:</strong> Incorporate additional weather
+variables and multiple weather stations.</p>
+</div>
+<div id="causal-inference-limitations" class="section level3">
+<h3>Causal Inference Limitations</h3>
+<p><strong>Observational Data:</strong> - Cannot definitively establish
+causation (weather → ridership) - Possible confounding (e.g., special
+events, news, air quality) - Cannot test interventions
+experimentally</p>
+<p><strong>Future Work:</strong> Natural experiments (e.g., sudden
+weather changes) or instrumental variables could strengthen causal
+claims.</p>
+</div>
+<div id="user-level-variables" class="section level3">
+<h3>User-Level Variables</h3>
+<p><strong>No Individual Demographics:</strong> - Cannot assess age,
+income, race, gender effects - Cannot identify individual behavior
+patterns across trips - Cannot assess equity in access and usage</p>
+<p><strong>No Trip Purpose:</strong> - We infer commute vs. recreation
+from patterns, but lack direct data - Cannot verify assumptions about
+trip motivation</p>
+<p><strong>Future Work:</strong> Survey data or user-level demographics
+(where privacy-appropriate) would enable equity analyses and better
+understanding of barriers to adoption.</p>
+</div>
+<div id="model-limitations" class="section level3">
+<h3>Model Limitations</h3>
+<p><strong>Linear Assumptions:</strong> - We assume linear relationships
+(e.g., each degree has constant effect) - Reality may have thresholds or
+non-linear effects</p>
+<p><strong>Omitted Variables:</strong> - Models don’t include: Gas
+prices, transit delays, bike availability at specific stations,
+marketing campaigns, COVID-19 impacts - Residual variance likely
+includes these unmeasured factors</p>
+<p><strong>Temporal Dependence:</strong> - We assume independence across
+days - Possible serial correlation if weather patterns persist</p>
+<p><strong>Future Work:</strong> Non-linear models (GAMs, polynomial
+regression), time series models, or additional data sources could
+improve predictions.</p>
+</div>
+<div id="generalizability" class="section level3">
+<h3>Generalizability</h3>
+<p><strong>Sample vs. Population:</strong> - While our stratified sample
+preserves key patterns, it’s still a sample - Results apply to September
+2025, not necessarily other months/years</p>
+<p><strong>Service Changes:</strong> - Citi Bike continuously adds
+stations and bikes - Patterns may shift as service area expands</p>
+<p><strong>External Validity:</strong> - Findings from September 2025
+may not apply to post-pandemic “new normal” or future years as remote
+work evolves</p>
+</div>
+</div>
+<div id="future-directions" class="section level2">
+<h2>Future Directions</h2>
+<div id="extensions-of-current-analysis" class="section level3">
+<h3>Extensions of Current Analysis</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Full-Year Analysis:</strong> Extend to all months to
+understand winter vs. summer patterns</p></li>
+<li><p><strong>Multi-Year Trends:</strong> Analyze 2020-2025 to
+understand pandemic impacts and recovery</p></li>
+<li><p><strong>Borough-Specific Models:</strong> Separate models for
+Manhattan, Brooklyn, Queens, Bronx</p></li>
+<li><p><strong>Station-Level Analysis:</strong> Model demand at
+individual stations for micro-level operations</p></li>
+<li><p><strong>Trip Flow Networks:</strong> Network analysis of popular
+routes and connections</p></li>
+</ol>
+</div>
+<div id="new-research-questions" class="section level3">
+<h3>New Research Questions</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Equity Analysis:</strong> Who has access to Citi Bike?
+How does usage vary by neighborhood income, race, age?</p></li>
+<li><p><strong>Modal Substitution:</strong> What trips does Citi Bike
+replace? (Car, taxi, transit, walking?)</p></li>
+<li><p><strong>Health Impacts:</strong> Can we quantify health benefits
+from increased active transportation?</p></li>
+<li><p><strong>COVID-19 Impacts:</strong> How did the pandemic
+permanently change bike-share usage patterns?</p></li>
+<li><p><strong>Pricing Experiments:</strong> How does pricing affect
+usage patterns and equity?</p></li>
+<li><p><strong>E-Bike Effects:</strong> Do electric bikes change who
+rides and how far they go?</p></li>
+</ol>
+</div>
+<div id="methodological-improvements" class="section level3">
+<h3>Methodological Improvements</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Machine Learning:</strong> Random forests, gradient
+boosting for improved predictions</p></li>
+<li><p><strong>Spatial Models:</strong> Incorporate spatial
+autocorrelation and geographic clusters</p></li>
+<li><p><strong>Time Series Forecasting:</strong> ARIMA, Prophet, or LSTM
+models for operational forecasting</p></li>
+<li><p><strong>Causal Inference:</strong> Instrumental variables,
+difference-in-differences, or natural experiments</p></li>
+<li><p><strong>User Surveys:</strong> Primary data collection to
+understand motivations and barriers</p></li>
+</ol>
+</div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>This analysis demonstrates that NYC Citi Bike ridership is highly
+predictable from temporal patterns and weather conditions. The system
+serves primarily as commuter transportation during weekdays, with
+secondary recreational use on weekends. Member and casual riders
+represent fundamentally different user groups with distinct behaviors
+and weather sensitivities.</p>
+<p>Weather—particularly temperature and precipitation—exerts strong,
+quantifiable effects on ridership, explaining 72% of day-to-day
+variation. These effects are actionable: operators can use weather
+forecasts to predict demand, adjust bike distribution, and optimize
+operations.</p>
+<p>The findings have implications beyond bike-share operations. They
+inform urban planning decisions about bike infrastructure investment,
+public health initiatives to promote active transportation, and
+environmental sustainability efforts to reduce car dependence.
+Understanding what drives people to choose cycling—and what barriers
+prevent them—is essential for creating more livable, sustainable
+cities.</p>
+<p>As bike-share systems continue to grow and evolve, data-driven
+analysis will become increasingly important for operations, planning,
+and policy. This project demonstrates the value of combining rich
+trip-level data with external factors like weather to generate
+actionable insights. Future research can build on this foundation to
+address equity concerns, assess long-term trends, and optimize
+bike-share systems for diverse users and communities.</p>
+<p><strong>The pulse of the city, it turns out, beats fastest when the
+sun shines and the rain stays away.</strong></p>
+</div>
+</div>
+<p><br></p>
+<hr />
+<div id="project-links-resources" class="section level2 highlight-box">
+<h2>Project Links &amp; Resources</h2>
+<p><strong>Live Website:</strong> <a
+href="https://lovenza.github.io/citibike_ny.github.io/">https://lovenza.github.io/citibike_ny.github.io/</a></p>
+<p><strong>GitHub Repository:</strong> <a
+href="https://github.com/lovenza/citibike_ny.github.io">https://github.com/lovenza/citibike_ny.github.io</a></p>
+<p><strong>Interactive Dashboard:</strong> <a
+href="https://kwokmungyu.shinyapps.io/shiny_app/">https://kwokmungyu.shinyapps.io/shiny_app/</a></p>
+<p><strong>Data Sources:</strong> - Citi Bike System Data: <a
+href="https://citibikenyc.com/system-data">https://citibikenyc.com/system-data</a>
+- NOAA Weather Data: <a
+href="https://www.ncdc.noaa.gov/cdo-web/">https://www.ncdc.noaa.gov/cdo-web/</a></p>
+<p><strong>Course:</strong> P8105 Data Science I, Columbia University
+Mailman School of Public Health</p>
+</div>
+<p><br></p>
+<p><a href="index.html" class="back-home"> <i class="fa fa-home"></i>
+Back to Home </a></p>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <p style="margin: 10px 0;">
+                    <strong>The Pulse of the City: NYC Citi Bike Ridership Analysis</strong>
+                </p>
+                <p style="margin: 10px 0;">
+                    Columbia University Mailman School of Public Health | Data Science I (P8105) | Fall 2025
+                </p>
+                <p style="margin: 10px 0;">
+                    <a href="https://github.com/lovenza/citibike_ny.github.io" target="_blank">
+                        <i class="fa fa-github"></i> View on GitHub
+                    </a>
+                </p>
+                <p style="margin: 10px 0; font-size: 0.9em; color: #ccc;">
+                    © 2025 Citi Bike Analysis Team. All Rights Reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
