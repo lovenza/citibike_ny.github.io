@@ -28,10 +28,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <div class="info-card">
 
-# Data Loading
-Load key packages and data. 
+# 1. Introduction
 
-```{r}
+In this part, we perform exploratory data analysis (EDA) and visualization for Citi Bike trips in September 2025 focusing on temporal patterns and weather influences. 
+
+```{r, include=FALSE}
 library(tidyverse)
 library(lubridate)
 library(ggplot2)
@@ -43,17 +44,15 @@ library(scales)
 library(knitr)
 library(broom)
 library(forecast)
+library(kableExtra)
 
-bike <- read_csv("data/final_bike_weather_categorized.csv")
-
-glimpse(bike)
 ```
 
 </div>
 
 <div class="info-card">
 
-# 1. Dataset Overview
+# 2. Dataset Overview
 
 The dataset contains **stratified sampled Citi Bike trips from September 2025**, enriched with **weather categories**.  
 Each row represents **a single bike ride** with detailed trip-level information including:
@@ -73,9 +72,12 @@ This allows us to analyze:
 - Weather effects  
 - Time-series trends across the month  
 
-In this part, we perform exploratory data analysis (EDA) and visualization for Citi Bike trips in September 2025 focusing on temporal patterns and weather influences. 
+```{r, message=FALSE}
+bike <- read_csv("data/final_bike_weather_categorized.csv")
 
-```{r}
+```
+
+```{r, include=FALSE}
 if ("datetime_start_obj" %in% names(bike) && !all(is.na(bike$datetime_start_obj))) {
   bike <- bike %>%
   mutate(datetime_start = ymd_hms(datetime_start_obj, quiet = TRUE))
@@ -98,13 +100,16 @@ bike <- bike %>%
 
 <div class="info-card">
 
-# 2. Daily Aggregates
+# 3. Daily Aggregates
 
-```{r}
+The table below shows the basic format of daily aggregated ride data. Further analysis is based on this.
+
+```{r, warning=FALSE, message=FALSE}
 daily <- bike %>%
   group_by(start_date) %>%
   summarise(
     total_rides = n(),
+    ride_duration_hours = ride_duration_hours,
     avg_duration = mean(ride_duration_hours, na.rm = TRUE),
     member_rides = sum(member_casual == "member"),
     casual_rides = sum(member_casual == "casual"),
@@ -112,18 +117,22 @@ daily <- bike %>%
     prcp = prcp
   )
 
-head(daily)
+kable(head(daily, 10), caption = "Daily Overview") %>%
+  kable_styling(bootstrap_options = "striped",
+                full_width = FALSE,
+                position = "center")
 ```
 
 </div>
 
 <div class="info-card">
 
-# 3. Daily Ride Volume
+# 4. Daily Ride Volume
 
-```{r}
+```{r, warning=FALSE}
 p_daily_rides <- ggplot(daily, aes(x = start_date, y = total_rides)) +
-  geom_line(size = 1) +
+  geom_line(color = "skyblue", size = 1, lineend = "round") +
+  geom_point(color = "lightpink", size = 2) +
   labs(title = "Daily Ride Volume — September 2025",
        x = "Date", y = "Ride Count") +
   theme_minimal()
@@ -131,15 +140,21 @@ p_daily_rides <- ggplot(daily, aes(x = start_date, y = total_rides)) +
 p_daily_rides
 ```
 
+The line chart shows the daily ride volume for Citi Bike in September 2025, with ride counts ranging around 2000 to 4000 per day.
+
+- Key trend: There is a clear upward trend in ride volume from the start of the month, with the lowest point on September 8 (around 2000 rides) and multiple peaks later in the month (e.g., mid September and late September, both exceeding 4000 rides).
+
+- Variability: Daily ride counts fluctuate noticeably, suggesting factors like weather, weekdays vs. weekends, or events may be influencing how many people use the bikes each day.
+
 </div>
 
 <div class="info-card">
 
-# 4. Member vs Casual Ride Patterns
+# 5. Member vs Casual Ride Patterns
 
-## 4.1 Daily Average Duration
+## 5.1 Daily Average Duration
 
-```{r}
+```{r, message=FALSE}
 dur_ts <- bike %>%
   group_by(start_date, member_casual) %>%
   summarise(mean_duration = mean(ride_duration_hours, na.rm = TRUE))
@@ -151,11 +166,19 @@ ggplot(dur_ts, aes(start_date, mean_duration, color = member_casual)) +
   theme_minimal()
 ```
 
+This line chart compares the daily average ride duration (in hours) between casual (red line) and member (teal line) Citi Bike users in September 2025.
+
+- Casual users consistently have longer average ride duration (ranging from 0.3 to over 0.4 hours), with a notable spike in late September.
+
+- Member users have much shorter and more stable average ride duration (around 0.2 hours), showing minimal fluctuation throughout the month.
+
+- The gap between casual and member ride duration remains significant across all days, indicating that casual users tend to take longer, more leisurely rides, while members use bikes for shorter, more routine trips.
+
 ---
 
-## 4.2 Hourly Ride Count
+## 5.2 Hourly Ride Count
 
-```{r}
+```{r, message=FALSE}
 hourly <- bike %>%
   group_by(hour, member_casual, weekend_and_holiday) %>%
   summarise(rides = n())
@@ -168,11 +191,15 @@ ggplot(hourly, aes(hour, rides, color = member_casual)) +
   theme_minimal()
 ```
 
+This faceted line chart compares hourly ride counts between casual (red line) and member (teal line) Citi Bike users, split by weekends/holidays (left panel) and workdays (right panel).
+
+Members primarily use bikes for weekday commutes, while casual users’ ride patterns are more consistent across weekends and workdays (with low overall activity on workdays).
+
 ---
 
-## 4.3 Day of Week Pattern
+## 5.3 Day of Week Pattern
 
-```{r}
+```{r, message=FALSE}
 wday_daily <- bike %>%
   group_by(wday, user_type) %>%
   summarise(rides = n(), .groups = "drop") %>%
@@ -194,8 +221,7 @@ Specifically, member ride counts are particularly high on Mondays and Tuesdays a
 
 In contrast, casual users' ride counts are relatively consistent throughout the week, with slightly higher numbers on weekends. The observation confirms the previous conclusion.
 
-
-```{r}
+```{r, message=FALSE}
 p_dur_group <- bike %>%
   group_by(member_casual, weekend_and_holiday) %>%
   summarise(
@@ -215,35 +241,38 @@ p_dur_group
 
 <div class="info-card">
 
-# 5. Time Series of Average Ride Duration
+# 6. Time Series of Average Ride Duration
 
-```{r}
+```{r, message=FALSE}
 dur_ts <- bike %>%
-  group_by(start_date, member_casual) %>%
+  group_by(start_date) %>%
   summarise(mean_duration = mean(ride_duration_hours, na.rm = TRUE))
 
-p_dur_ts <- ggplot(dur_ts, aes(start_date, mean_duration, color = member_casual)) +
-  geom_line(size = 1) +
-  labs(title = "Daily Average Ride Duration — Member vs Casual",
+p_dur_ts <- ggplot(dur_ts, aes(start_date, mean_duration)) +
+  geom_line(color = "skyblue", size = 1, lineend = "round") +
+  geom_point(color = "lightpink", size = 2) +
+  labs(title = "Daily Average Ride Duration",
        x = "Date", y = "Duration (hours)") +
   theme_minimal()
 
 p_dur_ts
 ```
 
+This line chart shows the daily average ride duration (in hours) for September 2025, with values ranging from 0.20 to just over 0.275 hours. The duration fluctuates slightly across the month, with the lowest point on September 8 and the highest peak in late September, indicating small day-to-day changes in how long rides lasted.
+
 </div>
 
 <div class="info-card">
 
-# 6. Weather Effects
+# 7. Weather Effects
 
-## 6.1 Ride Count vs Temperature Level Category
+## 7.1 Ride Count vs Temperature Level Category
 
-```{r}
+```{r, message=FALSE}
 p_temp_level <- bike %>%
   group_by(start_date, temp_level_category) %>%
-  summarise(rides = n()) %>%
-  ggplot(aes(temp_level_category, rides)) +
+  summarise(rides = n(), .groups = "drop") %>%
+  ggplot(aes(temp_level_category, rides, fill = temp_level_category)) +
   geom_boxplot() +
   labs(title = "Ride Counts by Temperature Level Category",
        x = "Temperature Category", y = "Daily Ride Count") +
@@ -252,17 +281,23 @@ p_temp_level <- bike %>%
 p_temp_level
 ```
 
-This plot shows that higher temperatures are associated with increased ridership.
+This boxplot compares daily ride counts across "High" and "Low" temperature categories.
+
+- High temperature is associated with slightly higher median daily ride counts and a wider range of values (with a longer whisker extending downward).
+
+- Low temperature has a lower median ride count and one noticeable low-value outlier, suggesting fewer rides on some cold days.
+
+- Overall, higher temperatures correspond to slightly more consistent and higher daily ride counts than lower temperatures.
 
 ---
 
-## 6.2 Ride Count vs Rain Category
+## 7.2 Ride Count vs Rain Category
 
-```{r}
+```{r, message=FALSE}
 p_rain <- bike %>%
   group_by(start_date, rain_category) %>%
-  summarise(rides = n()) %>%
-  ggplot(aes(rain_category, rides)) +
+  summarise(rides = n(), .groups = "drop") %>%
+  ggplot(aes(rain_category, rides, fill = rain_category)) +
   geom_boxplot() +
   labs(title = "Ride Counts by Rain Category",
        x = "Rain Category", y = "Daily Ride Count") +
@@ -271,13 +306,22 @@ p_rain <- bike %>%
 p_rain
 ```
 
-The analysis reveals a negative correlation between rainfall and ridership.
+This boxplot examines daily ride counts across four rain categories (Heavy Rain, Light Rain, Medium Rain, No Rain).
+
+- Heavy Rain has the lowest median daily ride count and the smallest range, showing very few rides on days with heavy rain.
+
+- No Rain and Light Rain have the highest median ride counts, with No Rain showing slightly more variability in values.
+
+- Medium Rain falls in the middle, with a lower median ride count than No Rain and Light Rain but higher than Heavy Rain.
+
+Overall, the chart clearly shows that rain, especially heavy rain,
+leads to fewer daily bike rides, while no rain or light rain is associated with the most rides.
 
 ---
 
-## 6.3 Weather Variables
+## 7.3 Weather Variables
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # tmax
 ggplot(daily, aes(x = tmax, y = total_rides)) +
   geom_point(alpha = .4) +
@@ -299,13 +343,13 @@ ggplot(daily, aes(x = prcp, y = total_rides)) +
 
 <div class="info-card">
 
-# 7. Bike Type Analysis
+# 8. Bike Type Analysis
 
-```{r}
+```{r, message=FALSE}
 p_type <- bike %>%
   group_by(start_date, rideable_type) %>%
-  summarise(rides = n()) %>%
-  ggplot(aes(rideable_type, rides)) +
+  summarise(rides = n(), .groups = "drop") %>%
+  ggplot(aes(rideable_type, rides, fill = rideable_type)) +
   geom_boxplot() +
   labs(title = "Ride Duration by Bike Type",
        x = "Bike Type", y = "Ride Counts") +
@@ -314,12 +358,23 @@ p_type <- bike %>%
 p_type
 ```
 
+This boxplot compares daily ride counts for two bike types: classic bikes and electric bikes.
+
+- Electric bikes have a significantly higher median daily ride count and a much wider range of values (with a long whisker extending downward), showing far more frequent use overall.
+
+- Classic bikes have a lower median ride count and one noticeable low-value outlier, indicating less consistent and lower daily usage compared to electric bikes.
+
+- Overall, the chart clearly shows that electric bikes are used much more heavily than classic bikes, with a larger volume of daily rides and greater variability in usage.
 
 </div>
 
 <div class="info-card">
 
-# 8. Time Series Analysis
+# 9. Time Series Analysis
+
+In this section, we will attempt to perform time series analysis on the ride data. After that, we fit an ARIMA model to predict future ride volume.
+
+## 9.1 Model Fitting and Prediction
 
 ```{r}
 library(tseries)
@@ -336,7 +391,9 @@ ts_data <- daily_rides %>%
 autoplot(ts_data, total_rides) +
   labs(title = "Daily Ride Counts",
        x = "Date",
-       y = "Number of Rides")
+       y = "Number of Rides") +
+  geom_line(linewidth = 1.2, color = "skyblue") +
+  theme_minimal() 
 
 ```
 
@@ -354,15 +411,16 @@ fc <- fit_arima %>% forecast(h = 7)
 autoplot(fc, ts_data) +
   labs(title = "ARIMA Forecast of Daily Rides",
        x = "Date",
-       y = "Number of Rides")
+       y = "Number of Rides") +
+  theme_minimal()
 
 ```
 
 ---
 
-## 8.1 Decomposition
+## 9.2 Decomposition
 
-```{r}
+```{r, warning = FALSE}
 fit_ets <- ts_data %>% model(ETS(total_rides))
 
 components_plot <- autoplot(components(fit_ets)) +
@@ -377,6 +435,16 @@ components_plot <- autoplot(components(fit_ets)) +
 components_plot
 
 ```
+
+This ETS decomposition chart breaks down daily ride counts into three components:
+
+- Total rides (top panel): Shows the overall trend of increasing daily ride counts through September, with small day-to-day fluctuations.
+
+- Level (middle panel): Reflects the underlying smooth trend of ride counts, which rises steadily and follows the overall upward direction of the raw data.
+
+- Remainder (bottom panel): Shows the residual variation after removing the trend—these small, random fluctuations indicate no strong unaccounted for patterns, meaning the ETS model captures the main trend well.
+
+Overall, the decomposition suggests daily ride counts have a clear upward trend in September, with only minor random variation left after accounting for this trend.
 
 </div>
 

@@ -9,11 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Ziang Niu" />
 
-<meta name="date" content="2025-11-06" />
 
-<title>Data Wrangling</title>
+<title>data_wrangling</title>
 
 <script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -36,8 +34,6 @@
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
-<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -59,8 +55,9 @@
   }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -71,7 +68,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -388,6 +385,12 @@ div.tocify {
   border-radius: 0px;
 }
 
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
 
 </style>
 
@@ -426,7 +429,7 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index_citibike.html">
+  <a href="index.html">
     <span class="fa fa-home"></span>
      
     Home
@@ -510,48 +513,39 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Data Wrangling</h1>
-<h4 class="author">Ziang Niu</h4>
-<h4 class="date">2025-11-06</h4>
 
 </div>
 
 
-<p><a href="index_citibike.html" class="back-home">
-<i class="fa fa-home"></i> Back to Home </a></p>
-<div class="hero-section">
-<h1>
-🔧 Data Wrangling
-</h1>
-<p>
-Transforming Raw Data into Analysis-Ready Insights
-</p>
+<div id="data-wrangling" class="section level1">
+<h1>Data Wrangling</h1>
+<p>Ziang Niu 2025-11-06</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.2     ✔ tibble    3.3.0
+## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+## ✔ purrr     1.1.0     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;janitor&#39;
+## 
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     chisq.test, fisher.test</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">library</span>(geosphere)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">235</span>)</span></code></pre></div>
 </div>
-<p><br></p>
-<div id="overview" class="section level1 info-card">
-<h1>Overview</h1>
-<p>This page documents our comprehensive data wrangling process for the
-NYC Citi Bike analysis. We transform raw trip data and weather
-observations into a clean, analysis-ready dataset through:</p>
-<ul>
-<li><strong>Stratified sampling</strong> to create a manageable
-100,000-ride dataset</li>
-<li><strong>Feature engineering</strong> including geospatial
-calculations</li>
-<li><strong>Data integration</strong> merging trip and weather data</li>
-<li><strong>Categorical variable creation</strong> for meaningful
-analysis</li>
-</ul>
-</div>
-<div id="load-and-pre-process-bike-data"
-class="section level1 info-card">
+<div id="load-and-pre-process-bike-data" class="section level1">
 <h1>Load and Pre-process Bike Data</h1>
-<p>Due to the large size of the raw dataset, which exceeds GitHub’s
-storage limits, the file is stored locally. You can access the original
-data via <a
-href="https://citibikenyc.com/system-data">https://citibikenyc.com/system-data</a>,
-where the specific file <code>202509-citibike-tripdata_3</code> was
-selected for this analysis.</p>
 <p>This section reads the raw Citibike data from its CSV file,
 specifying a list of values to interpret as NA. It then performs initial
 cleaning and feature engineering:</p>
@@ -566,50 +560,57 @@ start and end datetimes, which is more efficient and accurate than the
 original method of converting to strings and back to time
 objects.</p></li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>file_path <span class="ot">&lt;-</span> <span class="st">&quot;raw_data/202509-citibike-tripdata_3.csv&quot;</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>na_values <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;.&quot;</span>, <span class="st">&quot;NA&quot;</span>, <span class="st">&quot;&quot;</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>bike_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(file_path, <span class="at">na =</span> na_values) <span class="sc">%&gt;%</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>    <span class="at">datetime_start_obj =</span> <span class="fu">ymd_hms</span>(started_at),</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>    <span class="at">datetime_end_obj =</span> <span class="fu">ymd_hms</span>(ended_at),</span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>    <span class="at">start_month =</span> <span class="fu">month</span>(datetime_start_obj),</span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>    <span class="at">start_day =</span> <span class="fu">day</span>(datetime_start_obj),</span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>    <span class="at">ride_duration_hours =</span> <span class="fu">as.numeric</span>(datetime_end_obj <span class="sc">-</span> datetime_start_obj, <span class="at">units =</span> <span class="st">&quot;hours&quot;</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>file_path <span class="ot">&lt;-</span> <span class="st">&quot;raw_data/202509-citibike-tripdata_3.csv&quot;</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>na_values <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;.&quot;</span>, <span class="st">&quot;NA&quot;</span>, <span class="st">&quot;&quot;</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>bike_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(file_path, <span class="at">na =</span> na_values) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>    <span class="at">datetime_start_obj =</span> <span class="fu">ymd_hms</span>(started_at),</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>    <span class="at">datetime_end_obj =</span> <span class="fu">ymd_hms</span>(ended_at),</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>    <span class="at">start_month =</span> <span class="fu">month</span>(datetime_start_obj),</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>    <span class="at">start_day =</span> <span class="fu">day</span>(datetime_start_obj),</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>    <span class="at">ride_duration_hours =</span> <span class="fu">as.numeric</span>(datetime_end_obj <span class="sc">-</span> datetime_start_obj, <span class="at">units =</span> <span class="st">&quot;hours&quot;</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>  )</span></code></pre></div>
+<pre><code>## Rows: 1000000 Columns: 13
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr  (7): ride_id, rideable_type, start_station_name, start_station_id, end_...
+## dbl  (4): start_lat, start_lng, end_lat, end_lng
+## dttm (2): started_at, ended_at
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div id="stratified-daily-sampling" class="section level1 info-card">
+<div id="stratified-daily-sampling" class="section level1">
 <h1>Stratified Daily Sampling</h1>
 <p>This block creates the smaller sampled_bike_data dataframe
-(containing 100,000 rides). It first filters the data to include only
-rides from September. Then, it uses a grouped sampling strategy:</p>
+(containing 100000 rides). It first filters the data to include only
+rides from September. Then, it uses a split-map-combine strategy to
+perform stratified sampling:</p>
 <ul>
-<li><p>It calculates a global sampling rate based on the target size
-(100,000) and the total rows available in September.</p></li>
-<li><p><code>group_by(start_day)</code> groups the data by the day of
-the month.</p></li>
-<li><p><code>slice_sample(prop = sampling_rate)</code> applies the
-sampling rate within each group. This ensures <strong>proportional
-stratified sampling</strong>, preserving the relative distribution of
-rides across each day (e.g., busy days remain busy in the sample, quiet
-days remain quiet).</p></li>
-<li><p>Finally, <code>ungroup()</code> removes the grouping structure
-for subsequent analysis.</p></li>
+<li><p>group_split() divides the data into a list of dataframes, one for
+each start_day.</p></li>
+<li><p>map_dfr() iterates over this list, applies a custom sampling
+function, and rows-binds the results back into a single
+dataframe.</p></li>
+<li><p>The code performs proportional stratified sampling to achieve a
+target sample size of 100,000 rides, preserving the relative
+distribution of rides across each day in September.</p></li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>target_size <span class="ot">&lt;-</span> <span class="dv">100000</span> </span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>total_rows <span class="ot">&lt;-</span> <span class="fu">sum</span>(bike_data<span class="sc">$</span>start_month <span class="sc">==</span> <span class="dv">9</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>sampling_rate <span class="ot">&lt;-</span> target_size <span class="sc">/</span> total_rows</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>sampled_bike_data <span class="ot">&lt;-</span> bike_data <span class="sc">%&gt;%</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="fu">filter</span>(start_month <span class="sc">==</span> <span class="dv">9</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="fu">group_by</span>(start_day) <span class="sc">%&gt;%</span></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">prop =</span> sampling_rate) <span class="sc">%&gt;%</span></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>sampled_bike_data <span class="sc">%&gt;%</span></span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>  <span class="fu">count</span>(start_day, <span class="at">name =</span> <span class="st">&quot;count&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Day&quot;</span>, <span class="st">&quot;Count&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>target_size <span class="ot">&lt;-</span> <span class="dv">100000</span> </span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>total_rows <span class="ot">&lt;-</span> <span class="fu">sum</span>(bike_data<span class="sc">$</span>start_month <span class="sc">==</span> <span class="dv">9</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>sampling_rate <span class="ot">&lt;-</span> target_size <span class="sc">/</span> total_rows</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>sampled_bike_data <span class="ot">&lt;-</span> bike_data <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="fu">filter</span>(start_month <span class="sc">==</span> <span class="dv">9</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="fu">group_by</span>(start_day) <span class="sc">%&gt;%</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">prop =</span> sampling_rate) <span class="sc">%&gt;%</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>sampled_bike_data <span class="sc">%&gt;%</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  <span class="fu">count</span>(start_day, <span class="at">name =</span> <span class="st">&quot;count&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Day&quot;</span>, <span class="st">&quot;Count&quot;</span>))</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -742,7 +743,7 @@ for subsequent analysis.</p></li>
 </table>
 </div>
 <div id="feature-engineering-and-weather-data-merge"
-class="section level1 info-card">
+class="section level1">
 <h1>Feature Engineering and Weather Data Merge</h1>
 <p>This section enriches the sampled bike data with new geospatial
 features and joins it with external weather data.</p>
@@ -766,128 +767,114 @@ which are used as the join key.</p></li>
 join to standardize the new columns from the weather file (e.g., TMAX,
 PRCP).</p></li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>noaa_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/noaa_central_park_2025.csv&quot;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> sampled_bike_data <span class="sc">%&gt;%</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="at">start_lng =</span> <span class="fu">as.numeric</span>(start_lng),</span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    <span class="at">start_lat =</span> <span class="fu">as.numeric</span>(start_lat),</span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="at">end_lng =</span> <span class="fu">as.numeric</span>(end_lng),</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    <span class="at">end_lat =</span> <span class="fu">as.numeric</span>(end_lat)</span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>    <span class="at">start_coords =</span> <span class="fu">cbind</span>(start_lng, start_lat),</span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>    <span class="at">end_coords =</span> <span class="fu">cbind</span>(end_lng, end_lat),</span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>    <span class="at">distance_km =</span> <span class="fu">distHaversine</span>(start_coords, end_coords) <span class="sc">/</span> <span class="dv">1000</span>,</span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>    <span class="at">bearing_degrees =</span> <span class="fu">bearing</span>(start_coords, end_coords),</span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>    <span class="at">start_date =</span> <span class="fu">as.Date</span>(datetime_start_obj)</span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>start_coords, <span class="sc">-</span>end_coords)</span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>noaa_data_clean <span class="ot">&lt;-</span> noaa_data <span class="sc">%&gt;%</span></span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>    <span class="at">DATE =</span> <span class="fu">as.Date</span>(DATE)</span>
-<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>  )</span>
-<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(merged_data, noaa_data_clean, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;start_date&quot;</span> <span class="ot">=</span> <span class="st">&quot;DATE&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>noaa_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/noaa_central_park_2025.csv&quot;</span>)</span></code></pre></div>
+<pre><code>## Rows: 30 Columns: 28
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr   (7): STATION, NAME, PRCP_ATTRIBUTES, SNOW_ATTRIBUTES, SNWD_ATTRIBUTES,...
+## dbl   (8): LATITUDE, LONGITUDE, ELEVATION, PRCP, SNOW, SNWD, TMAX, TMIN
+## lgl  (12): DAPR, DAPR_ATTRIBUTES, MDPR, MDPR_ATTRIBUTES, TAVG, TAVG_ATTRIBUT...
+## date  (1): DATE
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> sampled_bike_data <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    <span class="at">start_lng =</span> <span class="fu">as.numeric</span>(start_lng),</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    <span class="at">start_lat =</span> <span class="fu">as.numeric</span>(start_lat),</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    <span class="at">end_lng =</span> <span class="fu">as.numeric</span>(end_lng),</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>    <span class="at">end_lat =</span> <span class="fu">as.numeric</span>(end_lat)</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>    <span class="at">start_coords =</span> <span class="fu">cbind</span>(start_lng, start_lat),</span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>    <span class="at">end_coords =</span> <span class="fu">cbind</span>(end_lng, end_lat),</span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>    <span class="at">distance_km =</span> <span class="fu">distHaversine</span>(start_coords, end_coords) <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>    <span class="at">bearing_degrees =</span> <span class="fu">bearing</span>(start_coords, end_coords),</span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a>    <span class="at">start_date =</span> <span class="fu">as.Date</span>(datetime_start_obj)</span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>start_coords, <span class="sc">-</span>end_coords)</span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a>noaa_data_clean <span class="ot">&lt;-</span> noaa_data <span class="sc">%&gt;%</span></span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a>    <span class="at">DATE =</span> <span class="fu">as.Date</span>(DATE)</span>
+<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a>  )</span>
+<span id="cb11-21"><a href="#cb11-21" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(merged_data, noaa_data_clean, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;start_date&quot;</span> <span class="ot">=</span> <span class="st">&quot;DATE&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb11-23"><a href="#cb11-23" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>()</span></code></pre></div>
 </div>
-<div id="final-categorization-and-export"
-class="section level1 info-card">
+<div id="final-categorization-and-export" class="section level1">
 <h1>Final Categorization and Export</h1>
 <p>This final block creates categorical variables based on the merged
 weather data, selects the final columns for the analysis, and exports
 the result to a new CSV file.</p>
 <ul>
-<li><p><code>case_when()</code> is used to create four new categorical
-columns:</p>
+<li><p>case_when() is used to create three new categorical columns:</p>
 <ul>
-<li><strong>temp_diff_category</strong>: Based on the diurnal
-temperature range (tmax - tmin).
-<ul>
-<li>“High” if temperature difference &gt; 15°F</li>
-<li>“Medium” if 8°F &lt; difference ≤ 15°F</li>
-<li>“Low” if difference ≤ 8°F</li>
+<li><p>temp_diff_category: Based on the diurnal temperature range (tmax
+- tmin). “High” is assigned if the temperature difference is greater
+than 15 degrees. “Medium” is assigned if the difference is greater than
+8 but less than or equal to 15. “Low” is for 8 degrees or less. “NA” is
+assigned if the calculation results in a missing value.</p></li>
+<li><p>temp_level_category: Based on the maximum temperature (tmax).
+“High” is assigned if the maximum temperature is 80 degrees or higher.
+“Low” is for a maximum temperature less than 80. “NA” is assigned if
+tmax is a missing value.</p></li>
+<li><p>rain_category: Based on the precipitation amount (prcp).
+“Missing” is assigned if the precipitation data is NA (not available).
+“No Rain” is for exactly 0. “Light Rain” is greater than 0 and less than
+or equal to 0.3 (units, e.g., inches). “Medium Rain” is greater than 0.3
+and less than or equal to 1.0. “Heavy Rain” is for precipitation greater
+than 1.0. “Other” catches any other cases.</p></li>
+<li><p>weekend_and_holiday: Based on the specific day of the month
+(start_day). “weekend and holiday” is assigned if the start day falls on
+specific dates: the 1st, 6th, 7th, 13th, 14th, 20th, 21st, 27th, or 28th
+(representing the Labor Day on the 1st and recurring weekends).
+“workday” catches all other cases not listed above.</p></li>
 </ul></li>
-<li><strong>temp_level_category</strong>: Based on the maximum
-temperature (tmax).
-<ul>
-<li>“High” if tmax ≥ 80°F</li>
-<li>“Low” if tmax &lt; 80°F</li>
-</ul></li>
-<li><strong>rain_category</strong>: Based on precipitation amount (prcp,
-in inches).
-<ul>
-<li>“No Rain” for exactly 0</li>
-<li>“Light Rain” for 0 &lt; prcp ≤ 0.3</li>
-<li>“Medium Rain” for 0.3 &lt; prcp ≤ 1.0</li>
-<li>“Heavy Rain” for prcp &gt; 1.0</li>
-</ul></li>
-<li><strong>weekend_and_holiday</strong>: Based on the day of the month
-(start_day).
-<ul>
-<li>“weekend and holiday” for Labor Day (Sept 1) and weekends</li>
-<li>“workday” for all other days</li>
-</ul></li>
-</ul></li>
-<li><p><code>select()</code> organizes the dataframe, keeping essential
+<li><p>select() is used to organize the dataframe, keeping essential
 ride info and the new weather categories.</p></li>
 <li><p>The final, processed dataframe is written to
-<code>final_bike_weather_categorized.csv</code>.</p></li>
+final_bike_weather_categorized.csv.</p></li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>final_categorized_data <span class="ot">&lt;-</span> merged_data <span class="sc">%&gt;%</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="at">temp_diff =</span> tmax <span class="sc">-</span> tmin,</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>    </span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>    <span class="at">temp_diff_category =</span> <span class="fu">case_when</span>(</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>      temp_diff <span class="sc">&gt;</span> <span class="dv">15</span> <span class="sc">~</span> <span class="st">&quot;High&quot;</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>      temp_diff <span class="sc">&gt;</span> <span class="dv">8</span>  <span class="sc">~</span> <span class="st">&quot;Medium&quot;</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>      temp_diff <span class="sc">&lt;=</span> <span class="dv">8</span> <span class="sc">~</span> <span class="st">&quot;Low&quot;</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>      <span class="cn">TRUE</span>           <span class="sc">~</span> <span class="cn">NA_character_</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>    ),</span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>    </span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    <span class="at">temp_level_category =</span> <span class="fu">case_when</span>(</span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>      tmax <span class="sc">&gt;=</span> <span class="dv">80</span> <span class="sc">~</span> <span class="st">&quot;High&quot;</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>      tmax <span class="sc">&lt;</span> <span class="dv">80</span>  <span class="sc">~</span> <span class="st">&quot;Low&quot;</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>      <span class="cn">TRUE</span>       <span class="sc">~</span> <span class="cn">NA_character_</span></span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>    ),</span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>    </span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>    <span class="at">rain_category =</span> <span class="fu">case_when</span>(</span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>      <span class="fu">is.na</span>(prcp)             <span class="sc">~</span> <span class="st">&quot;Missing&quot;</span>,</span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>      prcp <span class="sc">==</span> <span class="dv">0</span>               <span class="sc">~</span> <span class="st">&quot;No Rain&quot;</span>,</span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>      prcp <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> prcp <span class="sc">&lt;=</span> <span class="fl">0.3</span>  <span class="sc">~</span> <span class="st">&quot;Light Rain&quot;</span>,</span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>      prcp <span class="sc">&gt;</span> <span class="fl">0.3</span> <span class="sc">&amp;</span> prcp <span class="sc">&lt;=</span> <span class="fl">1.0</span> <span class="sc">~</span> <span class="st">&quot;Medium Rain&quot;</span>,</span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>      prcp <span class="sc">&gt;</span> <span class="fl">1.0</span>              <span class="sc">~</span> <span class="st">&quot;Heavy Rain&quot;</span>,</span>
-<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>      <span class="cn">TRUE</span>                    <span class="sc">~</span> <span class="st">&quot;Other&quot;</span></span>
-<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>    ),</span>
-<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>    </span>
-<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a>    <span class="at">weekend_and_holiday =</span> <span class="fu">case_when</span>(</span>
-<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>      start_day <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">13</span>, <span class="dv">14</span>, <span class="dv">20</span>, <span class="dv">21</span>, <span class="dv">27</span>, <span class="dv">28</span>) <span class="sc">~</span> <span class="st">&quot;weekend and holiday&quot;</span>,</span>
-<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;workday&quot;</span></span>
-<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>    )</span>
-<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>    ride_id<span class="sc">:</span>start_date,</span>
-<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>    tmax, tmin, prcp,</span>
-<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>    temp_diff_category, temp_level_category, rain_category, weekend_and_holiday</span>
-<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>  )</span>
-<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a></span>
-<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="fu">write_csv</span>(final_categorized_data, <span class="st">&quot;data/final_bike_weather_categorized.csv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>final_categorized_data <span class="ot">&lt;-</span> merged_data <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>    <span class="at">temp_diff =</span> tmax <span class="sc">-</span> tmin,</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>    </span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>    <span class="at">temp_diff_category =</span> <span class="fu">case_when</span>(</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>      temp_diff <span class="sc">&gt;</span> <span class="dv">15</span> <span class="sc">~</span> <span class="st">&quot;High&quot;</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>      temp_diff <span class="sc">&gt;</span> <span class="dv">8</span>  <span class="sc">~</span> <span class="st">&quot;Medium&quot;</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>      temp_diff <span class="sc">&lt;=</span> <span class="dv">8</span> <span class="sc">~</span> <span class="st">&quot;Low&quot;</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>      <span class="cn">TRUE</span>           <span class="sc">~</span> <span class="cn">NA_character_</span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>    ),</span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>    </span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>    <span class="at">temp_level_category =</span> <span class="fu">case_when</span>(</span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>      tmax <span class="sc">&gt;=</span> <span class="dv">80</span> <span class="sc">~</span> <span class="st">&quot;High&quot;</span>,</span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a>      tmax <span class="sc">&lt;</span> <span class="dv">80</span>  <span class="sc">~</span> <span class="st">&quot;Low&quot;</span>,</span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a>      <span class="cn">TRUE</span>       <span class="sc">~</span> <span class="cn">NA_character_</span></span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>    ),</span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a>    </span>
+<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a>    <span class="at">rain_category =</span> <span class="fu">case_when</span>(</span>
+<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a>      <span class="fu">is.na</span>(prcp)             <span class="sc">~</span> <span class="st">&quot;Missing&quot;</span>,</span>
+<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a>      prcp <span class="sc">==</span> <span class="dv">0</span>               <span class="sc">~</span> <span class="st">&quot;No Rain&quot;</span>,</span>
+<span id="cb12-21"><a href="#cb12-21" tabindex="-1"></a>      prcp <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> prcp <span class="sc">&lt;=</span> <span class="fl">0.3</span>  <span class="sc">~</span> <span class="st">&quot;Light Rain&quot;</span>,</span>
+<span id="cb12-22"><a href="#cb12-22" tabindex="-1"></a>      prcp <span class="sc">&gt;</span> <span class="fl">0.3</span> <span class="sc">&amp;</span> prcp <span class="sc">&lt;=</span> <span class="fl">1.0</span> <span class="sc">~</span> <span class="st">&quot;Medium Rain&quot;</span>,</span>
+<span id="cb12-23"><a href="#cb12-23" tabindex="-1"></a>      prcp <span class="sc">&gt;</span> <span class="fl">1.0</span>              <span class="sc">~</span> <span class="st">&quot;Heavy Rain&quot;</span>,</span>
+<span id="cb12-24"><a href="#cb12-24" tabindex="-1"></a>      <span class="cn">TRUE</span>                    <span class="sc">~</span> <span class="st">&quot;Other&quot;</span></span>
+<span id="cb12-25"><a href="#cb12-25" tabindex="-1"></a>    ),</span>
+<span id="cb12-26"><a href="#cb12-26" tabindex="-1"></a>    </span>
+<span id="cb12-27"><a href="#cb12-27" tabindex="-1"></a>    <span class="at">weekend_and_holiday =</span> <span class="fu">case_when</span>(</span>
+<span id="cb12-28"><a href="#cb12-28" tabindex="-1"></a>      start_day <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">13</span>, <span class="dv">14</span>, <span class="dv">20</span>, <span class="dv">21</span>, <span class="dv">27</span>, <span class="dv">28</span>) <span class="sc">~</span> <span class="st">&quot;weekend and holiday&quot;</span>,</span>
+<span id="cb12-29"><a href="#cb12-29" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;workday&quot;</span></span>
+<span id="cb12-30"><a href="#cb12-30" tabindex="-1"></a>    )</span>
+<span id="cb12-31"><a href="#cb12-31" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-32"><a href="#cb12-32" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb12-33"><a href="#cb12-33" tabindex="-1"></a>    ride_id<span class="sc">:</span>start_date,</span>
+<span id="cb12-34"><a href="#cb12-34" tabindex="-1"></a>    tmax, tmin, prcp,</span>
+<span id="cb12-35"><a href="#cb12-35" tabindex="-1"></a>    temp_diff_category, temp_level_category, rain_category, weekend_and_holiday</span>
+<span id="cb12-36"><a href="#cb12-36" tabindex="-1"></a>  )</span>
+<span id="cb12-37"><a href="#cb12-37" tabindex="-1"></a></span>
+<span id="cb12-38"><a href="#cb12-38" tabindex="-1"></a><span class="fu">write_csv</span>(final_categorized_data, <span class="st">&quot;data/final_bike_weather_categorized.csv&quot;</span>)</span></code></pre></div>
 </div>
-<p><br></p>
-<div id="data-wrangling-complete" class="section level3 highlight-box">
-<h3>✅ Data Wrangling Complete!</h3>
-<p>Our final dataset contains <strong>100,000 strategically sampled
-rides</strong> from September 2025, enriched with: - Temporal features
-(hour, day, weekday/weekend) - Geospatial metrics (distance, bearing) -
-Weather variables (temperature, precipitation) - Categorical
-classifications for analysis</p>
-<p><strong>Next Step</strong>: Explore patterns and relationships in our
-<a href="EDA.html">EDA &amp; Visualization</a> section!</p>
-</div>
-<p><br></p>
-<p><a href="index_citibike.html" class="back-home">
-<i class="fa fa-home"></i> Back to Home </a></p>
 
 <footer>
     <div class="container">
@@ -974,7 +961,7 @@ $(document).ready(function ()  {
       ignoreSelector: ".toc-ignore",
       scrollTo: 0
     };
-    options.showAndHide = true;
+    options.showAndHide = false;
     options.smoothScroll = true;
 
     // tocify
