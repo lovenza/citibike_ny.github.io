@@ -32,17 +32,22 @@ library(knitr)
 library(kableExtra)
 ```
 
-<a href="index.html" class="back-home">
-  <i class="fa fa-home"></i> Back to Home
-</a>
+<nav style="margin-bottom: 20px;">
+  <a href="index.html" class="back-home" style="text-decoration: none; color: #333;">
+    <i class="fa fa-home"></i> Back to Home
+  </a>
+</nav>
 
-<div class="hero-section">
-  <h1>📊 Final Project Report</h1>
-  <p><strong>Analyzing NYC Citi Bike Ridership Patterns in Response to Daily Rhythms and Weather</strong></p>
-  <p>Columbia University Mailman School of Public Health | Data Science I (P8105) | Fall 2025</p>
+<div class="hero-section" style="text-align: center; padding: 40px 20px; background-color: #f9f9f9; border-radius: 8px;">
+  <h1 style="margin-bottom: 10px;">📊 Final Project Report</h1>
+  <p style="font-size: 1.2em; margin-bottom: 5px;"><strong>Analyzing NYC Citi Bike Ridership Patterns in Response to Daily Rhythms and Weather</strong></p>
+  <p style="color: #555;">Columbia University Mailman School of Public Health | Data Science I (P8105) | Fall 2025</p>
 </div>
 
-<br>
+<div class="image-container" style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+  <img src="pic/pic1.png" alt="Citi Bike Lifestyle" style="width: 90%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+  <p style="font-size: 0.9em; color: #666; font-style: italic; margin-top: 10px;">Citi Bike brings vibrancy to NYC streets</p>
+</div>
 
 ---
 
@@ -528,6 +533,11 @@ ggplot(hourly_pattern, aes(x = hour, y = n, color = day_type)) +
 
 ## User Segmentation Analysis
 
+<div style="text-align: center; margin: 20px 0;">
+  <img src="pic/pic2.png" alt="User with Citi Bike" style="width: 80%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+  <p style="font-size: 0.9em; color: #666; font-style: italic;">Exploring user preferences: Classic vs. Electric Bikes</p>
+</div>
+
 ### Members vs. Casual Riders: Volume
 
 **Key Findings:**
@@ -582,6 +592,11 @@ ggplot(hourly_pattern, aes(x = hour, y = n, color = day_type)) +
    - Outer borough stations near residential areas
    - Brooklyn and Queens commuter hubs
    - Near subway connections
+   
+<div style="text-align: center; margin: 20px 0;">
+  <img src="pic/pic3.png" alt="NYC Citi Bike Station Map" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+  <p style="font-size: 0.9em; color: #666; font-style: italic;">Spatial distribution of Citi Bike rides in NYC</p>
+</div>
 
 2. **Casual Rider Stations (Top 5):**
    - Manhattan tourist areas
