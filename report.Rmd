@@ -645,7 +645,7 @@ ggplot(daily_weather, aes(x = tmax, y = total_rides)) +
 2. **Threshold Effects:**
    - 0-0.1 inches: Minimal impact
    - 0.1-0.5 inches: Moderate decline
-   - >0.5 inches: Severe decline
+   - Over 0.5 inches: Severe decline
 
 3. **User Type Differences:**
    - Casual riders: Very sensitive to rain (50%+ decline)
