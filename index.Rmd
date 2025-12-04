@@ -84,20 +84,28 @@ Explore the data yourself! Our Shiny dashboard allows you to filter by user type
 <div class="row">
 <div class="col-md-4">
 <div class="stat-card">
-<h3>100,000</h3>
-<p>Rides Analyzed</p>
+<div style="font-size: 32px; font-weight: bold; color: #2780e3; margin-bottom: 5px;">
+100,000
+</div> 
+<p style="font-size: 16px; color: #666;">Rides Analyzed</p>
 </div>
 </div>
+
 <div class="col-md-4">
 <div class="stat-card">
-<h3>30 Days</h3>
-<p>September 2025</p>
+<div style="font-size: 32px; font-weight: bold; color: #2780e3; margin-bottom: 5px;">
+30 Days
+</div>
+<p style="font-size: 16px; color: #666;">September 2025</p>
 </div>
 </div>
+
 <div class="col-md-4">
 <div class="stat-card">
-<h3>5+ Variables</h3>
-<p>Weather & Temporal</p>
+<div style="font-size: 32px; font-weight: bold; color: #2780e3; margin-bottom: 5px;">
+5+ Variables
+</div>
+<p style="font-size: 16px; color: #666;">Weather & Temporal</p>
 </div>
 </div>
 </div>
@@ -154,3 +162,5 @@ For an interactive experience, visit our [Shiny Dashboard](https://YOUR_SHINY_AP
   <p><em>This project was completed as part of Data Science I (P8105) at Columbia University Mailman School of Public Health, Fall 2025.</em></p>
   <p><a href="https://github.com/lovenza/citibike_ny.github.io" target="_blank" class="btn btn-primary"><i class="fa fa-github"></i> View on GitHub</a></p>
 </div>
+
+
