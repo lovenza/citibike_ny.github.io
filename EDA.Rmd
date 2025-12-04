@@ -294,6 +294,10 @@ This boxplot compares daily ride counts across "High" and "Low" temperature cate
 ## 7.2 Ride Count vs Rain Category
 
 ```{r, message=FALSE}
+bike <- bike %>%
+  mutate(rain_category = factor(rain_category,
+                                levels = c("No Rain", "Light Rain", "Medium Rain", "Heavy Rain"),
+                                ordered = TRUE))
 p_rain <- bike %>%
   group_by(start_date, rain_category) %>%
   summarise(rides = n(), .groups = "drop") %>%
@@ -376,7 +380,7 @@ In this section, we will attempt to perform time series analysis on the ride dat
 
 ## 9.1 Model Fitting and Prediction
 
-```{r}
+```{r, message=FALSE}
 library(tseries)
 daily_rides <- bike %>%
   group_by(start_date) %>%
@@ -405,6 +409,14 @@ report(fit_arima)
 
 ```
 
+This ARIMA(0,1,1)(1,0,0)[7] model (a seasonal ARIMA with weekly seasonality, given the [7] parameter) provides a reasonable fit for the daily ride count time series, as reflected by the key metrics:
+
+- The AIC (435.64) and BIC (439.74) are consistent with a parsimonious model that balances fit and complexity.
+
+- The significant seasonal AR term (sar1 = 0.4685, s.e. = 0.2006) captures the weekly cyclicality in ride demand, which aligns with the visible fluctuations in the time series plot (e.g., recurring peaks/troughs across the September dates).
+
+- The MA(1) term (ma1 = -0.4548) helps account for short-term, non-seasonal noise in daily ride counts, which is visible in the small, day-to-day variations in the line graph.
+
 ```{r}
 fc <- fit_arima %>% forecast(h = 7)
 
@@ -415,6 +427,8 @@ autoplot(fc, ts_data) +
   theme_minimal()
 
 ```
+
+Overall, the model effectively captures both the upward trend and weekly seasonality in the data, making it a useful tool for short-term forecasting of daily ride demand.
 
 ---
 
