@@ -36,6 +36,8 @@
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
 
@@ -59,9 +61,8 @@
   }
 </style>
 <style type="text/css" data-origin="pandoc">
-html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -72,7 +73,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -465,7 +466,7 @@ div.tocify {
   </ul>
 </li>
 <li>
-  <a href="https://YOUR_USERNAME.shinyapps.io/citibike_dashboard/">
+  <a href="https://kwokmungyu.shinyapps.io/shiny_app/">
     <span class="fa fa-dashboard"></span>
      
     Shiny Dashboard
@@ -529,108 +530,14 @@ Uncovering Patterns in NYC Citi Bike Usage
 </p>
 </div>
 <p><br></p>
-<div id="data-loading" class="section level1 info-card">
-<h1>Data Loading</h1>
-<p>Load key packages and data.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
-<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-## ✔ dplyr     1.1.4     ✔ readr     2.1.5
-## ✔ forcats   1.0.0     ✔ stringr   1.5.1
-## ✔ ggplot2   3.5.2     ✔ tibble    3.3.0
-## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
-## ✔ purrr     1.1.0     
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span></code></pre></div>
-<pre><code>## 
-## Attaching package: &#39;gridExtra&#39;
-## 
-## The following object is masked from &#39;package:dplyr&#39;:
-## 
-##     combine</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">library</span>(tsibble)</span></code></pre></div>
-<pre><code>## Registered S3 method overwritten by &#39;tsibble&#39;:
-##   method               from 
-##   as_tibble.grouped_df dplyr
-## 
-## Attaching package: &#39;tsibble&#39;
-## 
-## The following object is masked from &#39;package:lubridate&#39;:
-## 
-##     interval
-## 
-## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, union</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">library</span>(feasts)</span></code></pre></div>
-<pre><code>## Loading required package: fabletools</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">library</span>(scales)</span></code></pre></div>
-<pre><code>## 
-## Attaching package: &#39;scales&#39;
-## 
-## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     discard
-## 
-## The following object is masked from &#39;package:readr&#39;:
-## 
-##     col_factor</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="fu">library</span>(forecast)</span></code></pre></div>
-<pre><code>## Registered S3 method overwritten by &#39;quantmod&#39;:
-##   method            from
-##   as.zoo.data.frame zoo</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>bike <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/final_bike_weather_categorized.csv&quot;</span>)</span></code></pre></div>
-<pre><code>## Rows: 99986 Columns: 28
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr  (11): ride_id, rideable_type, start_station_name, start_station_id, end...
-## dbl  (12): start_lat, start_lng, end_lat, end_lng, start_month, start_day, r...
-## dttm  (4): started_at, ended_at, datetime_start_obj, datetime_end_obj
-## date  (1): start_date
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">glimpse</span>(bike)</span></code></pre></div>
-<pre><code>## Rows: 99,986
-## Columns: 28
-## $ ride_id             &lt;chr&gt; &quot;761B30A5B7B64236&quot;, &quot;FBEA1249070FDC8C&quot;, &quot;91A501973…
-## $ rideable_type       &lt;chr&gt; &quot;electric_bike&quot;, &quot;electric_bike&quot;, &quot;classic_bike&quot;, …
-## $ started_at          &lt;dttm&gt; 2025-09-01 11:38:30, 2025-09-01 19:38:52, 2025-09…
-## $ ended_at            &lt;dttm&gt; 2025-09-01 11:42:08, 2025-09-01 19:46:19, 2025-09…
-## $ start_station_name  &lt;chr&gt; &quot;5 Ave &amp; E 30 St&quot;, &quot;W 74 St &amp; Columbus Ave&quot;, &quot;Cumb…
-## $ start_station_id    &lt;chr&gt; &quot;6248.08&quot;, &quot;7230.10&quot;, &quot;4428.02&quot;, &quot;4467.03&quot;, &quot;5329.…
-## $ end_station_name    &lt;chr&gt; &quot;8 Ave &amp; W 31 St&quot;, &quot;3 Ave &amp; E 72 St&quot;, &quot;Lafayette A…
-## $ end_station_id      &lt;chr&gt; &quot;6450.05&quot;, &quot;7028.04&quot;, &quot;4470.09&quot;, &quot;4122.03&quot;, &quot;5989.…
-## $ start_lat           &lt;dbl&gt; 40.74598, 40.77857, 40.68753, 40.68672, 40.71755, …
-## $ start_lng           &lt;dbl&gt; -73.98629, -73.97755, -73.97265, -73.93899, -74.01…
-## $ end_lat             &lt;dbl&gt; 40.75059, 40.76994, 40.68700, 40.67686, 40.73805, …
-## $ end_lng             &lt;dbl&gt; -73.99468, -73.96061, -73.97665, -73.93607, -73.99…
-## $ member_casual       &lt;chr&gt; &quot;casual&quot;, &quot;casual&quot;, &quot;member&quot;, &quot;casual&quot;, &quot;casual&quot;, …
-## $ datetime_start_obj  &lt;dttm&gt; 2025-09-01 11:38:30, 2025-09-01 19:38:52, 2025-09…
-## $ datetime_end_obj    &lt;dttm&gt; 2025-09-01 11:42:08, 2025-09-01 19:46:19, 2025-09…
-## $ start_month         &lt;dbl&gt; 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,…
-## $ start_day           &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
-## $ ride_duration_hours &lt;dbl&gt; 0.06069722, 0.12432833, 0.04609028, 0.19654083, 0.…
-## $ distance_km         &lt;dbl&gt; 0.8734433, 1.7209451, 0.3426126, 1.1251295, 2.6857…
-## $ bearing_degrees     &lt;dbl&gt; -54.20579, 123.80039, -99.91008, 167.30502, 31.924…
-## $ start_date          &lt;date&gt; 2025-09-01, 2025-09-01, 2025-09-01, 2025-09-01, 2…
-## $ tmax                &lt;dbl&gt; 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78…
-## $ tmin                &lt;dbl&gt; 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64…
-## $ prcp                &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
-## $ temp_diff_category  &lt;chr&gt; &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, &quot;Medium&quot;, …
-## $ temp_level_category &lt;chr&gt; &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;Low&quot;, &quot;…
-## $ rain_category       &lt;chr&gt; &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Rain&quot;, &quot;No Ra…
-## $ weekend_and_holiday &lt;chr&gt; &quot;weekend and holiday&quot;, &quot;weekend and holiday&quot;, &quot;wee…</code></pre>
+<div id="introduction" class="section level1 info-card">
+<h1>1. Introduction</h1>
+<p>In this part, we perform exploratory data analysis (EDA) and
+visualization for Citi Bike trips in September 2025 focusing on temporal
+patterns and weather influences.</p>
 </div>
 <div id="dataset-overview" class="section level1 info-card">
-<h1>1. Dataset Overview</h1>
+<h1>2. Dataset Overview</h1>
 <p>The dataset contains <strong>stratified sampled Citi Bike trips from
 September 2025</strong>, enriched with <strong>weather
 categories</strong>.<br />
@@ -662,123 +569,1375 @@ rain category)<br />
 </li>
 <li>Time-series trends across the month</li>
 </ul>
-<p>In this part, we perform exploratory data analysis (EDA) and
-visualization for Citi Bike trips in September 2025 focusing on temporal
-patterns and weather influences.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="cf">if</span> (<span class="st">&quot;datetime_start_obj&quot;</span> <span class="sc">%in%</span> <span class="fu">names</span>(bike) <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">all</span>(<span class="fu">is.na</span>(bike<span class="sc">$</span>datetime_start_obj))) {</span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  bike <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">datetime_start =</span> <span class="fu">ymd_hms</span>(datetime_start_obj, <span class="at">quiet =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>  bike <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">datetime_start =</span> <span class="fu">ymd_hms</span>(started_at, <span class="at">quiet =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>}</span>
-<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>bike <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(datetime_start),</span>
-<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>  <span class="at">hour =</span> <span class="fu">hour</span>(datetime_start),</span>
-<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>  <span class="at">wday =</span> <span class="fu">wday</span>(datetime_start, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">week_start =</span> <span class="dv">1</span>),</span>
-<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a>  <span class="at">weekday_weekend =</span> <span class="fu">case_when</span>(</span>
-<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a>  weekend_and_holiday <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;weekend&quot;</span>, <span class="st">&quot;weekend and holiday&quot;</span>, <span class="st">&quot;Weekend&quot;</span>, <span class="st">&quot;weekend and holiday&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Weekend&quot;</span>, <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;Weekday&quot;</span>),</span>
-<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a>  <span class="at">user_type =</span> member_casual</span>
-<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>bike <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/final_bike_weather_categorized.csv&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(bike, <span class="dv">10</span>), <span class="at">caption =</span> <span class="st">&quot;Bike Overview&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">&quot;striped&quot;</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>                <span class="at">full_width =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>                <span class="at">position =</span> <span class="st">&quot;center&quot;</span>)</span></code></pre></div>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+Bike Overview
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+ride_id
+</th>
+<th style="text-align:left;">
+rideable_type
+</th>
+<th style="text-align:left;">
+started_at
+</th>
+<th style="text-align:left;">
+ended_at
+</th>
+<th style="text-align:left;">
+start_station_name
+</th>
+<th style="text-align:left;">
+start_station_id
+</th>
+<th style="text-align:left;">
+end_station_name
+</th>
+<th style="text-align:left;">
+end_station_id
+</th>
+<th style="text-align:right;">
+start_lat
+</th>
+<th style="text-align:right;">
+start_lng
+</th>
+<th style="text-align:right;">
+end_lat
+</th>
+<th style="text-align:right;">
+end_lng
+</th>
+<th style="text-align:left;">
+member_casual
+</th>
+<th style="text-align:left;">
+datetime_start_obj
+</th>
+<th style="text-align:left;">
+datetime_end_obj
+</th>
+<th style="text-align:right;">
+start_month
+</th>
+<th style="text-align:right;">
+start_day
+</th>
+<th style="text-align:right;">
+ride_duration_hours
+</th>
+<th style="text-align:right;">
+distance_km
+</th>
+<th style="text-align:right;">
+bearing_degrees
+</th>
+<th style="text-align:left;">
+start_date
+</th>
+<th style="text-align:right;">
+tmax
+</th>
+<th style="text-align:right;">
+tmin
+</th>
+<th style="text-align:right;">
+prcp
+</th>
+<th style="text-align:left;">
+temp_diff_category
+</th>
+<th style="text-align:left;">
+temp_level_category
+</th>
+<th style="text-align:left;">
+rain_category
+</th>
+<th style="text-align:left;">
+weekend_and_holiday
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+761B30A5B7B64236
+</td>
+<td style="text-align:left;">
+electric_bike
+</td>
+<td style="text-align:left;">
+2025-09-01 11:38:30
+</td>
+<td style="text-align:left;">
+2025-09-01 11:42:08
+</td>
+<td style="text-align:left;">
+5 Ave &amp; E 30 St
+</td>
+<td style="text-align:left;">
+6248.08
+</td>
+<td style="text-align:left;">
+8 Ave &amp; W 31 St
+</td>
+<td style="text-align:left;">
+6450.05
+</td>
+<td style="text-align:right;">
+40.74598
+</td>
+<td style="text-align:right;">
+-73.98629
+</td>
+<td style="text-align:right;">
+40.75059
+</td>
+<td style="text-align:right;">
+-73.99468
+</td>
+<td style="text-align:left;">
+casual
+</td>
+<td style="text-align:left;">
+2025-09-01 11:38:30
+</td>
+<td style="text-align:left;">
+2025-09-01 11:42:08
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0606972
+</td>
+<td style="text-align:right;">
+0.8734433
+</td>
+<td style="text-align:right;">
+-54.20579
+</td>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+Medium
+</td>
+<td style="text-align:left;">
+Low
+</td>
+<td style="text-align:left;">
+No Rain
+</td>
+<td style="text-align:left;">
+weekend and holiday
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+FBEA1249070FDC8C
+</td>
+<td style="text-align:left;">
+electric_bike
+</td>
+<td style="text-align:left;">
+2025-09-01 19:38:52
+</td>
+<td style="text-align:left;">
+2025-09-01 19:46:19
+</td>
+<td style="text-align:left;">
+W 74 St &amp; Columbus Ave
+</td>
+<td style="text-align:left;">
+7230.10
+</td>
+<td style="text-align:left;">
+3 Ave &amp; E 72 St
+</td>
+<td style="text-align:left;">
+7028.04
+</td>
+<td style="text-align:right;">
+40.77857
+</td>
+<td style="text-align:right;">
+-73.97755
+</td>
+<td style="text-align:right;">
+40.76994
+</td>
+<td style="text-align:right;">
+-73.96061
+</td>
+<td style="text-align:left;">
+casual
+</td>
+<td style="text-align:left;">
+2025-09-01 19:38:52
+</td>
+<td style="text-align:left;">
+2025-09-01 19:46:19
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.1243283
+</td>
+<td style="text-align:right;">
+1.7209451
+</td>
+<td style="text-align:right;">
+123.80039
+</td>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+Medium
+</td>
+<td style="text-align:left;">
+Low
+</td>
+<td style="text-align:left;">
+No Rain
+</td>
+<td style="text-align:left;">
+weekend and holiday
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+91A5019736D417E6
+</td>
+<td style="text-align:left;">
+classic_bike
+</td>
+<td style="text-align:left;">
+2025-09-01 13:55:21
+</td>
+<td style="text-align:left;">
+2025-09-01 13:58:07
+</td>
+<td style="text-align:left;">
+Cumberland St &amp; Lafayette Ave
+</td>
+<td style="text-align:left;">
+4428.02
+</td>
+<td style="text-align:left;">
+Lafayette Ave &amp; Ft Greene Pl
+</td>
+<td style="text-align:left;">
+4470.09
+</td>
+<td style="text-align:right;">
+40.68753
+</td>
+<td style="text-align:right;">
+-73.97265
+</td>
+<td style="text-align:right;">
+40.68700
+</td>
+<td style="text-align:right;">
+-73.97665
+</td>
+<td style="text-align:left;">
+member
+</td>
+<td style="text-align:left;">
+2025-09-01 13:55:21
+</td>
+<td style="text-align:left;">
+2025-09-01 13:58:07
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0460903
+</td>
+<td style="text-align:right;">
+0.3426126
+</td>
+<td style="text-align:right;">
+-99.91008
+</td>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+Medium
+</td>
+<td style="text-align:left;">
+Low
+</td>
+<td style="text-align:left;">
+No Rain
+</td>
+<td style="text-align:left;">
+weekend and holiday
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+F1CD7CB1CF230FBB
+</td>
+<td style="text-align:left;">
+electric_bike
+</td>
+<td style="text-align:left;">
+2025-09-01 18:10:23
+</td>
+<td style="text-align:left;">
+2025-09-01 18:22:11
+</td>
+<td style="text-align:left;">
+Monroe St &amp; Marcus Garvey Blvd
+</td>
+<td style="text-align:left;">
+4467.03
+</td>
+<td style="text-align:left;">
+Pacific St &amp; Troy Ave
+</td>
+<td style="text-align:left;">
+4122.03
+</td>
+<td style="text-align:right;">
+40.68672
+</td>
+<td style="text-align:right;">
+-73.93899
+</td>
+<td style="text-align:right;">
+40.67686
+</td>
+<td style="text-align:right;">
+-73.93607
+</td>
+<td style="text-align:left;">
+casual
+</td>
+<td style="text-align:left;">
+2025-09-01 18:10:23
+</td>
+<td style="text-align:left;">
+2025-09-01 18:22:11
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.1965408
+</td>
+<td style="text-align:right;">
+1.1251295
+</td>
+<td style="text-align:right;">
+167.30502
+</td>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+Medium
+</td>
+<td style="text-align:left;">
+Low
+</td>
+<td style="text-align:left;">
+No Rain
+</td>
+<td style="text-align:left;">
+weekend and holiday
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+31C8B256EFAD12A9
+</td>
+<td style="text-align:left;">
+classic_bike
+</td>
+<td style="text-align:left;">
+2025-09-01 14:19:38
+</td>
+<td style="text-align:left;">
+2025-09-01 14:39:38
+</td>
+<td style="text-align:left;">
+West St &amp; Chambers St
+</td>
+<td style="text-align:left;">
+5329.03
+</td>
+<td style="text-align:left;">
+W 15 St &amp; 6 Ave
+</td>
+<td style="text-align:left;">
+5989.02
+</td>
+<td style="text-align:right;">
+40.71755
+</td>
+<td style="text-align:right;">
+-74.01322
+</td>
+<td style="text-align:right;">
+40.73805
+</td>
+<td style="text-align:right;">
+-73.99643
+</td>
+<td style="text-align:left;">
+casual
+</td>
+<td style="text-align:left;">
+2025-09-01 14:19:38
+</td>
+<td style="text-align:left;">
+2025-09-01 14:39:38
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.3333336
+</td>
+<td style="text-align:right;">
+2.6857201
+</td>
+<td style="text-align:right;">
+31.92490
+</td>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+Medium
+</td>
+<td style="text-align:left;">
+Low
+</td>
+<td style="text-align:left;">
+No Rain
+</td>
+<td style="text-align:left;">
+weekend and holiday
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+85BF31D3951128B1
+</td>
+<td style="text-align:left;">
+electric_bike
+</td>
+<td style="text-align:left;">
+2025-09-01 18:04:05
+</td>
+<td style="text-align:left;">
+2025-09-01 18:34:21
+</td>
+<td style="text-align:left;">
+Bergen St &amp; Vanderbilt Ave
+</td>
+<td style="text-align:left;">
+4157.10
+</td>
+<td style="text-align:left;">
+Underhill Ave &amp; Pacific St
+</td>
+<td style="text-align:left;">
+4231.04
+</td>
+<td style="text-align:right;">
+40.67944
+</td>
+<td style="text-align:right;">
+-73.96804
+</td>
+<td style="text-align:right;">
+40.68048
+</td>
+<td style="text-align:right;">
+-73.96468
+</td>
+<td style="text-align:left;">
+member
+</td>
+<td style="text-align:left;">
+2025-09-01 18:04:05
+</td>
+<td style="text-align:left;">
+2025-09-01 18:34:21
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.5045014
+</td>
+<td style="text-align:right;">
+0.3069076
+</td>
+<td style="text-align:right;">
+67.80707
+</td>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+Medium
+</td>
+<td style="text-align:left;">
+Low
+</td>
+<td style="text-align:left;">
+No Rain
+</td>
+<td style="text-align:left;">
+weekend and holiday
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AF30CE59E8982E31
+</td>
+<td style="text-align:left;">
+electric_bike
+</td>
+<td style="text-align:left;">
+2025-09-01 00:19:48
+</td>
+<td style="text-align:left;">
+2025-09-01 00:23:54
+</td>
+<td style="text-align:left;">
+W 106 St &amp; Central Park W
+</td>
+<td style="text-align:left;">
+7606.01
+</td>
+<td style="text-align:left;">
+W 106 St &amp; Central Park W
+</td>
+<td style="text-align:left;">
+7606.01
+</td>
+<td style="text-align:right;">
+40.79819
+</td>
+<td style="text-align:right;">
+-73.96059
+</td>
+<td style="text-align:right;">
+40.79819
+</td>
+<td style="text-align:right;">
+-73.96059
+</td>
+<td style="text-align:left;">
+casual
+</td>
+<td style="text-align:left;">
+2025-09-01 00:19:48
+</td>
+<td style="text-align:left;">
+2025-09-01 00:23:54
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0681506
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+180.00000
+</td>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+Medium
+</td>
+<td style="text-align:left;">
+Low
+</td>
+<td style="text-align:left;">
+No Rain
+</td>
+<td style="text-align:left;">
+weekend and holiday
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1F9966FC682E18CB
+</td>
+<td style="text-align:left;">
+electric_bike
+</td>
+<td style="text-align:left;">
+2025-09-01 13:28:59
+</td>
+<td style="text-align:left;">
+2025-09-01 13:43:20
+</td>
+<td style="text-align:left;">
+7 Ave &amp; Central Park South
+</td>
+<td style="text-align:left;">
+6912.01
+</td>
+<td style="text-align:left;">
+7 Ave &amp; Central Park South
+</td>
+<td style="text-align:left;">
+6912.01
+</td>
+<td style="text-align:right;">
+40.76674
+</td>
+<td style="text-align:right;">
+-73.97907
+</td>
+<td style="text-align:right;">
+40.76674
+</td>
+<td style="text-align:right;">
+-73.97907
+</td>
+<td style="text-align:left;">
+casual
+</td>
+<td style="text-align:left;">
+2025-09-01 13:28:59
+</td>
+<td style="text-align:left;">
+2025-09-01 13:43:20
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.2391419
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+180.00000
+</td>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+Medium
+</td>
+<td style="text-align:left;">
+Low
+</td>
+<td style="text-align:left;">
+No Rain
+</td>
+<td style="text-align:left;">
+weekend and holiday
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+440A040A4ADB5FE0
+</td>
+<td style="text-align:left;">
+electric_bike
+</td>
+<td style="text-align:left;">
+2025-09-01 18:44:37
+</td>
+<td style="text-align:left;">
+2025-09-01 18:56:12
+</td>
+<td style="text-align:left;">
+Amsterdam Ave &amp; W 73 St
+</td>
+<td style="text-align:left;">
+7260.09
+</td>
+<td style="text-align:left;">
+W 59 St &amp; 10 Ave
+</td>
+<td style="text-align:left;">
+7023.04
+</td>
+<td style="text-align:right;">
+40.77967
+</td>
+<td style="text-align:right;">
+-73.98093
+</td>
+<td style="text-align:right;">
+40.77051
+</td>
+<td style="text-align:right;">
+-73.98804
+</td>
+<td style="text-align:left;">
+member
+</td>
+<td style="text-align:left;">
+2025-09-01 18:44:37
+</td>
+<td style="text-align:left;">
+2025-09-01 18:56:12
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.1930531
+</td>
+<td style="text-align:right;">
+1.1822209
+</td>
+<td style="text-align:right;">
+-149.44918
+</td>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+Medium
+</td>
+<td style="text-align:left;">
+Low
+</td>
+<td style="text-align:left;">
+No Rain
+</td>
+<td style="text-align:left;">
+weekend and holiday
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A82C0AA5EDDF7E77
+</td>
+<td style="text-align:left;">
+electric_bike
+</td>
+<td style="text-align:left;">
+2025-09-01 23:58:39
+</td>
+<td style="text-align:left;">
+2025-09-02 00:05:34
+</td>
+<td style="text-align:left;">
+W 27 St &amp; 7 Ave
+</td>
+<td style="text-align:left;">
+6257.06
+</td>
+<td style="text-align:left;">
+W 4 St &amp; 7 Ave S
+</td>
+<td style="text-align:left;">
+5880.02
+</td>
+<td style="text-align:right;">
+40.74665
+</td>
+<td style="text-align:right;">
+-73.99392
+</td>
+<td style="text-align:right;">
+40.73401
+</td>
+<td style="text-align:right;">
+-74.00294
+</td>
+<td style="text-align:left;">
+member
+</td>
+<td style="text-align:left;">
+2025-09-01 23:58:39
+</td>
+<td style="text-align:left;">
+2025-09-02 00:05:34
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.1152025
+</td>
+<td style="text-align:right;">
+1.5993919
+</td>
+<td style="text-align:right;">
+-151.50563
+</td>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+Medium
+</td>
+<td style="text-align:left;">
+Low
+</td>
+<td style="text-align:left;">
+No Rain
+</td>
+<td style="text-align:left;">
+weekend and holiday
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="daily-aggregates" class="section level1 info-card">
-<h1>2. Daily Aggregates</h1>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>daily <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date) <span class="sc">%&gt;%</span></span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>    <span class="at">total_rides =</span> <span class="fu">n</span>(),</span>
-<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>    <span class="at">avg_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>    <span class="at">member_rides =</span> <span class="fu">sum</span>(member_casual <span class="sc">==</span> <span class="st">&quot;member&quot;</span>),</span>
-<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>    <span class="at">casual_rides =</span> <span class="fu">sum</span>(member_casual <span class="sc">==</span> <span class="st">&quot;casual&quot;</span>),</span>
-<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>    <span class="at">tmax =</span> tmax,</span>
-<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>    <span class="at">prcp =</span> prcp</span>
-<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>  )</span></code></pre></div>
-<pre><code>## Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
-## dplyr 1.1.0.
-## ℹ Please use `reframe()` instead.
-## ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()`
-##   always returns an ungrouped data frame and adjust accordingly.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">head</span>(daily)</span></code></pre></div>
-<pre><code>## # A tibble: 6 × 7
-## # Groups:   start_date [1]
-##   start_date total_rides avg_duration member_rides casual_rides  tmax  prcp
-##   &lt;date&gt;           &lt;int&gt;        &lt;dbl&gt;        &lt;int&gt;        &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 2025-09-01        2417        0.258         1691          726    78     0
-## 2 2025-09-01        2417        0.258         1691          726    78     0
-## 3 2025-09-01        2417        0.258         1691          726    78     0
-## 4 2025-09-01        2417        0.258         1691          726    78     0
-## 5 2025-09-01        2417        0.258         1691          726    78     0
-## 6 2025-09-01        2417        0.258         1691          726    78     0</code></pre>
+<h1>3. Daily Aggregates</h1>
+<p>The table below shows the basic format of daily aggregated ride data.
+Further analysis is based on this.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>daily <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>    <span class="at">total_rides =</span> <span class="fu">n</span>(),</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>    <span class="at">ride_duration_hours =</span> ride_duration_hours,</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>    <span class="at">avg_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>    <span class="at">member_rides =</span> <span class="fu">sum</span>(member_casual <span class="sc">==</span> <span class="st">&quot;member&quot;</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>    <span class="at">casual_rides =</span> <span class="fu">sum</span>(member_casual <span class="sc">==</span> <span class="st">&quot;casual&quot;</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>    <span class="at">tmax =</span> tmax,</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>    <span class="at">prcp =</span> prcp</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  )</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(daily, <span class="dv">10</span>), <span class="at">caption =</span> <span class="st">&quot;Daily Overview&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">&quot;striped&quot;</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>                <span class="at">full_width =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>                <span class="at">position =</span> <span class="st">&quot;center&quot;</span>)</span></code></pre></div>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+Daily Overview
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+start_date
+</th>
+<th style="text-align:right;">
+total_rides
+</th>
+<th style="text-align:right;">
+ride_duration_hours
+</th>
+<th style="text-align:right;">
+avg_duration
+</th>
+<th style="text-align:right;">
+member_rides
+</th>
+<th style="text-align:right;">
+casual_rides
+</th>
+<th style="text-align:right;">
+tmax
+</th>
+<th style="text-align:right;">
+prcp
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+2417
+</td>
+<td style="text-align:right;">
+0.0606972
+</td>
+<td style="text-align:right;">
+0.2584018
+</td>
+<td style="text-align:right;">
+1691
+</td>
+<td style="text-align:right;">
+726
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+2417
+</td>
+<td style="text-align:right;">
+0.1243283
+</td>
+<td style="text-align:right;">
+0.2584018
+</td>
+<td style="text-align:right;">
+1691
+</td>
+<td style="text-align:right;">
+726
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+2417
+</td>
+<td style="text-align:right;">
+0.0460903
+</td>
+<td style="text-align:right;">
+0.2584018
+</td>
+<td style="text-align:right;">
+1691
+</td>
+<td style="text-align:right;">
+726
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+2417
+</td>
+<td style="text-align:right;">
+0.1965408
+</td>
+<td style="text-align:right;">
+0.2584018
+</td>
+<td style="text-align:right;">
+1691
+</td>
+<td style="text-align:right;">
+726
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+2417
+</td>
+<td style="text-align:right;">
+0.3333336
+</td>
+<td style="text-align:right;">
+0.2584018
+</td>
+<td style="text-align:right;">
+1691
+</td>
+<td style="text-align:right;">
+726
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+2417
+</td>
+<td style="text-align:right;">
+0.5045014
+</td>
+<td style="text-align:right;">
+0.2584018
+</td>
+<td style="text-align:right;">
+1691
+</td>
+<td style="text-align:right;">
+726
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+2417
+</td>
+<td style="text-align:right;">
+0.0681506
+</td>
+<td style="text-align:right;">
+0.2584018
+</td>
+<td style="text-align:right;">
+1691
+</td>
+<td style="text-align:right;">
+726
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+2417
+</td>
+<td style="text-align:right;">
+0.2391419
+</td>
+<td style="text-align:right;">
+0.2584018
+</td>
+<td style="text-align:right;">
+1691
+</td>
+<td style="text-align:right;">
+726
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+2417
+</td>
+<td style="text-align:right;">
+0.1930531
+</td>
+<td style="text-align:right;">
+0.2584018
+</td>
+<td style="text-align:right;">
+1691
+</td>
+<td style="text-align:right;">
+726
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2025-09-01
+</td>
+<td style="text-align:right;">
+2417
+</td>
+<td style="text-align:right;">
+0.1152025
+</td>
+<td style="text-align:right;">
+0.2584018
+</td>
+<td style="text-align:right;">
+1691
+</td>
+<td style="text-align:right;">
+726
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="daily-ride-volume" class="section level1 info-card">
-<h1>3. Daily Ride Volume</h1>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>p_daily_rides <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> start_date, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
-<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Ride Volume — September 2025&quot;</span>,</span>
-<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Count&quot;</span>) <span class="sc">+</span></span>
-<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-## ℹ Please use `linewidth` instead.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.</code></pre>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>p_daily_rides</span></code></pre></div>
-<p><img src="EDA_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<h1>4. Daily Ride Volume</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>p_daily_rides <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> start_date, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">&quot;skyblue&quot;</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">lineend =</span> <span class="st">&quot;round&quot;</span>) <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;lightpink&quot;</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Ride Volume — September 2025&quot;</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Count&quot;</span>) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>p_daily_rides</span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>The line chart shows the daily ride volume for Citi Bike in September
+2025, with ride counts ranging around 2000 to 4000 per day.</p>
+<ul>
+<li><p>Key trend: There is a clear upward trend in ride volume from the
+start of the month, with the lowest point on September 8 (around 2000
+rides) and multiple peaks later in the month (e.g., mid September and
+late September, both exceeding 4000 rides).</p></li>
+<li><p>Variability: Daily ride counts fluctuate noticeably, suggesting
+factors like weather, weekdays vs. weekends, or events may be
+influencing how many people use the bikes each day.</p></li>
+</ul>
 </div>
 <div id="member-vs-casual-ride-patterns"
 class="section level1 info-card">
-<h1>4. Member vs Casual Ride Patterns</h1>
+<h1>5. Member vs Casual Ride Patterns</h1>
 <div id="daily-average-duration" class="section level2">
-<h2>4.1 Daily Average Duration</h2>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>dur_ts <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, member_casual) <span class="sc">%&gt;%</span></span>
-<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">ggplot</span>(dur_ts, <span class="fu">aes</span>(start_date, mean_duration, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Average Ride Duration — Member vs Casual&quot;</span>,</span>
-<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Duration (hours)&quot;</span>) <span class="sc">+</span></span>
-<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<p><img src="EDA_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<h2>5.1 Daily Average Duration</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>dur_ts <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, member_casual) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="fu">ggplot</span>(dur_ts, <span class="fu">aes</span>(start_date, mean_duration, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Average Ride Duration — Member vs Casual&quot;</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Duration (hours)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>This line chart compares the daily average ride duration (in hours)
+between casual (red line) and member (teal line) Citi Bike users in
+September 2025.</p>
+<ul>
+<li><p>Casual users consistently have longer average ride duration
+(ranging from 0.3 to over 0.4 hours), with a notable spike in late
+September.</p></li>
+<li><p>Member users have much shorter and more stable average ride
+duration (around 0.2 hours), showing minimal fluctuation throughout the
+month.</p></li>
+<li><p>The gap between casual and member ride duration remains
+significant across all days, indicating that casual users tend to take
+longer, more leisurely rides, while members use bikes for shorter, more
+routine trips.</p></li>
+</ul>
 <hr />
 </div>
 <div id="hourly-ride-count" class="section level2">
-<h2>4.2 Hourly Ride Count</h2>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>hourly <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>  <span class="fu">group_by</span>(hour, member_casual, weekend_and_holiday) <span class="sc">%&gt;%</span></span>
-<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>())</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;hour&#39;, &#39;member_casual&#39;. You can override
-## using the `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">ggplot</span>(hourly, <span class="fu">aes</span>(hour, rides, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> weekend_and_holiday) <span class="sc">+</span></span>
-<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Hourly Ride Patterns — Member vs Casual (Weekday vs Weekend)&quot;</span>,</span>
-<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Hour of Day&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Count&quot;</span>) <span class="sc">+</span></span>
-<span id="cb31-6"><a href="#cb31-6" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<p><img src="EDA_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<h2>5.2 Hourly Ride Count</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>hourly <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">group_by</span>(hour, member_casual, weekend_and_holiday) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>())</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="fu">ggplot</span>(hourly, <span class="fu">aes</span>(hour, rides, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> weekend_and_holiday) <span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Hourly Ride Patterns — Member vs Casual (Weekday vs Weekend)&quot;</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Hour of Day&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Count&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>This faceted line chart compares hourly ride counts between casual
+(red line) and member (teal line) Citi Bike users, split by
+weekends/holidays (left panel) and workdays (right panel).</p>
+<p>Members primarily use bikes for weekday commutes, while casual users’
+ride patterns are more consistent across weekends and workdays (with low
+overall activity on workdays).</p>
 <hr />
 </div>
 <div id="day-of-week-pattern" class="section level2">
-<h2>4.3 Day of Week Pattern</h2>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>wday_daily <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>  <span class="fu">group_by</span>(wday, user_type) <span class="sc">%&gt;%</span></span>
-<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">wday =</span> <span class="fu">factor</span>(wday, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Mon&quot;</span>,<span class="st">&quot;Tue&quot;</span>,<span class="st">&quot;Wed&quot;</span>,<span class="st">&quot;Thu&quot;</span>,<span class="st">&quot;Fri&quot;</span>,<span class="st">&quot;Sat&quot;</span>,<span class="st">&quot;Sun&quot;</span>)))</span>
-<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a></span>
-<span id="cb32-6"><a href="#cb32-6" tabindex="-1"></a>p_wday <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(wday_daily, <span class="fu">aes</span>(<span class="at">x =</span> wday, <span class="at">y =</span> rides, <span class="at">fill =</span> user_type)) <span class="sc">+</span></span>
-<span id="cb32-7"><a href="#cb32-7" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
-<span id="cb32-8"><a href="#cb32-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ridership by Day of Week (member vs casual)&quot;</span>,</span>
-<span id="cb32-9"><a href="#cb32-9" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Day of Week&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Count&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;User Type&quot;</span>) <span class="sc">+</span></span>
-<span id="cb32-10"><a href="#cb32-10" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb32-11"><a href="#cb32-11" tabindex="-1"></a></span>
-<span id="cb32-12"><a href="#cb32-12" tabindex="-1"></a>p_wday</span></code></pre></div>
-<p><img src="EDA_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<h2>5.3 Day of Week Pattern</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>wday_daily <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">group_by</span>(wday, user_type) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">wday =</span> <span class="fu">factor</span>(wday, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Mon&quot;</span>,<span class="st">&quot;Tue&quot;</span>,<span class="st">&quot;Wed&quot;</span>,<span class="st">&quot;Thu&quot;</span>,<span class="st">&quot;Fri&quot;</span>,<span class="st">&quot;Sat&quot;</span>,<span class="st">&quot;Sun&quot;</span>)))</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>p_wday <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(wday_daily, <span class="fu">aes</span>(<span class="at">x =</span> wday, <span class="at">y =</span> rides, <span class="at">fill =</span> user_type)) <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ridership by Day of Week (member vs casual)&quot;</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Day of Week&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Count&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;User Type&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>p_wday</span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>As shown in the bar chart, it is clear that member users have much
 higher ride counts than casual users.</p>
 <p>Specifically, member ride counts are particularly high on Mondays and
@@ -786,152 +1945,178 @@ Tuesdays and reach their lowest on weekends.</p>
 <p>In contrast, casual users’ ride counts are relatively consistent
 throughout the week, with slightly higher numbers on weekends. The
 observation confirms the previous conclusion.</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>p_dur_group <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a>  <span class="fu">group_by</span>(member_casual, weekend_and_holiday) <span class="sc">%&gt;%</span></span>
-<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb33-4"><a href="#cb33-4" tabindex="-1"></a>    <span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb33-5"><a href="#cb33-5" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb33-6"><a href="#cb33-6" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> weekend_and_holiday, <span class="at">y =</span> mean_duration,</span>
-<span id="cb33-7"><a href="#cb33-7" tabindex="-1"></a>             <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb33-8"><a href="#cb33-8" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
-<span id="cb33-9"><a href="#cb33-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Average Ride Duration — Member vs Casual across Weekday/Weekend&quot;</span>,</span>
-<span id="cb33-10"><a href="#cb33-10" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Day Type&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Duration (hours)&quot;</span>) <span class="sc">+</span></span>
-<span id="cb33-11"><a href="#cb33-11" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;member_casual&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>p_dur_group</span></code></pre></div>
-<p><img src="EDA_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>p_dur_group <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">group_by</span>(member_casual, weekend_and_holiday) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> weekend_and_holiday, <span class="at">y =</span> mean_duration,</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>             <span class="at">fill =</span> member_casual)) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Average Ride Duration — Member vs Casual across Weekday/Weekend&quot;</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Day Type&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Duration (hours)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>p_dur_group</span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
 </div>
 <div id="time-series-of-average-ride-duration"
 class="section level1 info-card">
-<h1>5. Time Series of Average Ride Duration</h1>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a>dur_ts <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, member_casual) <span class="sc">%&gt;%</span></span>
-<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a>p_dur_ts <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dur_ts, <span class="fu">aes</span>(start_date, mean_duration, <span class="at">color =</span> member_casual)) <span class="sc">+</span></span>
-<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb38-3"><a href="#cb38-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Average Ride Duration — Member vs Casual&quot;</span>,</span>
-<span id="cb38-4"><a href="#cb38-4" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Duration (hours)&quot;</span>) <span class="sc">+</span></span>
-<span id="cb38-5"><a href="#cb38-5" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb38-6"><a href="#cb38-6" tabindex="-1"></a></span>
-<span id="cb38-7"><a href="#cb38-7" tabindex="-1"></a>p_dur_ts</span></code></pre></div>
-<p><img src="EDA_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<h1>6. Time Series of Average Ride Duration</h1>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>dur_ts <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date) <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>p_dur_ts <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dur_ts, <span class="fu">aes</span>(start_date, mean_duration)) <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">&quot;skyblue&quot;</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">lineend =</span> <span class="st">&quot;round&quot;</span>) <span class="sc">+</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;lightpink&quot;</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Average Ride Duration&quot;</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Duration (hours)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>p_dur_ts</span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>This line chart shows the daily average ride duration (in hours) for
+September 2025, with values ranging from 0.20 to just over 0.275 hours.
+The duration fluctuates slightly across the month, with the lowest point
+on September 8 and the highest peak in late September, indicating small
+day-to-day changes in how long rides lasted.</p>
 </div>
 <div id="weather-effects" class="section level1 info-card">
-<h1>6. Weather Effects</h1>
+<h1>7. Weather Effects</h1>
 <div id="ride-count-vs-temperature-level-category"
 class="section level2">
-<h2>6.1 Ride Count vs Temperature Level Category</h2>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>p_temp_level <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, temp_level_category) <span class="sc">%&gt;%</span></span>
-<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb39-4"><a href="#cb39-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(temp_level_category, rides)) <span class="sc">+</span></span>
-<span id="cb39-5"><a href="#cb39-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb39-6"><a href="#cb39-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Counts by Temperature Level Category&quot;</span>,</span>
-<span id="cb39-7"><a href="#cb39-7" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Temperature Category&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Daily Ride Count&quot;</span>) <span class="sc">+</span></span>
-<span id="cb39-8"><a href="#cb39-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>p_temp_level</span></code></pre></div>
-<p><img src="EDA_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p>This plot shows that higher temperatures are associated with
-increased ridership.</p>
+<h2>7.1 Ride Count vs Temperature Level Category</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>p_temp_level <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, temp_level_category) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(temp_level_category, rides, <span class="at">fill =</span> temp_level_category)) <span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Counts by Temperature Level Category&quot;</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Temperature Category&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Daily Ride Count&quot;</span>) <span class="sc">+</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>p_temp_level</span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>This boxplot compares daily ride counts across “High” and “Low”
+temperature categories.</p>
+<ul>
+<li><p>High temperature is associated with slightly higher median daily
+ride counts and a wider range of values (with a longer whisker extending
+downward).</p></li>
+<li><p>Low temperature has a lower median ride count and one noticeable
+low-value outlier, suggesting fewer rides on some cold days.</p></li>
+<li><p>Overall, higher temperatures correspond to slightly more
+consistent and higher daily ride counts than lower
+temperatures.</p></li>
+</ul>
 <hr />
 </div>
 <div id="ride-count-vs-rain-category" class="section level2">
-<h2>6.2 Ride Count vs Rain Category</h2>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>p_rain <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, rain_category) <span class="sc">%&gt;%</span></span>
-<span id="cb42-3"><a href="#cb42-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb42-4"><a href="#cb42-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rain_category, rides)) <span class="sc">+</span></span>
-<span id="cb42-5"><a href="#cb42-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb42-6"><a href="#cb42-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Counts by Rain Category&quot;</span>,</span>
-<span id="cb42-7"><a href="#cb42-7" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Rain Category&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Daily Ride Count&quot;</span>) <span class="sc">+</span></span>
-<span id="cb42-8"><a href="#cb42-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a>p_rain</span></code></pre></div>
-<p><img src="EDA_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>The analysis reveals a negative correlation between rainfall and
-ridership.</p>
+<h2>7.2 Ride Count vs Rain Category</h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>p_rain <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, rain_category) <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rain_category, rides, <span class="at">fill =</span> rain_category)) <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Counts by Rain Category&quot;</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Rain Category&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Daily Ride Count&quot;</span>) <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>p_rain</span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>This boxplot examines daily ride counts across four rain categories
+(Heavy Rain, Light Rain, Medium Rain, No Rain).</p>
+<ul>
+<li><p>Heavy Rain has the lowest median daily ride count and the
+smallest range, showing very few rides on days with heavy rain.</p></li>
+<li><p>No Rain and Light Rain have the highest median ride counts, with
+No Rain showing slightly more variability in values.</p></li>
+<li><p>Medium Rain falls in the middle, with a lower median ride count
+than No Rain and Light Rain but higher than Heavy Rain.</p></li>
+</ul>
+<p>Overall, the chart clearly shows that rain, especially heavy rain,
+leads to fewer daily bike rides, while no rain or light rain is
+associated with the most rides.</p>
 <hr />
 </div>
 <div id="weather-variables" class="section level2">
-<h2>6.3 Weather Variables</h2>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a><span class="co"># tmax</span></span>
-<span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a><span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> tmax, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
-<span id="cb45-3"><a href="#cb45-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb45-4"><a href="#cb45-4" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;loess&quot;</span>) <span class="sc">+</span></span>
-<span id="cb45-5"><a href="#cb45-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Count vs Daily Maximum Temperature&quot;</span>,</span>
-<span id="cb45-6"><a href="#cb45-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;tmax&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rides&quot;</span>) <span class="sc">+</span></span>
-<span id="cb45-7"><a href="#cb45-7" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<pre><code>## Warning: Failed to fit group -1.
-## Caused by error in `predLoess()`:
-## ! workspace required (14996775205) is too large probably because of setting &#39;se = TRUE&#39;.</code></pre>
-<p><img src="EDA_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="co"># prcp</span></span>
-<span id="cb48-2"><a href="#cb48-2" tabindex="-1"></a><span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> prcp, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
-<span id="cb48-3"><a href="#cb48-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb48-4"><a href="#cb48-4" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;loess&quot;</span>) <span class="sc">+</span></span>
-<span id="cb48-5"><a href="#cb48-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Count vs Precipitation&quot;</span>,</span>
-<span id="cb48-6"><a href="#cb48-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Precipitation (mm)&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rides&quot;</span>) <span class="sc">+</span></span>
-<span id="cb48-7"><a href="#cb48-7" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-## : pseudoinverse used at -0.00505</code></pre>
-<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-## : neighborhood radius 0.01505</code></pre>
-<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-## : reciprocal condition number 7.1893e-25</code></pre>
-<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-## : There are other near singularities as well. 0.0001</code></pre>
-<pre><code>## Warning: Failed to fit group -1.
-## Caused by error in `predLoess()`:
-## ! workspace required (14996775205) is too large probably because of setting &#39;se = TRUE&#39;.</code></pre>
-<p><img src="EDA_files/figure-html/unnamed-chunk-12-2.png" width="672" /></p>
+<h2>7.3 Weather Variables</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># tmax</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> tmax, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;loess&quot;</span>) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Count vs Daily Maximum Temperature&quot;</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;tmax&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rides&quot;</span>) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># prcp</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> prcp, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;loess&quot;</span>) <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Count vs Precipitation&quot;</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Precipitation (mm)&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rides&quot;</span>) <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-13-2.png" width="672" /></p>
 </div>
 </div>
 <div id="bike-type-analysis" class="section level1 info-card">
-<h1>7. Bike Type Analysis</h1>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" tabindex="-1"></a>p_type <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb55-2"><a href="#cb55-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, rideable_type) <span class="sc">%&gt;%</span></span>
-<span id="cb55-3"><a href="#cb55-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb55-4"><a href="#cb55-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rideable_type, rides)) <span class="sc">+</span></span>
-<span id="cb55-5"><a href="#cb55-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb55-6"><a href="#cb55-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Duration by Bike Type&quot;</span>,</span>
-<span id="cb55-7"><a href="#cb55-7" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Bike Type&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Counts&quot;</span>) <span class="sc">+</span></span>
-<span id="cb55-8"><a href="#cb55-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;start_date&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" tabindex="-1"></a>p_type</span></code></pre></div>
-<p><img src="EDA_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<h1>8. Bike Type Analysis</h1>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>p_type <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, rideable_type) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rideable_type, rides, <span class="at">fill =</span> rideable_type)) <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Ride Duration by Bike Type&quot;</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Bike Type&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Ride Counts&quot;</span>) <span class="sc">+</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>p_type</span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>This boxplot compares daily ride counts for two bike types: classic
+bikes and electric bikes.</p>
+<ul>
+<li><p>Electric bikes have a significantly higher median daily ride
+count and a much wider range of values (with a long whisker extending
+downward), showing far more frequent use overall.</p></li>
+<li><p>Classic bikes have a lower median ride count and one noticeable
+low-value outlier, indicating less consistent and lower daily usage
+compared to electric bikes.</p></li>
+<li><p>Overall, the chart clearly shows that electric bikes are used
+much more heavily than classic bikes, with a larger volume of daily
+rides and greater variability in usage.</p></li>
+</ul>
 </div>
 <div id="time-series-analysis" class="section level1 info-card">
-<h1>8. Time Series Analysis</h1>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" tabindex="-1"></a><span class="fu">library</span>(tseries)</span>
-<span id="cb58-2"><a href="#cb58-2" tabindex="-1"></a>daily_rides <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
-<span id="cb58-3"><a href="#cb58-3" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date) <span class="sc">%&gt;%</span></span>
-<span id="cb58-4"><a href="#cb58-4" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
-<span id="cb58-5"><a href="#cb58-5" tabindex="-1"></a></span>
-<span id="cb58-6"><a href="#cb58-6" tabindex="-1"></a><span class="fu">library</span>(tsibble)</span>
-<span id="cb58-7"><a href="#cb58-7" tabindex="-1"></a><span class="fu">library</span>(fable)</span>
-<span id="cb58-8"><a href="#cb58-8" tabindex="-1"></a></span>
-<span id="cb58-9"><a href="#cb58-9" tabindex="-1"></a>ts_data <span class="ot">&lt;-</span> daily_rides <span class="sc">%&gt;%</span></span>
-<span id="cb58-10"><a href="#cb58-10" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span> start_date)</span>
-<span id="cb58-11"><a href="#cb58-11" tabindex="-1"></a></span>
-<span id="cb58-12"><a href="#cb58-12" tabindex="-1"></a><span class="fu">autoplot</span>(ts_data, total_rides) <span class="sc">+</span></span>
-<span id="cb58-13"><a href="#cb58-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Ride Counts&quot;</span>,</span>
-<span id="cb58-14"><a href="#cb58-14" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
-<span id="cb58-15"><a href="#cb58-15" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of Rides&quot;</span>)</span></code></pre></div>
-<p><img src="EDA_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a>fit_arima <span class="ot">&lt;-</span> ts_data <span class="sc">%&gt;%</span></span>
-<span id="cb59-2"><a href="#cb59-2" tabindex="-1"></a>  <span class="fu">model</span>(<span class="fu">ARIMA</span>(total_rides))</span>
-<span id="cb59-3"><a href="#cb59-3" tabindex="-1"></a></span>
-<span id="cb59-4"><a href="#cb59-4" tabindex="-1"></a><span class="fu">report</span>(fit_arima)</span></code></pre></div>
+<h1>9. Time Series Analysis</h1>
+<p>In this section, we will attempt to perform time series analysis on
+the ride data. After that, we fit an ARIMA model to predict future ride
+volume.</p>
+<div id="model-fitting-and-prediction" class="section level2">
+<h2>9.1 Model Fitting and Prediction</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">library</span>(tseries)</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>daily_rides <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date) <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="fu">library</span>(tsibble)</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="fu">library</span>(fable)</span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>ts_data <span class="ot">&lt;-</span> daily_rides <span class="sc">%&gt;%</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span> start_date)</span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="fu">autoplot</span>(ts_data, total_rides) <span class="sc">+</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Daily Ride Counts&quot;</span>,</span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of Rides&quot;</span>) <span class="sc">+</span></span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>, <span class="at">color =</span> <span class="st">&quot;skyblue&quot;</span>) <span class="sc">+</span></span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() </span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>fit_arima <span class="ot">&lt;-</span> ts_data <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="fu">model</span>(<span class="fu">ARIMA</span>(total_rides))</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="fu">report</span>(fit_arima)</span></code></pre></div>
 <pre><code>## Series: total_rides 
 ## Model: ARIMA(0,1,1)(1,0,0)[7] 
 ## 
@@ -942,31 +2127,48 @@ ridership.</p>
 ## 
 ## sigma^2 estimated as 159701:  log likelihood=-214.82
 ## AIC=435.64   AICc=436.6   BIC=439.74</code></pre>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a>fc <span class="ot">&lt;-</span> fit_arima <span class="sc">%&gt;%</span> <span class="fu">forecast</span>(<span class="at">h =</span> <span class="dv">7</span>)</span>
-<span id="cb61-2"><a href="#cb61-2" tabindex="-1"></a></span>
-<span id="cb61-3"><a href="#cb61-3" tabindex="-1"></a><span class="fu">autoplot</span>(fc, ts_data) <span class="sc">+</span></span>
-<span id="cb61-4"><a href="#cb61-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;ARIMA Forecast of Daily Rides&quot;</span>,</span>
-<span id="cb61-5"><a href="#cb61-5" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
-<span id="cb61-6"><a href="#cb61-6" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of Rides&quot;</span>)</span></code></pre></div>
-<p><img src="EDA_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
-<hr />
-<div id="decomposition" class="section level2">
-<h2>8.1 Decomposition</h2>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a>fit_ets <span class="ot">&lt;-</span> ts_data <span class="sc">%&gt;%</span> <span class="fu">model</span>(<span class="fu">ETS</span>(total_rides))</span>
-<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a></span>
-<span id="cb62-3"><a href="#cb62-3" tabindex="-1"></a>components_plot <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(<span class="fu">components</span>(fit_ets)) <span class="sc">+</span></span>
-<span id="cb62-4"><a href="#cb62-4" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb62-5"><a href="#cb62-5" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;ETS Decomposition of Daily Ride Counts&quot;</span>,</span>
-<span id="cb62-6"><a href="#cb62-6" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Using Exponential Smoothing (suitable for short, non-periodic series)&quot;</span>,</span>
-<span id="cb62-7"><a href="#cb62-7" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
-<span id="cb62-8"><a href="#cb62-8" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Value&quot;</span></span>
-<span id="cb62-9"><a href="#cb62-9" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb62-10"><a href="#cb62-10" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb62-11"><a href="#cb62-11" tabindex="-1"></a></span>
-<span id="cb62-12"><a href="#cb62-12" tabindex="-1"></a>components_plot</span></code></pre></div>
-<pre><code>## Warning: Removed 1 row containing missing values or values outside the scale range
-## (`geom_line()`).</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>fc <span class="ot">&lt;-</span> fit_arima <span class="sc">%&gt;%</span> <span class="fu">forecast</span>(<span class="at">h =</span> <span class="dv">7</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="fu">autoplot</span>(fc, ts_data) <span class="sc">+</span></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;ARIMA Forecast of Daily Rides&quot;</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of Rides&quot;</span>) <span class="sc">+</span></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <p><img src="EDA_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="decomposition" class="section level2">
+<h2>9.2 Decomposition</h2>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>fit_ets <span class="ot">&lt;-</span> ts_data <span class="sc">%&gt;%</span> <span class="fu">model</span>(<span class="fu">ETS</span>(total_rides))</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>components_plot <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(<span class="fu">components</span>(fit_ets)) <span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;ETS Decomposition of Daily Ride Counts&quot;</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Using Exponential Smoothing (suitable for short, non-periodic series)&quot;</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Value&quot;</span></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>components_plot</span></code></pre></div>
+<p><img src="EDA_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>This ETS decomposition chart breaks down daily ride counts into three
+components:</p>
+<ul>
+<li><p>Total rides (top panel): Shows the overall trend of increasing
+daily ride counts through September, with small day-to-day
+fluctuations.</p></li>
+<li><p>Level (middle panel): Reflects the underlying smooth trend of
+ride counts, which rises steadily and follows the overall upward
+direction of the raw data.</p></li>
+<li><p>Remainder (bottom panel): Shows the residual variation after
+removing the trend—these small, random fluctuations indicate no strong
+unaccounted for patterns, meaning the ETS model captures the main trend
+well.</p></li>
+</ul>
+<p>Overall, the decomposition suggests daily ride counts have a clear
+upward trend in September, with only minor random variation left after
+accounting for this trend.</p>
 </div>
 </div>
 <div id="summary" class="section level1 highlight-box">
