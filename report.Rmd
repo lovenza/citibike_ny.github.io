@@ -51,7 +51,7 @@ library(kableExtra)
 
 ---
 
-# Motivation
+# **1. Motivation**
 
 <div class="info-card">
 
@@ -83,7 +83,7 @@ By combining granular trip-level data with daily weather records, we aim to pain
 
 ---
 
-# Related Work
+# **2. Related Work**
 
 <div class="info-card">
 
@@ -116,7 +116,7 @@ These projects provided valuable examples of effective data presentation, visual
 
 ---
 
-# Initial Questions & Evolution
+# **3. Initial Questions & Evolution**
 
 <div class="info-card">
 
@@ -194,7 +194,7 @@ While we touched on many of these questions in our exploratory analysis, we main
 
 ---
 
-# Data
+# **4. Data**
 
 <div class="info-card">
 
@@ -469,7 +469,7 @@ This clean, well-structured dataset forms the foundation for all subsequent expl
 
 ---
 
-# Exploratory Analysis
+# **5. Exploratory Analysis**
 
 <div class="info-card">
 
@@ -745,7 +745,7 @@ These insights motivated the statistical analyses and modeling approach describe
 
 ---
 
-# Statistical Analysis
+# **6.Statistical Analysis**
 
 <div class="info-card">
 
@@ -1060,7 +1060,7 @@ Casual | 0.75 | 0.72 | 93 | Tourist operations
 
 ---
 
-# Discussion
+# **7. Discussion**
 
 <div class="info-card">
 
