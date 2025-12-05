@@ -34,7 +34,7 @@ knitr::opts_chunk$set(
 
 <div class="info-card">
 
-# Introduction
+# **1.Introduction**
 
 This analysis examines how weather conditions and temporal patterns influence **individual ride duration** (riding time) for NYC Citi Bike users in September 2025. Unlike aggregate daily ridership analysis (which has only 30 observations), analyzing individual rides provides **100,000 observations**, offering much greater statistical power and more robust findings.
 
@@ -73,7 +73,7 @@ glimpse(bike_weather)
 ```
 
 
-# Data Preparation
+# **2.Data Preparation**
 
 ```{r data_prep,include=FALSE}
 # Prepare ride-level data for analysis
@@ -159,7 +159,7 @@ summary_stats %>%
 
 <div class="info-card">
 
-# Data Analysis
+# **3.Data Analysis**
 
 ## Ride Duration by User Type and Weather
 
@@ -286,7 +286,7 @@ ggplot(sample_data, aes(x = tmax, y = ride_duration_min, color = member_casual))
 
 <div class="info-card">
 
-# Statistical Methodology
+# **4.Statistical Methodology**
 
 We employ multiple linear regression to model individual ride duration as a function of weather and temporal predictors. The large sample size (N ≈ 100,000) provides excellent statistical power.
 
@@ -327,7 +327,7 @@ Where:
 
 <div class="info-card">
 
-# Correlation Analysis
+# **5.Correlation Analysis**
 
 ```{r correlation_analysis}
 # Select numeric variables for correlation
@@ -427,7 +427,7 @@ summary(model_casual_full)
 
 <div class="info-card">
 
-# Comprehensive Results
+# **6.Comprehensive Results**
 
 ```{r comprehensive_results}
 # Extract coefficients for all models
@@ -479,7 +479,7 @@ model_stats %>%
 
 <div class="info-card">
 
-# CLEAR KEY FINDINGS
+# **7.CLEAR KEY FINDINGS**
 
 ```{r setup_findings, include=FALSE}
 # Extract key coefficients
@@ -688,7 +688,7 @@ Analyzing 100,000 individual rides provides much better statistical inference th
 
 <div class="info-card">
 
-# Model Diagnostics
+# **8.Model Diagnostics**
 
 ```{r diagnostics, fig.height=8}
 # Diagnostic plots for total model (sample 5000 for speed)
@@ -705,7 +705,7 @@ plot(model_total_full, which = 1:4, main = "Total Model Diagnostics (All Riders)
 
 <div class="info-card">
 
-# Discussion and Conclusions
+# **9.Discussion and Conclusions**
 
 ## Main Findings Summary
 
@@ -776,7 +776,7 @@ Analyzing 100,000 rides vs 30 daily observations provides:
 
 <div class="highlight-box">
 
-# Key Takeaways
+# **Summary**
 
 1. **Distance Dominates Duration**: The strongest predictor of ride duration is trip distance (~4.3 minutes per km)
 2. **Weather Has Modest Effects**: Temperature and precipitation have statistically significant but practically small effects
