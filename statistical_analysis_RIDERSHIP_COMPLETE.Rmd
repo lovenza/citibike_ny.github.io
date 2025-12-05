@@ -35,7 +35,7 @@ knitr::opts_chunk$set(
 
 <div class="info-card">
 
-# Executive Summary
+# **1. Executive Summary**
 
 This analysis examines daily NYC Citi Bike ridership patterns in September 2025 using a **proportional stratified random sample** of approximately 100,000 rides. The sampling design ensures that each day contributes rides proportional to its actual ridership, preserving natural variation patterns.
 
@@ -82,7 +82,7 @@ cat(sprintf("User types: %s\n", paste(unique(bike_weather$member_casual), collap
 
 
 
-# Data Preparation
+# **2. Data Preparation**
 
 ```{r daily_aggregation, include=FALSE}
 # Aggregate to daily level
@@ -199,7 +199,7 @@ desc_stats %>%
 
 <div class="info-card">
 
-# Statistical Analysis
+# **3. Statistical Analysis**
 
 ## Correlation Analysis
 
@@ -547,7 +547,7 @@ ggplot(r2_comp, aes(x = Model, y = R_squared, fill = Outcome)) +
 
 <div class="info-card">
 
-# CLEAR KEY FINDINGS
+# **4. CLEAR KEY FINDINGS**
 
 ```{r setup_findings, include=FALSE}
 # Extract values for clear interpretation
@@ -750,7 +750,7 @@ The convergence across methods provides robust evidence for our conclusions.
 
 <div class="info-card">
 
-# Model Diagnostics
+# **5. Model Diagnostics**
 
 ```{r diagnostics, fig.height=8}
 par(mfrow = c(2, 2))
@@ -767,7 +767,7 @@ plot(model_total_full, main = "Total Ridership: Model Diagnostics")
 
 <div class="info-card">
 
-# Discussion
+# **6. Discussion**
 
 ## Main Findings
 
@@ -838,7 +838,7 @@ plot(model_total_full, main = "Total Ridership: Model Diagnostics")
 
 <div class="info-card">
 
-# Conclusions
+# **7. Conclusions**
 
 Based on proportional stratified sampling of ~100,000 rides across September 2025:
 
