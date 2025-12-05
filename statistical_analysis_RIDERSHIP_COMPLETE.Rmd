@@ -319,9 +319,9 @@ We fit nine models total (3 outcomes × 3 specifications):
 2. Temporal-only: `rides ~ day_of_week_indicators`
 3. Full model: `rides ~ weather + day_of_week`
 
-### Total Ridership Models
 
-```{r models_total}
+### Total Ridership Models
+```{r models_total, include=FALSE}
 # Weather-only
 model_total_weather <- lm(
   total_rides ~ tmax + tmin + prcp,
@@ -346,9 +346,19 @@ cat("=== TOTAL RIDERSHIP: FULL MODEL ===\n")
 summary(model_total_full)
 ```
 
-### Member Ridership Models
+```{r extract_total_stats, include=FALSE}
+# Extract key statistics for narrative
+total_r2 <- summary(model_total_full)$r.squared
+total_adj_r2 <- summary(model_total_full)$adj.r.squared
+total_fstat <- summary(model_total_full)$fstatistic[1]
+total_df1 <- summary(model_total_full)$fstatistic[2]
+total_df2 <- summary(model_total_full)$fstatistic[3]
+```
 
-```{r models_member}
+We estimated three models for total daily ridership: a weather-only model (including maximum temperature, minimum temperature, and precipitation), a temporal-only model (using day-of-week indicators), and a full model combining both weather and temporal predictors. The full model demonstrates strong predictive power with an R² of `r round(total_r2, 3)` (adjusted R² = `r round(total_adj_r2, 3)`), indicating that approximately `r round(total_r2*100, 1)`% of the variation in daily ridership can be explained by weather conditions and day-of-week patterns. The model is highly significant (F(`r round(total_df1, 0)`, `r round(total_df2, 0)`) = `r round(total_fstat, 2)`, p < 0.001), confirming that our predictors collectively have substantial explanatory power for ridership patterns.
+
+### Member Ridership Models
+```{r models_member, include=FALSE}
 model_member_weather <- lm(
   member_rides ~ tmax + tmin + prcp,
   data = daily_ridership
@@ -370,9 +380,18 @@ cat("\n=== MEMBER RIDERSHIP: FULL MODEL ===\n")
 summary(model_member_full)
 ```
 
-### Casual Ridership Models
+```{r extract_member_stats, include=FALSE}
+# Extract key statistics
+member_r2 <- summary(model_member_full)$r.squared
+member_adj_r2 <- summary(model_member_full)$adj.r.squared
+member_fstat <- summary(model_member_full)$fstatistic[1]
+member_df1 <- summary(model_member_full)$fstatistic[2]
+member_df2 <- summary(model_member_full)$fstatistic[3]
+```
+For annual members, we fitted the same three model specifications. The full model achieves an R² of `r round(member_r2, 3)` (adjusted R² = `r round(member_adj_r2, 3)`), explaining `r round(member_r2*100, 1)`% of the variation in member ridership. This strong model fit (F(`r summary(model_member_full)$fstatistic[2]`, `r summary(model_member_full)$fstatistic[3]`) = `r round(member_fstat, 2)`, p < 0.001) demonstrates that member ridership patterns are well-predicted by our weather and temporal variables. Notably, member riders show more consistent patterns compared to casual riders, as reflected in the model's ability to capture their commuting-focused behavior across different days and weather conditions.
 
-```{r models_casual}
+### Causal Ridership Models
+```{r models_casual, include=FALSE}
 model_casual_weather <- lm(
   casual_rides ~ tmax + tmin + prcp,
   data = daily_ridership
@@ -393,6 +412,17 @@ model_casual_full <- lm(
 cat("\n=== CASUAL RIDERSHIP: FULL MODEL ===\n")
 summary(model_casual_full)
 ```
+
+```{r extract_casual_stats, include=FALSE}
+# Extract key statistics
+casual_r2 <- summary(model_casual_full)$r.squared
+casual_adj_r2 <- summary(model_casual_full)$adj.r.squared
+casual_fstat <- summary(model_casual_full)$fstatistic[1]
+casual_df1 <- summary(model_casual_full)$fstatistic[2]
+casual_df2 <- summary(model_casual_full)$fstatistic[3]
+```
+For casual users, the three model specifications reveal distinct behavioral patterns. The full model yields an R² of `r round(casual_r2, 3)` (adjusted R² = `r round(casual_adj_r2, 3)`), accounting for `r round(casual_r2*100, 1)`% of the variation in casual ridership. While this remains statistically significant (F(`r summary(model_casual_full)$fstatistic[2]`, `r summary(model_casual_full)$fstatistic[3]`) = `r round(casual_fstat, 2)`, p < 0.001), casual riders exhibit more variable patterns than members, reflecting their recreational usage which is more discretionary and weather-dependent. The strong influence of both weather and day-of-week patterns confirms that casual riders primarily use the system for leisure activities concentrated on weekends and favorable weather days.
+
 
 ---
 
