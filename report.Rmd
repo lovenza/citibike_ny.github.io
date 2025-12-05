@@ -7,7 +7,7 @@ output:
   html_document:
     toc: true
     toc_float: 
-      collapsed: false
+      collapsed: true
       smooth_scroll: true
     toc_depth: 3
     code_folding: hide
@@ -138,6 +138,8 @@ At the project's inception (November 2025), we formulated three primary research
    - What's the effect of temperature on daily rides?
    - How does precipitation affect ridership?
    - Can we build predictive models?
+   
+---
 
 ## Questions That Evolved
 
@@ -163,6 +165,8 @@ As we dove into the data, several questions evolved or emerged:
 - We added geospatial analysis to identify popular stations and routes
 - Created interactive maps to explore station-level patterns
 - Examined borough-level differences in usage
+
+---
 
 ## New Questions Considered
 
@@ -228,6 +232,8 @@ Our analysis combines two primary datasets:
 - `prcp`: Precipitation (inches)
 - `snow`: Snowfall (inches, not applicable for September)
 
+---
+
 ## Data Collection & Sampling
 
 ### Stratified Sampling Strategy
@@ -285,6 +291,8 @@ weather_data <- ncdc(
   limit = 1000
 )
 ```
+
+---
 
 ## Data Cleaning
 
@@ -406,6 +414,8 @@ analysis_data <- daily_rides %>%
   left_join(weather_clean, by = c("start_date" = "date"))
 ```
 
+---
+
 ## Data Quality Checks
 
 **Final Dataset Characteristics:**
@@ -438,6 +448,8 @@ summary_stats <- bike_data_clean %>%
 - Member/casual classifications valid ✓
 - Temperature values reasonable for September in NYC (50-85°F) ✓
 
+---
+
 ## Final Dataset Structure
 
 **Trip-Level Data (bike_data_light.csv):**
@@ -462,6 +474,8 @@ This clean, well-structured dataset forms the foundation for all subsequent expl
 <div class="info-card">
 
 Our exploratory data analysis (EDA) systematically investigated the three core research questions through visualization and summary statistics. This section documents the major findings and insights that emerged.
+
+---
 
 ## Temporal Patterns
 
@@ -530,6 +544,8 @@ ggplot(hourly_pattern, aes(x = hour, y = n, color = day_type)) +
 2. **No Strong Day-of-Month Effects:**
    - No obvious pay-cycle or monthly patterns
    - Variability mostly explained by weather and day-of-week
+
+---
 
 ## User Segmentation Analysis
 
@@ -609,6 +625,8 @@ ggplot(hourly_pattern, aes(x = hour, y = n, color = day_type)) +
    - Members more dispersed across boroughs
    - Reflects different trip purposes
 
+---
+
 ## Weather Impact Analysis
 
 ### Temperature Effects
@@ -682,6 +700,8 @@ ggplot(daily_weather, aes(x = tmax, y = total_rides)) +
    - Above 70°F + Dry: Very high ridership
    - Middle ranges show more variability
 
+---
+
 ## Time Series Decomposition
 
 **Key Findings:**
@@ -697,6 +717,8 @@ ggplot(daily_weather, aes(x = tmax, y = total_rides)) +
 3. **Residual Variation:**
    - Mostly explained by day-to-day weather variation
    - Some random noise remains
+
+---
 
 ## Major Changes to Initial Ideas
 
@@ -729,12 +751,16 @@ These insights motivated the statistical analyses and modeling approach describe
 
 Building on insights from exploratory analysis, we conducted formal statistical analyses to quantify relationships and test hypotheses. This section describes our modeling approach, results, and interpretation.
 
+---
+
 ## Analysis Objectives
 
 1. Quantify the effects of temperature and precipitation on daily ridership
 2. Assess day-of-week effects on ridership
 3. Compare weather sensitivity between member and casual riders
 4. Build predictive models for operational planning
+
+---
 
 ## Data Preparation for Modeling
 
@@ -763,6 +789,8 @@ daily_analysis <- bike_data_clean %>%
 - **Outcome variable:** Total rides per day
 - **Predictors:** Temperature (°F), Precipitation (inches), Day of week
 
+---
+
 ## Correlation Analysis
 
 ### Pearson Correlations
@@ -789,6 +817,8 @@ Given the non-normal distribution of precipitation (many zero days), we also com
 - Precipitation: ρ = -0.62 (stronger than Pearson)
 
 **Interpretation:** Rank-based correlations confirm relationships are robust and not driven by outliers.
+
+---
 
 ## ANOVA: Day of Week Effects
 
@@ -817,6 +847,8 @@ summary(anova_result)
 - Friday lower than mid-week but higher than weekend
 
 **Practical Implication:** Weekday ridership ~25% higher than weekend, primarily driven by commuting.
+
+---
 
 ## Multiple Regression Models
 
@@ -931,6 +963,8 @@ model_casual <- lm(total_rides ~ tmax + prcp + is_weekend,
    - Unexpected! Still lower than weekdays
    - May reflect tourist activity concentrated on weekdays in September
 
+---
+
 ## Model Diagnostics
 
 ### Residual Analysis
@@ -978,6 +1012,8 @@ cv_results <- cv.lm(model_total, k = 5)
 ```
 
 **Interpretation:** Model performs similarly on held-out data, suggesting good generalizability within September 2025.
+
+---
 
 ## Key Statistical Findings
 
@@ -1086,6 +1122,8 @@ Our analysis of 100,000 Citi Bike trips from September 2025, combined with daily
 
 **Implication:** Weather is not a minor inconvenience but a major determinant of system usage. Operators should plan for weather-driven demand fluctuations, and planners should consider covered stations or all-weather infrastructure to reduce weather sensitivity.
 
+--
+
 ## Comparison to Expectations
 
 ### Expectations Confirmed
@@ -1109,6 +1147,8 @@ Our analysis of 100,000 Citi Bike trips from September 2025, combined with daily
 4. **Member Rain Resilience:** While members were less rain-sensitive, they still showed a 25-30% decline in heavy rain—more than we expected for "committed" commuters.
 
 5. **Geographic Concentration:** The extreme concentration of casual riders in specific tourist areas (Central Park, waterfront, Times Square) was starker than anticipated.
+
+---
 
 ## Insights into Urban Mobility
 
@@ -1148,6 +1188,8 @@ Our analysis of 100,000 Citi Bike trips from September 2025, combined with daily
 
 3. **Tourism Impact:** High casual rider usage in tourist areas may be displacing taxi/rideshare trips, contributing to cleaner tourism.
 
+---
+
 ## Strengths of the Analysis
 
 1. **Rich Dataset:** 100,000 rides provide robust statistical power while remaining computationally manageable.
@@ -1161,6 +1203,8 @@ Our analysis of 100,000 Citi Bike trips from September 2025, combined with daily
 5. **Practical Application:** Findings directly inform operational decisions and policy recommendations.
 
 6. **Reproducibility:** All code, data, and methods documented for transparency and reproducibility.
+
+---
 
 ## Limitations
 
@@ -1253,6 +1297,8 @@ Our analysis of 100,000 Citi Bike trips from September 2025, combined with daily
 **External Validity:**
 - Findings from September 2025 may not apply to post-pandemic "new normal" or future years as remote work evolves
 
+---
+
 ## Future Directions
 
 ### Extensions of Current Analysis
@@ -1275,11 +1321,9 @@ Our analysis of 100,000 Citi Bike trips from September 2025, combined with daily
 
 3. **Health Impacts:** Can we quantify health benefits from increased active transportation?
 
-4. **COVID-19 Impacts:** How did the pandemic permanently change bike-share usage patterns?
+4. **Pricing Experiments:** How does pricing affect usage patterns and equity?
 
-5. **Pricing Experiments:** How does pricing affect usage patterns and equity?
-
-6. **E-Bike Effects:** Do electric bikes change who rides and how far they go?
+5. **E-Bike Effects:** Do electric bikes change who rides and how far they go?
 
 ### Methodological Improvements
 
@@ -1292,6 +1336,8 @@ Our analysis of 100,000 Citi Bike trips from September 2025, combined with daily
 4. **Causal Inference:** Instrumental variables, difference-in-differences, or natural experiments
 
 5. **User Surveys:** Primary data collection to understand motivations and barriers
+
+---
 
 ## Conclusion
 

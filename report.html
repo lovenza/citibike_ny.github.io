@@ -387,12 +387,6 @@ div.tocify {
   border-radius: 0px;
 }
 
-.tocify-subheader {
-  display: inline;
-}
-.tocify-subheader .tocify-item {
-  font-size: 0.95em;
-}
 
 </style>
 
@@ -687,6 +681,7 @@ patterns?</strong>
 <li>Can we build predictive models?</li>
 </ul></li>
 </ol>
+<hr />
 </div>
 <div id="questions-that-evolved" class="section level2">
 <h2>Questions That Evolved</h2>
@@ -713,6 +708,7 @@ effects into regression models after EDA revealed their importance</p>
 identify popular stations and routes - Created interactive maps to
 explore station-level patterns - Examined borough-level differences in
 usage</p>
+<hr />
 </div>
 <div id="new-questions-considered" class="section level2">
 <h2>New Questions Considered</h2>
@@ -775,6 +771,7 @@ class="uri">https://www.ncdc.noaa.gov/cdo-web/</a><br />
 <code>tmax</code>: Maximum temperature (°F) - <code>tmin</code>: Minimum
 temperature (°F) - <code>prcp</code>: Precipitation (inches) -
 <code>snow</code>: Snowfall (inches, not applicable for September)</p>
+<hr />
 </div>
 </div>
 <div id="data-collection-sampling" class="section level2">
@@ -832,6 +829,7 @@ for regression analyses</p>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">datatypeid =</span> <span class="fu">c</span>(<span class="st">&quot;TMAX&quot;</span>, <span class="st">&quot;TMIN&quot;</span>, <span class="st">&quot;PRCP&quot;</span>),</span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="at">limit =</span> <span class="dv">1000</span></span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>)</span></code></pre></div>
+<hr />
 </div>
 </div>
 <div id="data-cleaning" class="section level2">
@@ -929,6 +927,7 @@ for regression analyses</p>
 <span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co"># Merge with weather</span></span>
 <span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>analysis_data <span class="ot">&lt;-</span> daily_rides <span class="sc">%&gt;%</span></span>
 <span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>  <span class="fu">left_join</span>(weather_clean, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;start_date&quot;</span> <span class="ot">=</span> <span class="st">&quot;date&quot;</span>))</span></code></pre></div>
+<hr />
 </div>
 </div>
 <div id="data-quality-checks" class="section level2">
@@ -953,6 +952,7 @@ Weather data: Complete for all 30 days</p>
 minutes ✓ - All distances between 0 and 50 km ✓ - All dates within
 September 2025 ✓ - Member/casual classifications valid ✓ - Temperature
 values reasonable for September in NYC (50-85°F) ✓</p>
+<hr />
 </div>
 <div id="final-dataset-structure" class="section level2">
 <h2>Final Dataset Structure</h2>
@@ -979,6 +979,7 @@ the following sections.</p>
 three core research questions through visualization and summary
 statistics. This section documents the major findings and insights that
 emerged.</p>
+<hr />
 <div id="temporal-patterns" class="section level2">
 <h2>Temporal Patterns</h2>
 <div id="hourly-usage-patterns" class="section level3">
@@ -1055,6 +1056,7 @@ How do patterns differ between weekdays and weekends?</p>
 <li>Variability mostly explained by weather and day-of-week</li>
 </ul></li>
 </ol>
+<hr />
 </div>
 </div>
 <div id="user-segmentation-analysis" class="section level2">
@@ -1156,6 +1158,7 @@ Spatial distribution of Citi Bike rides in NYC
 <li>Reflects different trip purposes</li>
 </ul></li>
 </ol>
+<hr />
 </div>
 </div>
 <div id="weather-impact-analysis" class="section level2">
@@ -1241,6 +1244,7 @@ Spatial distribution of Citi Bike rides in NYC
 <li>Middle ranges show more variability</li>
 </ul></li>
 </ol>
+<hr />
 </div>
 </div>
 <div id="time-series-decomposition" class="section level2">
@@ -1263,6 +1267,7 @@ Spatial distribution of Citi Bike rides in NYC
 <li>Some random noise remains</li>
 </ul></li>
 </ol>
+<hr />
 </div>
 <div id="major-changes-to-initial-ideas" class="section level2">
 <h2>Major Changes to Initial Ideas</h2>
@@ -1304,6 +1309,7 @@ relationships and quantify effect sizes.</p>
 statistical analyses to quantify relationships and test hypotheses. This
 section describes our modeling approach, results, and
 interpretation.</p>
+<hr />
 <div id="analysis-objectives" class="section level2">
 <h2>Analysis Objectives</h2>
 <ol style="list-style-type: decimal">
@@ -1313,6 +1319,7 @@ ridership</li>
 <li>Compare weather sensitivity between member and casual riders</li>
 <li>Build predictive models for operational planning</li>
 </ol>
+<hr />
 </div>
 <div id="data-preparation-for-modeling" class="section level2">
 <h2>Data Preparation for Modeling</h2>
@@ -1337,6 +1344,7 @@ analysis:</strong> Day × User Type - <strong>Sample size:</strong> 60
 observations (30 days × 2 user types) - <strong>Outcome
 variable:</strong> Total rides per day - <strong>Predictors:</strong>
 Temperature (°F), Precipitation (inches), Day of week</p>
+<hr />
 </div>
 </div>
 <div id="correlation-analysis" class="section level2">
@@ -1366,6 +1374,7 @@ we also computed Spearman rank correlations:</p>
 </ul>
 <p><strong>Interpretation:</strong> Rank-based correlations confirm
 relationships are robust and not driven by outliers.</p>
+<hr />
 </div>
 </div>
 <div id="anova-day-of-week-effects" class="section level2">
@@ -1392,6 +1401,7 @@ and weekend levels - Friday lower than mid-week but higher than
 weekend</p>
 <p><strong>Practical Implication:</strong> Weekday ridership ~25% higher
 than weekend, primarily driven by commuting.</p>
+<hr />
 </div>
 </div>
 <div id="multiple-regression-models" class="section level2">
@@ -1610,6 +1620,7 @@ precipitation
 September</li>
 </ul></li>
 </ol>
+<hr />
 </div>
 </div>
 <div id="model-diagnostics" class="section level2">
@@ -1646,6 +1657,7 @@ No high-leverage points unduly influencing results</p>
 <span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a><span class="co"># R²: 0.68 (slightly lower than training R²)</span></span></code></pre></div>
 <p><strong>Interpretation:</strong> Model performs similarly on held-out
 data, suggesting good generalizability within September 2025.</p>
+<hr />
 </div>
 </div>
 <div id="key-statistical-findings" class="section level2">
@@ -1786,6 +1798,7 @@ but a major determinant of system usage. Operators should plan for
 weather-driven demand fluctuations, and planners should consider covered
 stations or all-weather infrastructure to reduce weather
 sensitivity.</p>
+<p>–</p>
 </div>
 </div>
 <div id="comparison-to-expectations" class="section level2">
@@ -1826,6 +1839,7 @@ than we expected for “committed” commuters.</p></li>
 concentration of casual riders in specific tourist areas (Central Park,
 waterfront, Times Square) was starker than anticipated.</p></li>
 </ol>
+<hr />
 </div>
 </div>
 <div id="insights-into-urban-mobility" class="section level2">
@@ -1893,6 +1907,7 @@ transportation adoption.</p></li>
 tourist areas may be displacing taxi/rideshare trips, contributing to
 cleaner tourism.</p></li>
 </ol>
+<hr />
 </div>
 </div>
 <div id="strengths-of-the-analysis" class="section level2">
@@ -1914,6 +1929,7 @@ operational decisions and policy recommendations.</p></li>
 <li><p><strong>Reproducibility:</strong> All code, data, and methods
 documented for transparency and reproducibility.</p></li>
 </ol>
+<hr />
 </div>
 <div id="limitations" class="section level2">
 <h2>Limitations</h2>
@@ -1999,6 +2015,7 @@ stations and bikes - Patterns may shift as service area expands</p>
 <p><strong>External Validity:</strong> - Findings from September 2025
 may not apply to post-pandemic “new normal” or future years as remote
 work evolves</p>
+<hr />
 </div>
 </div>
 <div id="future-directions" class="section level2">
@@ -2027,8 +2044,6 @@ How does usage vary by neighborhood income, race, age?</p></li>
 replace? (Car, taxi, transit, walking?)</p></li>
 <li><p><strong>Health Impacts:</strong> Can we quantify health benefits
 from increased active transportation?</p></li>
-<li><p><strong>COVID-19 Impacts:</strong> How did the pandemic
-permanently change bike-share usage patterns?</p></li>
 <li><p><strong>Pricing Experiments:</strong> How does pricing affect
 usage patterns and equity?</p></li>
 <li><p><strong>E-Bike Effects:</strong> Do electric bikes change who
@@ -2049,6 +2064,7 @@ difference-in-differences, or natural experiments</p></li>
 <li><p><strong>User Surveys:</strong> Primary data collection to
 understand motivations and barriers</p></li>
 </ol>
+<hr />
 </div>
 </div>
 <div id="conclusion" class="section level2">
@@ -2189,7 +2205,7 @@ $(document).ready(function ()  {
       ignoreSelector: ".toc-ignore",
       scrollTo: 0
     };
-    options.showAndHide = false;
+    options.showAndHide = true;
     options.smoothScroll = true;
 
     // tocify
