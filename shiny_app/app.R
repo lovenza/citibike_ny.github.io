@@ -78,8 +78,9 @@ color_palette <- c("member" = "#2C3E50", "casual" = "#E74C3C")
 
 ui <- bs4DashPage(
   title = "NYC Citi Bike 2025",
-  freshTheme = my_theme,
-  dark = NULL,
+  freshTheme = my_theme, 
+  dark = FALSE,
+  help = NULL,
   
   header = dashboardHeader(
     title = dashboardBrand(
@@ -87,8 +88,7 @@ ui <- bs4DashPage(
       color = "primary",
       href = "#",
       image = NULL
-    ),
-    fixed = TRUE
+    )
   ),
   
   sidebar = dashboardSidebar(
