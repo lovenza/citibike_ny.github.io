@@ -83,10 +83,10 @@ ui <- bs4DashPage(
   
   header = dashboardHeader(
     title = dashboardBrand(
-      title = "Citi Bike NYC",
+      title = "🚲 Citi Bike NYC",
       color = "primary",
       href = "#",
-      image = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Citi_Bike_logo.svg/1200px-Citi_Bike_logo.svg.png"
+      image = NULL
     ),
     fixed = TRUE
   ),
