@@ -33,7 +33,7 @@ set.seed(235)
 
 <div class="info-card">
 
-# 1. Overview
+# **1. Overview**
 
 This page documents our comprehensive data wrangling process for the NYC Citi Bike analysis. We transform raw trip data and weather observations into a clean, analysis-ready dataset through:
 
@@ -46,7 +46,7 @@ This page documents our comprehensive data wrangling process for the NYC Citi Bi
 
 <div class="info-card">
 
-# 2. Load and Pre-process Bike Data
+# **2. Load and Pre-process Bike Data**
 
 Due to the large size of the raw dataset, which exceeds GitHub's storage limits, the file is stored locally. You can access the original data via [https://citibikenyc.com/system-data](https://citibikenyc.com/system-data), where the specific file `202509-citibike-tripdata_3` was selected for this analysis.
 
@@ -79,7 +79,7 @@ bike_data <- read_csv(file_path, na = na_values) %>%
 
 <div class="info-card">
 
-# 3. Stratified Daily Sampling
+# **3. Stratified Daily Sampling**
 
 This block creates the smaller sampled_bike_data dataframe (containing 100,000 rides). It first filters the data to include only rides from September. Then, it uses a grouped sampling strategy:
 
@@ -111,7 +111,7 @@ sampled_bike_data %>%
 
 <div class="info-card">
 
-# 4. Feature Engineering and Weather Data Merge
+# **4. Feature Engineering and Weather Data Merge**
 
 This section enriches the sampled bike data with new geospatial features and joins it with external weather data. 
 
@@ -155,7 +155,7 @@ merged_data <- left_join(merged_data, noaa_data_clean, by = c("start_date" = "DA
 
 <div class="info-card">
 
-# 5. Final Categorization and Export
+# **5. Final Categorization and Export**
 
 This final block creates categorical variables based on the merged weather data, selects the final columns for the analysis, and exports the result to a new CSV file. 
 

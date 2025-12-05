@@ -45,7 +45,7 @@ library(kableExtra)
 
 <br>
 
-# 📊 Project Overview
+# **📊 Project Overview**
 
 <div class="info-card">
 
@@ -55,24 +55,24 @@ The goal of this project is to analyze how NYC's population uses the Citi Bike s
 
 </div>
 
-# ❓ Core Research Questions
+# **❓ Core Research Questions**
 
 <div class="info-card">
 
 We will address the following key questions using our 100,000-ride sample from September 2025:
 
-## **1. Temporal Patterns**  
+## 1. Temporal Patterns  
 How do predictable daily and weekly rhythms (e.g., time of day, weekday vs. weekend) shape ridership? We investigate commuter peaks, weekend leisure patterns, and the daily pulse of urban mobility.
 
-## **2. User Segmentation**  
+## 2. User Segmentation  
 How do different user groups (members vs. casual riders) use the system differently in terms of trip volume and duration? Understanding these patterns helps inform system optimization and user experience improvements.
 
-## **3. Weather Quantification**  
+## 3. Weather Quantification  
 To what extent does daily weather (Max Temperature, Precipitation) influence the decision to ride a bike and the duration of the trip? We quantify the specific impact of weather variables on ridership behavior.
 
 </div>
 
-# 🛠️ Project Structure and Analysis Pipeline
+# **🛠️ Project Structure and Analysis Pipeline**
 
 <div class="info-card">
 
@@ -96,7 +96,7 @@ Explore the data yourself! Our Shiny dashboard allows you to filter by user type
 
 </div>
 
-# 📈 Key Findings Preview
+# **📈 Key Findings Preview**
 
 <div class="info-card">
 
@@ -133,7 +133,7 @@ Our analysis reveals significant patterns in how New Yorkers use Citi Bike. Weat
 
 </div>
 
-# 🧑‍💻 Meet the Team
+# **🧑‍💻 Meet the Team**
 
 <div class="info-card">
 
@@ -150,7 +150,7 @@ Learn more about us on our **[About Us](about.html)** page!
 
 </div>
 
-# 🎯 Why This Matters
+# **🎯 Why This Matters**
 
 <div class="highlight-box">
 
@@ -165,7 +165,7 @@ Our findings contribute to the growing body of evidence supporting data-driven u
 
 </div>
 
-# 🚀 Get Started
+# **🚀 Get Started**
 
 <div class="info-card" style="text-align: center;">
 
@@ -176,7 +176,7 @@ For an interactive experience, visit our [Shiny Dashboard](https://YOUR_SHINY_AP
 </div>
 
 
-# 🎥 Screencast
+# **🎥 Screencast**
 
 <div style="background: #f0f0f0; padding: 30px; border-radius: 10px;">
 
