@@ -538,13 +538,13 @@ Uncovering Patterns in NYC Citi Bike Usage
 </div>
 <p><br></p>
 <div id="introduction" class="section level1 info-card">
-<h1>1. Introduction</h1>
+<h1><strong>1. Introduction</strong></h1>
 <p>In this part, we perform exploratory data analysis (EDA) and
 visualization for Citi Bike trips in September 2025 focusing on temporal
 patterns and weather influences.</p>
 </div>
 <div id="dataset-overview" class="section level1 info-card">
-<h1>2. Dataset Overview</h1>
+<h1><strong>2. Dataset Overview</strong></h1>
 <p>The dataset contains <strong>stratified sampled Citi Bike trips from
 September 2025</strong>, enriched with <strong>weather
 categories</strong>.<br />
@@ -579,7 +579,7 @@ rain category)<br />
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>bike <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/final_bike_weather_categorized.csv&quot;</span>)</span></code></pre></div>
 </div>
 <div id="daily-aggregates" class="section level1 info-card">
-<h1>3. Daily Aggregates</h1>
+<h1><strong>3. Daily Aggregates</strong></h1>
 <p>The table below shows the basic format of daily aggregated ride data.
 Further analysis is based on this.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>daily <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
@@ -895,7 +895,7 @@ prcp
 </table>
 </div>
 <div id="daily-ride-volume" class="section level1 info-card">
-<h1>4. Daily Ride Volume</h1>
+<h1><strong>4. Daily Ride Volume</strong></h1>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>p_daily_rides <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> start_date, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">&quot;skyblue&quot;</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">lineend =</span> <span class="st">&quot;round&quot;</span>) <span class="sc">+</span></span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;lightpink&quot;</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
@@ -919,9 +919,9 @@ influencing how many people use the bikes each day.</p></li>
 </div>
 <div id="member-vs-casual-ride-patterns"
 class="section level1 info-card">
-<h1>5. Member vs Casual Ride Patterns</h1>
+<h1><strong>5. Member vs Casual Ride Patterns</strong></h1>
 <div id="daily-average-duration" class="section level2">
-<h2>5.1 Daily Average Duration</h2>
+<h2>Daily Average Duration</h2>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>dur_ts <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, member_casual) <span class="sc">%&gt;%</span></span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
@@ -950,7 +950,7 @@ routine trips.</p></li>
 <hr />
 </div>
 <div id="hourly-ride-count" class="section level2">
-<h2>5.2 Hourly Ride Count</h2>
+<h2>Hourly Ride Count</h2>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>hourly <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">group_by</span>(hour, member_casual, weekend_and_holiday) <span class="sc">%&gt;%</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>())</span>
@@ -971,7 +971,7 @@ overall activity on workdays).</p>
 <hr />
 </div>
 <div id="day-of-week-pattern" class="section level2">
-<h2>5.3 Day of Week Pattern</h2>
+<h2>Day of Week Pattern</h2>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>wday_daily <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">group_by</span>(wday, user_type) <span class="sc">%&gt;%</span></span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">%&gt;%</span></span>
@@ -1010,7 +1010,7 @@ observation confirms the previous conclusion.</p>
 </div>
 <div id="time-series-of-average-ride-duration"
 class="section level1 info-card">
-<h1>6. Time Series of Average Ride Duration</h1>
+<h1><strong>6. Time Series of Average Ride Duration</strong></h1>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>dur_ts <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date) <span class="sc">%&gt;%</span></span>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_duration =</span> <span class="fu">mean</span>(ride_duration_hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
@@ -1031,10 +1031,10 @@ on September 8 and the highest peak in late September, indicating small
 day-to-day changes in how long rides lasted.</p>
 </div>
 <div id="weather-effects" class="section level1 info-card">
-<h1>7. Weather Effects</h1>
+<h1><strong>7. Weather Effects</strong></h1>
 <div id="ride-count-vs-temperature-level-category"
 class="section level2">
-<h2>7.1 Ride Count vs Temperature Level Category</h2>
+<h2>Ride Count vs Temperature Level Category</h2>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>p_temp_level <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, temp_level_category) <span class="sc">%&gt;%</span></span>
 <span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">%&gt;%</span></span>
@@ -1061,7 +1061,7 @@ temperatures.</p></li>
 <hr />
 </div>
 <div id="ride-count-vs-rain-category" class="section level2">
-<h2>7.2 Ride Count vs Rain Category</h2>
+<h2>Ride Count vs Rain Category</h2>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>bike <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rain_category =</span> <span class="fu">factor</span>(rain_category,</span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>                                <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;No Rain&quot;</span>, <span class="st">&quot;Light Rain&quot;</span>, <span class="st">&quot;Medium Rain&quot;</span>, <span class="st">&quot;Heavy Rain&quot;</span>),</span>
@@ -1093,7 +1093,7 @@ associated with the most rides.</p>
 <hr />
 </div>
 <div id="weather-variables" class="section level2">
-<h2>7.3 Weather Variables</h2>
+<h2>Weather Variables</h2>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># tmax</span></span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">ggplot</span>(daily, <span class="fu">aes</span>(<span class="at">x =</span> tmax, <span class="at">y =</span> total_rides)) <span class="sc">+</span></span>
 <span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
@@ -1113,7 +1113,7 @@ associated with the most rides.</p>
 </div>
 </div>
 <div id="bike-type-analysis" class="section level1 info-card">
-<h1>8. Bike Type Analysis</h1>
+<h1><strong>8. Bike Type Analysis</strong></h1>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>p_type <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date, rideable_type) <span class="sc">%&gt;%</span></span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">rides =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">%&gt;%</span></span>
@@ -1140,12 +1140,12 @@ rides and greater variability in usage.</p></li>
 </ul>
 </div>
 <div id="time-series-analysis" class="section level1 info-card">
-<h1>9. Time Series Analysis</h1>
+<h1><strong>9. Time Series Analysis</strong></h1>
 <p>In this section, we will attempt to perform time series analysis on
 the ride data. After that, we fit an ARIMA model to predict future ride
 volume.</p>
 <div id="model-fitting-and-prediction" class="section level2">
-<h2>9.1 Model Fitting and Prediction</h2>
+<h2>Model Fitting and Prediction</h2>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">library</span>(tseries)</span>
 <span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>daily_rides <span class="ot">&lt;-</span> bike <span class="sc">%&gt;%</span></span>
 <span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="fu">group_by</span>(start_date) <span class="sc">%&gt;%</span></span>
@@ -1206,7 +1206,7 @@ forecasting of daily ride demand.</p>
 <hr />
 </div>
 <div id="decomposition" class="section level2">
-<h2>9.2 Decomposition</h2>
+<h2>Decomposition</h2>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>fit_ets <span class="ot">&lt;-</span> ts_data <span class="sc">%&gt;%</span> <span class="fu">model</span>(<span class="fu">ETS</span>(total_rides))</span>
 <span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>components_plot <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(<span class="fu">components</span>(fit_ets)) <span class="sc">+</span></span>
@@ -1240,7 +1240,7 @@ accounting for this trend.</p>
 </div>
 </div>
 <div id="summary" class="section level1 highlight-box">
-<h1>Summary</h1>
+<h1><strong>Summary</strong></h1>
 <ul>
 <li>Member and casual riders display distinct <strong>daily and
 weekend/weekday patterns</strong>.<br />

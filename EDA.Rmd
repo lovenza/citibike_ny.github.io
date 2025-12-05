@@ -28,7 +28,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <div class="info-card">
 
-# 1. Introduction
+# **1. Introduction**
 
 In this part, we perform exploratory data analysis (EDA) and visualization for Citi Bike trips in September 2025 focusing on temporal patterns and weather influences. 
 
@@ -52,7 +52,7 @@ library(kableExtra)
 
 <div class="info-card">
 
-# 2. Dataset Overview
+# **2. Dataset Overview**
 
 The dataset contains **stratified sampled Citi Bike trips from September 2025**, enriched with **weather categories**.  
 Each row represents **a single bike ride** with detailed trip-level information including:
@@ -100,7 +100,7 @@ bike <- bike %>%
 
 <div class="info-card">
 
-# 3. Daily Aggregates
+# **3. Daily Aggregates**
 
 The table below shows the basic format of daily aggregated ride data. Further analysis is based on this.
 
@@ -127,7 +127,7 @@ kable(head(daily, 10), caption = "Daily Overview") %>%
 
 <div class="info-card">
 
-# 4. Daily Ride Volume
+# **4. Daily Ride Volume**
 
 ```{r, warning=FALSE}
 p_daily_rides <- ggplot(daily, aes(x = start_date, y = total_rides)) +
@@ -150,9 +150,9 @@ The line chart shows the daily ride volume for Citi Bike in September 2025, with
 
 <div class="info-card">
 
-# 5. Member vs Casual Ride Patterns
+# **5. Member vs Casual Ride Patterns**
 
-## 5.1 Daily Average Duration
+## Daily Average Duration
 
 ```{r, message=FALSE}
 dur_ts <- bike %>%
@@ -176,7 +176,7 @@ This line chart compares the daily average ride duration (in hours) between casu
 
 ---
 
-## 5.2 Hourly Ride Count
+## Hourly Ride Count
 
 ```{r, message=FALSE}
 hourly <- bike %>%
@@ -197,7 +197,7 @@ Members primarily use bikes for weekday commutes, while casual users’ ride pat
 
 ---
 
-## 5.3 Day of Week Pattern
+## Day of Week Pattern
 
 ```{r, message=FALSE}
 wday_daily <- bike %>%
@@ -241,7 +241,7 @@ p_dur_group
 
 <div class="info-card">
 
-# 6. Time Series of Average Ride Duration
+# **6. Time Series of Average Ride Duration**
 
 ```{r, message=FALSE}
 dur_ts <- bike %>%
@@ -264,9 +264,9 @@ This line chart shows the daily average ride duration (in hours) for September 2
 
 <div class="info-card">
 
-# 7. Weather Effects
+# **7. Weather Effects**
 
-## 7.1 Ride Count vs Temperature Level Category
+## Ride Count vs Temperature Level Category
 
 ```{r, message=FALSE}
 p_temp_level <- bike %>%
@@ -291,7 +291,7 @@ This boxplot compares daily ride counts across "High" and "Low" temperature cate
 
 ---
 
-## 7.2 Ride Count vs Rain Category
+## Ride Count vs Rain Category
 
 ```{r, message=FALSE}
 bike <- bike %>%
@@ -323,7 +323,7 @@ leads to fewer daily bike rides, while no rain or light rain is associated with 
 
 ---
 
-## 7.3 Weather Variables
+## Weather Variables
 
 ```{r, message=FALSE, warning=FALSE}
 # tmax
@@ -347,7 +347,7 @@ ggplot(daily, aes(x = prcp, y = total_rides)) +
 
 <div class="info-card">
 
-# 8. Bike Type Analysis
+# **8. Bike Type Analysis**
 
 ```{r, message=FALSE}
 p_type <- bike %>%
@@ -374,11 +374,11 @@ This boxplot compares daily ride counts for two bike types: classic bikes and el
 
 <div class="info-card">
 
-# 9. Time Series Analysis
+# **9. Time Series Analysis**
 
 In this section, we will attempt to perform time series analysis on the ride data. After that, we fit an ARIMA model to predict future ride volume.
 
-## 9.1 Model Fitting and Prediction
+## Model Fitting and Prediction
 
 ```{r, message=FALSE}
 library(tseries)
@@ -432,7 +432,7 @@ Overall, the model effectively captures both the upward trend and weekly seasona
 
 ---
 
-## 9.2 Decomposition
+## Decomposition
 
 ```{r, warning = FALSE}
 fit_ets <- ts_data %>% model(ETS(total_rides))
@@ -464,7 +464,7 @@ Overall, the decomposition suggests daily ride counts have a clear upward trend 
 
 <div class="highlight-box">
 
-# Summary
+# **Summary**
 
 - Member and casual riders display distinct **daily and weekend/weekday patterns**.  
 - Daily ride volume shows clear **temporal trends** across September.  
