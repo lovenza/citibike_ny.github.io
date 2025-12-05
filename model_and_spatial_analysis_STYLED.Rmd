@@ -381,11 +381,9 @@ cat(sprintf("Distance vs Duration: r = %.3f, p < 0.001\n", test3$estimate))
 
 <div class="info-card">
 
-# Model Fitting
 
-## Full Models with Weather and Temporal Variables
 
-```{r model_total}
+```{r model_total, include=FALSE}
 # Model 1: All Riders
 model_total_full <- lm(
   ride_duration_min ~ tmax + tmin + prcp + distance_km +
@@ -397,7 +395,7 @@ model_total_full <- lm(
 summary(model_total_full)
 ```
 
-```{r model_member}
+```{r model_member, include=FALSE}
 # Model 2: Members Only
 ride_member <- ride_analysis_data %>% filter(member_casual == "member")
 
@@ -411,7 +409,7 @@ model_member_full <- lm(
 summary(model_member_full)
 ```
 
-```{r model_casual}
+```{r model_casual, include=FALSE}
 # Model 3: Casual Users Only
 ride_casual <- ride_analysis_data %>% filter(member_casual == "casual")
 
