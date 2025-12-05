@@ -7,10 +7,13 @@ navbar:
     - text: "Home"
       icon: fa-home
       href: index.html
+    - text: "Overview"
+      icon: fa-info-circle
+      href: overview.html
     - text: "Data Wrangling"
       icon: fa-database
       href: data_wrangling.html
-    - text: "EDA & Visualization"
+    - text: "EDA"
       icon: fa-chart-bar
       href: EDA.html
     - text: "Statistical Analysis"
@@ -20,16 +23,13 @@ navbar:
           href: statistical_analysis_RIDERSHIP_COMPLETE.html
         - text: "Ride Duration Analysis"
           href: model_and_spatial_analysis_STYLED.html
-    - text: "Shiny Dashboard"
+    - text: "Shiny"
       icon: fa-dashboard
       href: https://kwokmungyu.shinyapps.io/shiny_app/
     - text: "About Us"
       icon: fa-users
       href: about.html
-    - text: "Proposal"
-      icon: fa-file-text
-      href: proposal.html
-    - text: "Final Report"
+    - text: "Report"
       icon: fa-file-text-o
       href: report.html
   right:

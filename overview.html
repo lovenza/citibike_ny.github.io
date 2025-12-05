@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Mungyu Kwok, Ziang Niu, Bowen Xia, Zihan Zhou" />
+
+
+<title>Project Overview</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">🚴 Citi Bike NYC</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="overview.html">
+    <span class="fa fa-info-circle"></span>
+     
+    Overview
+  </a>
+</li>
+<li>
+  <a href="data_wrangling.html">
+    <span class="fa fa-database"></span>
+     
+    Data Wrangling
+  </a>
+</li>
+<li>
+  <a href="EDA.html">
+    <span class="fa fa-chart-bar"></span>
+     
+    EDA
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-calculator"></span>
+     
+    Statistical Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="statistical_analysis_RIDERSHIP_COMPLETE.html">Daily Ridership Analysis</a>
+    </li>
+    <li>
+      <a href="model_and_spatial_analysis_STYLED.html">Ride Duration Analysis</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="https://kwokmungyu.shinyapps.io/shiny_app/">
+    <span class="fa fa-dashboard"></span>
+     
+    Shiny
+  </a>
+</li>
+<li>
+  <a href="about.html">
+    <span class="fa fa-users"></span>
+     
+    About Us
+  </a>
+</li>
+<li>
+  <a href="report.html">
+    <span class="fa fa-file-text-o"></span>
+     
+    Report
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/lovenza/citibike_ny.github.io">
+    <span class="fa fa-github fa-lg"></span>
+     
+    GitHub
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Project Overview</h1>
+<h4 class="author">Mungyu Kwok, Ziang Niu, Bowen Xia, Zihan Zhou</h4>
+<h4 class="date">December 2025</h4>
+
+</div>
+
+
+<style>
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    margin: 20px 0;
+}
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+</style>
+<div class="hero-section">
+<h1>
+🚴 The Pulse of the City
+</h1>
+<p>
+<strong>NYC Citi Bike Ridership Patterns in Response to Daily Rhythms
+and Weather</strong>
+</p>
+<p>
+Analyzing 100,000 rides from September 2025
+</p>
+</div>
+<p><br></p>
+<div id="project-overview" class="section level1">
+<h1><strong>📊 Project Overview</strong></h1>
+<div class="info-card">
+<p>Citi Bike has become an integral part of New York City’s public
+transportation network, serving millions of rides. As a data-rich
+system, it offers a unique opportunity to understand the mobility
+patterns of a major metropolis.</p>
+<p>The goal of this project is to analyze how NYC’s population uses the
+Citi Bike system, focusing on key external factors and usage patterns.
+Through comprehensive statistical analysis and interactive
+visualizations, we explore the intricate relationship between urban
+mobility, temporal patterns, and environmental conditions.</p>
+</div>
+</div>
+<div id="core-research-questions" class="section level1">
+<h1><strong>❓ Core Research Questions</strong></h1>
+<div class="info-card">
+<p>We will address the following key questions using our 100,000-ride
+sample from September 2025:</p>
+<div id="temporal-patterns" class="section level2">
+<h2>1. Temporal Patterns</h2>
+<p>How do predictable daily and weekly rhythms (e.g., time of day,
+weekday vs. weekend) shape ridership? We investigate commuter peaks,
+weekend leisure patterns, and the daily pulse of urban mobility.</p>
+</div>
+<div id="user-segmentation" class="section level2">
+<h2>2. User Segmentation</h2>
+<p>How do different user groups (members vs. casual riders) use the
+system differently in terms of trip volume and duration? Understanding
+these patterns helps inform system optimization and user experience
+improvements.</p>
+</div>
+<div id="weather-quantification" class="section level2">
+<h2>3. Weather Quantification</h2>
+<p>To what extent does daily weather (Max Temperature, Precipitation)
+influence the decision to ride a bike and the duration of the trip? We
+quantify the specific impact of weather variables on ridership
+behavior.</p>
+</div>
+</div>
+</div>
+<div id="project-structure-and-analysis-pipeline"
+class="section level1">
+<h1><strong>🛠️ Project Structure and Analysis Pipeline</strong></h1>
+<div class="info-card">
+<p>The website is organized to follow our analytical workflow. Each
+section builds upon the previous, creating a comprehensive narrative of
+our findings:</p>
+<div
+style="padding: 20px; background: #f8f9fa; border-radius: 10px; margin: 15px 0;">
+<p><strong><a href="data_wrangling.html"><i class="fa fa-database"></i>
+1. Data Wrangling</a></strong><br />
+Details our data collection, the <strong>stratified sampling
+strategy</strong> creating the 100k-ride dataset, cleaning, and merging
+trip-level data with daily NOAA weather data. This foundation ensures
+robust and representative analysis.</p>
+<p><strong><a href="EDA.html"><i class="fa fa-chart-bar"></i> 2. EDA
+&amp; Visualization</a></strong><br />
+Presents a comprehensive exploratory analysis of
+<strong>temporal</strong> (hourly, daily) and <strong>user-type</strong>
+patterns, including plots demonstrating the relationship between
+ridership and key weather variables. Visual insights reveal hidden
+patterns in urban mobility.</p>
+<p><strong><a
+href="model_and_spatial_analysis_STYLED.html"><i class="fa fa-calculator"></i>
+3. Statistical Analysis</a></strong><br />
+Quantifies the specific impact of weather (e.g., effect per 10°F or
+1-inch of precipitation) and day-of-week on <strong>individual ride
+duration</strong> using multivariate linear regression models.
+Evidence-based conclusions drive our recommendations.</p>
+<p><strong><a
+href="https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/"><i class="fa fa-dashboard"></i>
+4. Interactive Dashboard</a></strong><br />
+Explore the data yourself! Our Shiny dashboard allows you to filter by
+user type, time period, and weather conditions. Visualize patterns in
+real-time and discover insights through interactive exploration.</p>
+</div>
+</div>
+</div>
+<div id="key-findings-preview" class="section level1">
+<h1><strong>📈 Key Findings Preview</strong></h1>
+<div class="info-card">
+<div class="row">
+<div class="col-md-4">
+<div class="stat-card">
+<div
+style="font-size: 32px; font-weight: bold; color: #2780e3; margin-bottom: 5px;">
+<p>100,000</p>
+</div>
+<p style="font-size: 16px; color: #666;">
+Rides Analyzed
+</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="stat-card">
+<div
+style="font-size: 32px; font-weight: bold; color: #2780e3; margin-bottom: 5px;">
+<p>30 Days</p>
+</div>
+<p style="font-size: 16px; color: #666;">
+September 2025
+</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="stat-card">
+<div
+style="font-size: 32px; font-weight: bold; color: #2780e3; margin-bottom: 5px;">
+<p>5+ Variables</p>
+</div>
+<p style="font-size: 16px; color: #666;">
+Weather &amp; Temporal
+</p>
+</div>
+</div>
+</div>
+<p>Our analysis reveals significant patterns in how New Yorkers use Citi
+Bike. Weather plays a crucial role, with temperature and precipitation
+showing measurable effects on ridership. Temporal patterns demonstrate
+clear commuter behavior on weekdays versus leisure usage on weekends.
+User segmentation analysis shows distinct behavioral differences between
+members and casual riders.</p>
+</div>
+</div>
+<div id="meet-the-team" class="section level1">
+<h1><strong>🧑‍💻 Meet the Team</strong></h1>
+<div class="info-card">
+<p>Our interdisciplinary team brings together expertise in data science,
+public health, and urban analytics. Each member contributed specialized
+skills to create this comprehensive analysis:</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Name</th>
+<th align="left">UNI</th>
+<th align="left">Primary Responsibility</th>
+<th align="left">Expertise</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>Ziang Niu</strong></td>
+<td align="left">zn2220</td>
+<td align="left">Project Lead &amp; Data Wrangling</td>
+<td align="left">Data Engineering, Project Management</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Zihan Zhou</strong></td>
+<td align="left">zz3460</td>
+<td align="left">EDA &amp; Visualization Lead</td>
+<td align="left">Statistical Graphics, Data Visualization</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>Bowen Xia</strong></td>
+<td align="left">bx2232</td>
+<td align="left">Modeling &amp; Spatial Analysis Lead</td>
+<td align="left">Statistical Modeling, Geospatial Analysis</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Mungyu Kwok</strong></td>
+<td align="left">mk5149</td>
+<td align="left">Shiny &amp; Web Lead</td>
+<td align="left">Interactive Dashboards, Web Development</td>
+</tr>
+</tbody>
+</table>
+<p>Learn more about us on our <strong><a href="about.html">About
+Us</a></strong> page!</p>
+</div>
+</div>
+<div id="why-this-matters" class="section level1">
+<h1><strong>🎯 Why This Matters</strong></h1>
+<div class="highlight-box">
+<p>Understanding bike-share usage patterns has profound implications
+for:</p>
+<ul>
+<li><strong>Urban Planning</strong>: Optimize station placement and bike
+allocation</li>
+<li><strong>Public Health</strong>: Encourage active transportation and
+reduce emissions</li>
+<li><strong>Transportation Policy</strong>: Inform sustainable mobility
+strategies</li>
+<li><strong>System Operations</strong>: Improve service quality and user
+experience</li>
+</ul>
+<p>Our findings contribute to the growing body of evidence supporting
+data-driven urban mobility solutions.</p>
+</div>
+</div>
+<div id="get-started" class="section level1">
+<h1><strong>🚀 Get Started</strong></h1>
+<div class="info-card" style="text-align: center;">
+<p>Ready to explore? Navigate through our analysis using the menu bar
+above, or start with our <a href="data_wrangling.html">Data
+Wrangling</a> section to see how we prepared this rich dataset.</p>
+<p>For an interactive experience, visit our <a
+href="https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/">Shiny
+Dashboard</a> to explore the data yourself!</p>
+</div>
+</div>
+<div id="screencast" class="section level1">
+<h1><strong>🎥 Screencast</strong></h1>
+<div style="background: #f0f0f0; padding: 30px; border-radius: 10px;">
+<div class="video-container">
+<iframe src="https://www.youtube.com/embed/H6kWUNH9haQ" frameborder="0" allowfullscreen>
+</iframe>
+</div>
+</div>
+<hr />
+<div style="text-align: center; margin: 30px 0;">
+<p>
+<em>This project was completed as part of Data Science I (P8105) at
+Columbia University Mailman School of Public Health, Fall 2025.</em>
+</p>
+<p>
+<a href="https://github.com/lovenza/citibike_ny.github.io" target="_blank" class="btn btn-primary"><i class="fa fa-github"></i>
+View on GitHub</a>
+</p>
+</div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <p style="margin: 10px 0;">
+                    <strong>The Pulse of the City: NYC Citi Bike Ridership Analysis</strong>
+                </p>
+                <p style="margin: 10px 0;">
+                    Columbia University Mailman School of Public Health | Data Science I (P8105) | Fall 2025
+                </p>
+                <p style="margin: 10px 0;">
+                    <a href="https://github.com/lovenza/citibike_ny.github.io" target="_blank">
+                        <i class="fa fa-github"></i> View on GitHub
+                    </a>
+                </p>
+                <p style="margin: 10px 0; font-size: 0.9em; color: #ccc;">
+                    © 2025 Citi Bike Analysis Team. All Rights Reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

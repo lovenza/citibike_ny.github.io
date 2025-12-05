@@ -45,7 +45,7 @@ library(kableExtra)
 </div>
 
 <div class="image-container" style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
-  <img src="pic/pic1.png" alt="Citi Bike Lifestyle" style="width: 90%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+  <img src="pictures/pic1.png" alt="Citi Bike Lifestyle" style="width: 90%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
   <p style="font-size: 0.9em; color: #666; font-style: italic; margin-top: 10px;">Citi Bike brings vibrancy to NYC streets</p>
 </div>
 
@@ -550,7 +550,7 @@ ggplot(hourly_pattern, aes(x = hour, y = n, color = day_type)) +
 ## User Segmentation Analysis
 
 <div style="text-align: center; margin: 20px 0;">
-  <img src="pic/pic2.png" alt="User with Citi Bike" style="width: 80%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+  <img src="pictures/pic2.png" alt="User with Citi Bike" style="width: 80%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
   <p style="font-size: 0.9em; color: #666; font-style: italic;">Exploring user preferences: Classic vs. Electric Bikes</p>
 </div>
 
@@ -610,7 +610,7 @@ ggplot(hourly_pattern, aes(x = hour, y = n, color = day_type)) +
    - Near subway connections
    
 <div style="text-align: center; margin: 20px 0;">
-  <img src="pic/pic3.png" alt="NYC Citi Bike Station Map" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+  <img src="pictures/pic3.png" alt="NYC Citi Bike Station Map" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
   <p style="font-size: 0.9em; color: #666; font-style: italic;">Spatial distribution of Citi Bike rides in NYC</p>
 </div>
 
