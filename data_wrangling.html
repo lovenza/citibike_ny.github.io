@@ -536,7 +536,7 @@ Transforming Raw Data into Analysis-Ready Insights
 </div>
 <p><br></p>
 <div id="overview" class="section level1 info-card">
-<h1>Overview</h1>
+<h1>1. Overview</h1>
 <p>This page documents our comprehensive data wrangling process for the
 NYC Citi Bike analysis. We transform raw trip data and weather
 observations into a clean, analysis-ready dataset through:</p>
@@ -552,7 +552,7 @@ analysis</li>
 </div>
 <div id="load-and-pre-process-bike-data"
 class="section level1 info-card">
-<h1>Load and Pre-process Bike Data</h1>
+<h1>2. Load and Pre-process Bike Data</h1>
 <p>Due to the large size of the raw dataset, which exceeds GitHub’s
 storage limits, the file is stored locally. You can access the original
 data via <a
@@ -587,7 +587,7 @@ objects.</p></li>
 <span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>  )</span></code></pre></div>
 </div>
 <div id="stratified-daily-sampling" class="section level1 info-card">
-<h1>Stratified Daily Sampling</h1>
+<h1>3. Stratified Daily Sampling</h1>
 <p>This block creates the smaller sampled_bike_data dataframe
 (containing 100,000 rides). It first filters the data to include only
 rides from September. Then, it uses a grouped sampling strategy:</p>
@@ -750,7 +750,7 @@ for subsequent analysis.</p></li>
 </div>
 <div id="feature-engineering-and-weather-data-merge"
 class="section level1 info-card">
-<h1>Feature Engineering and Weather Data Merge</h1>
+<h1>4. Feature Engineering and Weather Data Merge</h1>
 <p>This section enriches the sampled bike data with new geospatial
 features and joins it with external weather data.</p>
 <ul>
@@ -801,7 +801,7 @@ PRCP).</p></li>
 </div>
 <div id="final-categorization-and-export"
 class="section level1 info-card">
-<h1>Final Categorization and Export</h1>
+<h1>5. Final Categorization and Export</h1>
 <p>This final block creates categorical variables based on the merged
 weather data, selects the final columns for the analysis, and exports
 the result to a new CSV file.</p>
