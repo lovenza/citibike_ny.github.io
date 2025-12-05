@@ -18,6 +18,25 @@ library(knitr)
 library(kableExtra)
 ```
 
+<style>
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    margin: 20px 0;
+}
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+</style>
+
 <div class="hero-section">
   <h1>🚴 The Pulse of the City</h1>
   <p><strong>NYC Citi Bike Ridership Patterns in Response to Daily Rhythms and Weather</strong></p>
@@ -153,6 +172,17 @@ Our findings contribute to the growing body of evidence supporting data-driven u
 Ready to explore? Navigate through our analysis using the menu bar above, or start with our [Data Wrangling](data_wrangling.html) section to see how we prepared this rich dataset.
 
 For an interactive experience, visit our [Shiny Dashboard](https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/) to explore the data yourself!
+
+</div>
+
+
+# 🎥 Screencast
+
+<div style="background: #f0f0f0; padding: 30px; border-radius: 10px;">
+
+<div class="video-container">
+<iframe src="https://www.youtube.com/embed/H6kWUNH9haQ" frameborder="0" allowfullscreen></iframe>
+</div>
 
 </div>
 

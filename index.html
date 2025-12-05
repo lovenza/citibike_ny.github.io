@@ -14,7 +14,7 @@
 
 <title>The Pulse of the City</title>
 
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -413,6 +413,24 @@ div.tocify {
 </div>
 
 
+<style>
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    margin: 20px 0;
+}
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+</style>
 <div class="hero-section">
 <h1>
 🚴 The Pulse of the City
@@ -631,6 +649,15 @@ Wrangling</a> section to see how we prepared this rich dataset.</p>
 <p>For an interactive experience, visit our <a
 href="https://YOUR_SHINY_APP_URL.shinyapps.io/citibike_dashboard/">Shiny
 Dashboard</a> to explore the data yourself!</p>
+</div>
+</div>
+<div id="screencast" class="section level1">
+<h1>🎥 Screencast</h1>
+<div style="background: #f0f0f0; padding: 30px; border-radius: 10px;">
+<div class="video-container">
+<iframe src="https://www.youtube.com/embed/H6kWUNH9haQ" frameborder="0" allowfullscreen>
+</iframe>
+</div>
 </div>
 <hr />
 <div style="text-align: center; margin: 30px 0;">
