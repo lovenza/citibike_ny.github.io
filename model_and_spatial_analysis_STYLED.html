@@ -539,7 +539,7 @@ Quantifying Weather and Temporal Effects on Ridership
 </div>
 <p><br></p>
 <div id="introduction" class="section level1 info-card">
-<h1><strong>1.Introduction</strong></h1>
+<h1><strong>1. Introduction</strong></h1>
 <p>This analysis examines how weather conditions and temporal patterns
 influence <strong>individual ride duration</strong> (riding time) for
 NYC Citi Bike users in September 2025. Unlike aggregate daily ridership
@@ -562,7 +562,7 @@ reliable estimates</li>
 </div>
 </div>
 <div id="data-preparation" class="section level1 info-card">
-<h1><strong>2.Data Preparation</strong></h1>
+<h1><strong>2. Data Preparation</strong></h1>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Descriptive statistics</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>summary_stats <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="fu">group_by</span>(member_casual) <span class="sc">%&gt;%</span></span>
@@ -663,7 +663,7 @@ member
 </table>
 </div>
 <div id="data-analysis" class="section level1 info-card">
-<h1><strong>3.Data Analysis</strong></h1>
+<h1><strong>3. Data Analysis</strong></h1>
 <div id="ride-duration-by-user-type-and-weather" class="section level2">
 <h2>Ride Duration by User Type and Weather</h2>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Duration by temperature category</span></span>
@@ -784,7 +784,7 @@ class="section level2">
 </div>
 </div>
 <div id="statistical-methodology" class="section level1 info-card">
-<h1><strong>4.Statistical Methodology</strong></h1>
+<h1><strong>4. Statistical Methodology</strong></h1>
 <p>We employ multiple linear regression to model individual ride
 duration as a function of weather and temporal predictors. The large
 sample size (N ≈ 100,000) provides excellent statistical power.</p>
@@ -820,7 +820,7 @@ heteroscedasticity</p>
 </div>
 </div>
 <div id="correlation-analysis" class="section level1 info-card">
-<h1><strong>5.Correlation Analysis</strong></h1>
+<h1><strong>5. Correlation Analysis</strong></h1>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Select numeric variables for correlation</span></span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>cor_vars <span class="ot">&lt;-</span> ride_analysis_data <span class="sc">%&gt;%</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">select</span>(ride_duration_min, tmax, tmin, prcp, distance_km, hour) <span class="sc">%&gt;%</span></span>
@@ -1206,7 +1206,7 @@ hour
 
 </div>
 <div id="comprehensive-results" class="section level1 info-card">
-<h1><strong>6.Comprehensive Results</strong></h1>
+<h1><strong>6. Comprehensive Results</strong></h1>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Extract coefficients for all models</span></span>
 <span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>coef_total <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model_total_full) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">&quot;All Riders&quot;</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>coef_member <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model_member_full) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">&quot;Members&quot;</span>)</span>
@@ -1546,7 +1546,7 @@ Casual
 </table>
 </div>
 <div id="clear-key-findings" class="section level1 info-card">
-<h1><strong>7.CLEAR KEY FINDINGS</strong></h1>
+<h1><strong>7. CLEAR KEY FINDINGS</strong></h1>
 <div id="key-finding-1-temperature-has-modest-effect-on-duration"
 class="section level2">
 <h2>KEY FINDING 1: Temperature Has Modest Effect on Duration</h2>
@@ -2007,7 +2007,7 @@ significant effects - Results are highly reliable and reproducible</p>
 </div>
 </div>
 <div id="model-diagnostics" class="section level1 info-card">
-<h1><strong>8.Model Diagnostics</strong></h1>
+<h1><strong>8. Model Diagnostics</strong></h1>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># Diagnostic plots for total model (sample 5000 for speed)</span></span>
 <span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
 <span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a><span class="fu">plot</span>(model_total_full, <span class="at">which =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">main =</span> <span class="st">&quot;Total Model Diagnostics (All Riders)&quot;</span>)</span></code></pre></div>
@@ -2018,7 +2018,7 @@ patterns show good model fit - Heteroscedasticity present (common with
 large samples) - can use robust standard errors if needed</p>
 </div>
 <div id="discussion-and-conclusions" class="section level1 info-card">
-<h1><strong>9.Discussion and Conclusions</strong></h1>
+<h1><strong>9. Discussion and Conclusions</strong></h1>
 <div id="main-findings-summary" class="section level2">
 <h2>Main Findings Summary</h2>
 <p><strong>1. Distance Dominates Duration</strong><br />
