@@ -29,6 +29,9 @@ navbar:
     - text: "About Us"
       icon: fa-users
       href: about.html
+    - text: "Proposal"
+      icon: fa-file-text-o
+      href: proposal.html
     - text: "Report"
       icon: fa-file-text-o
       href: report.html
